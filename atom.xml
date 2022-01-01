@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://lebalz.ch/</id>
+    <title>Blog Blog</title>
+    <updated>2022-01-01T00:00:00.000Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://lebalz.ch/"/>
+    <subtitle>Blog Blog</subtitle>
+    <icon>https://lebalz.ch/img/favicon.ico</icon>
+    <entry>
+        <title type="html"><![CDATA[Happy New Year 🥳]]></title>
+        <id>/2022/01/01/happy-new-year</id>
+        <link href="https://lebalz.ch/2022/01/01/happy-new-year"/>
+        <updated>2022-01-01T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Hangovers are perfect for config tasks. So i set up my dev blog using Docusaurus.]]></summary>
+        <content type="html"><![CDATA[<p>Hangovers are perfect for config tasks. So i set up my dev blog using <a href="https://docusaurus.io">Docusaurus</a>.</p>]]></content>
+        <author>
+            <name>Balthasar Hofer</name>
+            <uri>https://github.com/lebalz</uri>
+        </author>
+    </entry>
+</feed>
