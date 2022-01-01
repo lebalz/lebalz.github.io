@@ -39,9 +39,6 @@ const config = {
       }),
     ],
   ],
-  plugins: [
-    'docusaurus-plugin-sass'
-  ],
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
@@ -115,6 +112,19 @@ const config = {
         darkTheme: darkCodeTheme,
       },
     }),
+    plugins: [
+      'docusaurus-plugin-sass'
+    ],
+    scripts: [
+      // Object format.
+      {
+        src: 'https://umami.lebalz.ch/umami.js',
+        ['data-website-id']: 'fc37f18b-ef7a-4e4c-aebd-dc95acfcee02',
+        ['data-domains']: 'lebalz.ch',
+        async: true,
+        defer: true
+      },
+    ],
 };
 
 module.exports = config;
