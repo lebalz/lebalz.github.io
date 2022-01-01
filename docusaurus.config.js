@@ -3,6 +3,8 @@
 
 const lightCodeTheme = require('prism-react-renderer/themes/github');
 const darkCodeTheme = require('prism-react-renderer/themes/dracula');
+const remarkFlex = require('./src/plugins/remark-flex');
+const remarkImage = require('./src/plugins/remark-images');
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -15,7 +17,6 @@ const config = {
   favicon: 'img/favicon.ico',
   organizationName: 'lebalz', // Usually your GitHub org/user name.
   projectName: 'blog', // Usually your repo name.
-
   presets: [
     [
       'classic',
@@ -25,16 +26,35 @@ const config = {
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
           editUrl: 'https://github.com/lebalz/blog/tree/main/packages/create-docusaurus/templates/shared/',
+          beforeDefaultRemarkPlugins: [
+            remarkImage
+          ],
+          remarkPlugins: [
+            remarkFlex
+          ],
         },
         blog: {
+          blogTitle: 'Dev Blog',
           routeBasePath: '/',
           showReadingTime: true,
+          blogSidebarCount: 'ALL',
+          postsPerPage: 1,
+          blogSidebarTitle: 'Posts',
           // Please change this to your repo.
           editUrl:
             'https://github.com/lebalz/blog/tree/main/packages/create-docusaurus/templates/shared/',
+          beforeDefaultRemarkPlugins: [
+            remarkImage
+          ],
+          remarkPlugins: [
+            remarkFlex
+          ]
         },
         theme: {
-          customCss: require.resolve('./src/css/custom.scss'),
+          customCss: [
+            require.resolve('./src/css/custom.scss'),
+            require.resolve('./node_modules/react-image-gallery/styles/css/image-gallery.css')
+          ]
         },
       }),
     ],
@@ -112,19 +132,19 @@ const config = {
         darkTheme: darkCodeTheme,
       },
     }),
-    plugins: [
-      'docusaurus-plugin-sass'
-    ],
-    scripts: [
-      // Object format.
-      {
-        src: 'https://umami.lebalz.ch/umami.js',
-        ['data-website-id']: 'fc37f18b-ef7a-4e4c-aebd-dc95acfcee02',
-        ['data-domains']: 'lebalz.ch',
-        async: true,
-        defer: true
-      },
-    ],
+  plugins: [
+    'docusaurus-plugin-sass'
+  ],
+  scripts: [
+    // Object format.
+    {
+      src: 'https://umami.lebalz.ch/umami.js',
+      ['data-website-id']: 'fc37f18b-ef7a-4e4c-aebd-dc95acfcee02',
+      ['data-domains']: 'lebalz.ch',
+      async: true,
+      defer: true
+    },
+  ],
 };
 
 module.exports = config;
