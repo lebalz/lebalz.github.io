@@ -12,8 +12,8 @@
         <id>/2022/01/01/happy-new-year</id>
         <link href="https://lebalz.ch/2022/01/01/happy-new-year"/>
         <updated>2022-01-01T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[Hangovers are perfect for config tasks. So i set up my dev blog using Docusaurus.]]></summary>
-        <content type="html"><![CDATA[<p>Hangovers are perfect for config tasks. So i set up my dev blog using <a href="https://docusaurus.io">Docusaurus</a>.</p>]]></content>
+        <summary type="html"><![CDATA[Hangovers are perfect for config tasks. So, i set up my dev blog using Docusaurus.]]></summary>
+        <content type="html"><![CDATA[<p>Hangovers are perfect for config tasks. So, i set up my dev blog using <a href="https://docusaurus.io">Docusaurus</a>.</p><p><img src="/img/logo.png" alt="--width=250px"/></p>]]></content>
         <author>
             <name>Balthasar Hofer</name>
             <uri>https://github.com/lebalz</uri>

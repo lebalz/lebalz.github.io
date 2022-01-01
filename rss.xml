@@ -12,8 +12,8 @@
             <link>https://lebalz.ch/2022/01/01/happy-new-year</link>
             <guid>/2022/01/01/happy-new-year</guid>
             <pubDate>Sat, 01 Jan 2022 00:00:00 GMT</pubDate>
-            <description><![CDATA[Hangovers are perfect for config tasks. So i set up my dev blog using Docusaurus.]]></description>
-            <content:encoded><![CDATA[<p>Hangovers are perfect for config tasks. So i set up my dev blog using <a href="https://docusaurus.io">Docusaurus</a>.</p>]]></content:encoded>
+            <description><![CDATA[Hangovers are perfect for config tasks. So, i set up my dev blog using Docusaurus.]]></description>
+            <content:encoded><![CDATA[<p>Hangovers are perfect for config tasks. So, i set up my dev blog using <a href="https://docusaurus.io">Docusaurus</a>.</p><p><img src="/img/logo.png" alt="--width=250px"/></p>]]></content:encoded>
         </item>
     </channel>
 </rss>
