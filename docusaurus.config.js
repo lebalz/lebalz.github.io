@@ -46,7 +46,7 @@ const config = {
         title: 'Dev Blog',
         logo: {
           alt: 'Le Balz',
-          src: 'img/logo.svg',
+          src: 'img/logo.png',
         },
         items: [
           {
