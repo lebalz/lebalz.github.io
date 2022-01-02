@@ -134,7 +134,8 @@ const config = {
       },
     }),
   plugins: [
-    'docusaurus-plugin-sass'
+    'docusaurus-plugin-sass',
+    '@saucelabs/theme-github-codeblock'
   ],
   scripts: [
     // Object format.
