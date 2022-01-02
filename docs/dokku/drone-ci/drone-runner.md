@@ -9,7 +9,7 @@ keywords: [drone, dokku, drone ci, drone runner, ci]
 For the runner, follow the same steps as fot the server, but make sure you
 follow the instructions for the [runners](https://docs.drone.io/runner/docker/installation/linux/).
 
-```sh {3-7}
+```bash {3-7}
 docker run --detach \
   --volume=/var/run/docker.sock:/var/run/docker.sock \
   --env=DRONE_RPC_PROTO=https \
@@ -30,7 +30,7 @@ The instructions state that
 
 ## Preparing dokku and the image
 
-```sh
+```bash
 dokku apps:create drone-runner
 
 # env variables
@@ -53,7 +53,7 @@ dokku git:from-image drone-runner drone/drone-runner-docker:latest
 ## Update
 To update to a specific version (e.g. `1.8.0` or `latest`) lookup the tags on [https://hub.docker.com/r/drone/drone-runner-docker/tags](https://hub.docker.com/r/drone/drone-runner-docker/tags) and run on your dokku server:
 
-```sh
+```bash
 docker pull drone/drone-runner-docker:1.8.0
 dokku git:from-image drone-runner drone/drone-runner-docker:1.8.0
 ```

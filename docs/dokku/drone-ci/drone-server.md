@@ -10,7 +10,7 @@ keywords: [drone, dokku, drone ci, drone server, ci]
 To get started with Drone, read the [documentation](https://docs.drone.io/server/provider/gtihub/), where
 you can find the following snippet:
 
-```sh {3-7}
+```bash {3-7}
 docker run \
   --volume=/var/lib/drone:/data \
   --env=DRONE_GITHUB_CLIENT_ID=your-id \
@@ -34,7 +34,7 @@ It states the following:
 
 ## Preparing dokku and the image
 
-```sh
+```bash
 # create the app
 dokku apps:create drone-server
 
@@ -81,7 +81,7 @@ HTTPS, resulting in an infinite loop.
 ## Update
 To update to a specific version (e.g. `2.7.3` or `latest`) lookup the tags on [https://hub.docker.com/r/drone/drone/tags](https://hub.docker.com/r/drone/drone/tags) and run on your dokku server:
 
-```sh
+```bash
 dokku git:from-image drone-server drone/drone:2.7.3
 ```
 
