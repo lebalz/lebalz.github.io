@@ -1,6 +1,8 @@
 ---
 title: Drone Runner
 sidebar_position: 2
+description: Deploy Drone CI Runner with Dokku
+keywords: [drone, dokku, drone ci, drone runner, ci]
 ---
 # Drone Runner
 

@@ -1,6 +1,8 @@
 ---
 title: Drone Server
 sidebar_position: 1
+description: Deploy Drone CI Runner with Dokku
+keywords: [drone, dokku, drone ci, drone server, ci]
 ---
 
 # Drone for Github

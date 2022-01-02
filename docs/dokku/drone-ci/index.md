@@ -1,10 +1,12 @@
 ---
 title: Drone CI
+description: Deploy Drone CI Runner with Dokku
+keywords: [drone, dokku, drone ci, github, drone runner, drone runner, ci]
 ---
 
 # Drone CI
 
-[Drone CI](https://www.drone.io/) can be easily used with Github, Bitbucket, Gitlab,...
+[Drone CI](https://www.drone.io/) can be easily used with Github, *Bitbucket, Gitlab*,... The description is for the integration with Github.
 
 To deploy it on dokku, you need two apps - [drone-server](drone-server.md) and [drone-runner](drone-runner.md).
 
