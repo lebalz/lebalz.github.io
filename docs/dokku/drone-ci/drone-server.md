@@ -1,5 +1,6 @@
 ---
 title: Drone Server
+sidebar_position: 1
 ---
 
 # Drone for Github
@@ -31,14 +32,14 @@ It states the following:
 
 ## Preparing dokku and the image
 
-```
+```sh
 # create the app
 dokku apps:create drone-server
 
 # set the env variables
 dokku config:set drone-server DRONE_GITHUB_CLIENT_ID=1234
 dokku config:set drone-server DRONE_GITHUB_CLIENT_SECRET=abcdef
-dokku config:set drone-server DRONE_RPC_SECRET=abcdef
+dokku config:set drone-server DRONE_RPC_SECRET=$(openssl rand -hex 32)
 dokku config:set drone-server DRONE_SERVER_HOST=drone.lebalz.ch
 dokku config:set drone-server DRONE_SERVER_PROTO=http
 
@@ -51,6 +52,9 @@ dokku storage:mount drone-server /var/lib/dokku/data/storage/drone-server:/data
 # change port mapping
 dokku proxy:ports-add drone-server http:80:80
 
+# add a domain
+dokku domains:add drone-server drone.lebalz.ch
+
 # optional: set email for letsencrypt
 dokku config:set --no-restart drone-server DOKKU_LETSENCRYPT_EMAIL=foo@bar.ch
 
@@ -60,6 +64,10 @@ dokku git:from-image drone-server drone/drone:latest
 # optional: letsencrypt
 dokku letsencrypt drone-server
 ```
+
+:::info `DRONE_RPC_SECRET`
+Required string value provides the shared secret generated in the previous step. This is used to authenticate the rpc connection between the server and runners. The server and runner must be provided the same secret value. A secure random string can be generated with `openssl rand -hex 32`.
+:::
 
 :::danger Careful `DRONE_SERVER_PROTO`
 Make sure you disable the HTTPS redirect option. Dokku terminates the SSL
