@@ -34,7 +34,7 @@ The instructions state that
 dokku apps:create drone-runner
 
 # env variables
-dokku config:set drone-runner DRONE_RPC_SECRET=$(dokku config:get hfr-drone-server DRONE_RPC_SECRET)
+dokku config:set drone-runner DRONE_RPC_SECRET=$(dokku config:get drone-server DRONE_RPC_SECRET)
 dokku config:set drone-runner DRONE_RPC_PROTO=https
 dokku config:set drone-runner DRONE_RPC_HOST=drone.lebalz.ch
 dokku config:set drone-runner DRONE_RUNNER_CAPACITY=2
