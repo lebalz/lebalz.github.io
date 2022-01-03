@@ -32,3 +32,28 @@ html[data-theme='dark'] {
 html[data-theme='dark'] .docusaurus-highlight-code-line {
   background-color: rgba(0, 0, 0, 0.3);
 }
+
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    .footnote-ref {
+        font-size: 50%;
+    }
+}
+
+
+.footnote-ref {
+  font-size: 75%;
+  &::before {
+      content: '[';
+      margin-right: 3px;
+  }
+  &::after {
+      content: ']';
+      margin-left: 3px;
+  }
+}
