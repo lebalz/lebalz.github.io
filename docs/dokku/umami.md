@@ -52,14 +52,15 @@ dokku config:set --no-restart drone-server DOKKU_LETSENCRYPT_EMAIL=foo@bar.ch
 
 ## Create database tables
 
-* Open the Umami [Github repository](https://github.com/mikecao/umami)
-* Copy the content of the file `sql/schema.postgresql.sql`
+* Copy the content of the file `schema.postgresql.sql`
 * Open a connection to your dokku PostgreSQL instance: `dokku postgres:connect umami-postgres`
 * Paste the content of the file that you previously copied
 
-<details><summary>`schema.postgresql.sql`</summary>
+<details><summary>schema.postgresql.sql</summary>
 
-```sql reference title=schema.postgresql.sql
+The Schema from [Github repository](https://github.com/mikecao/umami):
+
+```sql reference title=sql/schema.postgresql.sql
 https://github.com/mikecao/umami/blob/master/sql/schema.postgresql.sql
 ```
 
@@ -79,9 +80,10 @@ The default username is `admin` and the default password is `umami`.
 ## Updating
 
 ```bash
+# pull the latest image
 docker pull ghcr.io/mikecao/umami:postgresql-latest
-dokku git:from-image umami ghcr.io/mikecao/umami:postgresql-latest
-# optional: rebuild
+
+# rebuild umami
 dokku ps:rebuild umami
 ```
 
