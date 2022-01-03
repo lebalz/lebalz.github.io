@@ -6,7 +6,9 @@ keywords: [umami, web, tracker, web analytics, dokku]
 
 # Umami [^1]
 
-To get started with Umami, read the
+> Umami is a simple, easy to use, self-hosted web analytics solution. The goal is to provide you with a friendlier, privacy-focused alternative to Google Analytics and a free, open-sourced alternative to paid solutions. [^2]
+
+To get started with [Umami](https://umami.is/), read the
 [docker-compose.yml](https://github.com/mikecao/umami/blob/master/docker-compose.yml).
 
 It states the following:
@@ -94,4 +96,5 @@ dokku ps:rebuild umami
 * Debug proxy mapping: `dokku nginx:error-logs umami -t`
 
 
-[^1]: Quelle: [knowledge.code-fabrik.ch](https://knowledge.code-fabrik.ch/software/dokku/docker-image-deploys/umami.html)
+[^1]: Reference: [knowledge.code-fabrik.ch](https://knowledge.code-fabrik.ch/software/dokku/docker-image-deploys/umami.html)
+[^2]: Reference: [Umami](https://umami.is/)

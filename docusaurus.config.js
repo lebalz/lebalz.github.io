@@ -24,8 +24,9 @@ const config = {
       ({
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
+          routeBasePath: 'synopsis',
           // Please change this to your repo.
-          editUrl: 'https://github.com/lebalz/blog/tree/main/packages/create-docusaurus/templates/shared/',
+          editUrl: 'https://github.com/lebalz/blog/edit/main/',
           beforeDefaultRemarkPlugins: [
             remarkImage
           ],
@@ -42,7 +43,7 @@ const config = {
           blogSidebarTitle: 'Posts',
           // Please change this to your repo.
           editUrl:
-            'https://github.com/lebalz/blog/tree/main/packages/create-docusaurus/templates/shared/',
+            'https://github.com/lebalz/blog/edit/main/',
           beforeDefaultRemarkPlugins: [
             remarkImage
           ],
@@ -71,7 +72,7 @@ const config = {
         items: [
           {
             type: 'doc',
-            docId: 'intro',
+            docId: 'index',
             position: 'left',
             label: 'Knowledgebase',
           },
@@ -87,38 +88,17 @@ const config = {
         style: 'dark',
         links: [
           {
-            title: 'Docs',
+            title: 'Knowledgebase',
             items: [
               {
-                label: 'Tutorial',
-                to: '/docs/intro',
-              },
-            ],
-          },
-          {
-            title: 'Community',
-            items: [
-              {
-                label: 'Stack Overflow',
-                href: 'https://stackoverflow.com/questions/tagged/docusaurus',
-              },
-              {
-                label: 'Discord',
-                href: 'https://discordapp.com/invite/docusaurus',
-              },
-              {
-                label: 'Twitter',
-                href: 'https://twitter.com/docusaurus',
+                label: 'Dokku',
+                to: '/synopsis/dokku',
               },
             ],
           },
           {
             title: 'More',
             items: [
-              {
-                label: 'Blog',
-                to: '/',
-              },
               {
                 label: 'GitHub',
                 href: 'https://github.com/lebalz',

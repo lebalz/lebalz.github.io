@@ -4,21 +4,26 @@
  * work well for content-centric websites.
  */
 
-/* You can override the default Infima variables here. */
+/** You can override the default Infima variables here. 
+ * https://docusaurus.io/docs/styling-layout#styling-your-site-with-infima
+ */
 :root {
-  --ifm-color-primary: #191852;
-  --ifm-color-primary-dark: #16164a;
-  --ifm-color-primary-darker: #151446;
-  --ifm-color-primary-darkest: #111139;
-  --ifm-color-primary-light: #1b1a5a;
-  --ifm-color-primary-lighter: #1d1c5e;
-  --ifm-color-primary-lightest: #201f6b;
+  --ifm-color-primary: #1f1e72;
+  --ifm-color-primary-dark: #1c1b67;
+  --ifm-color-primary-darker: #1a1961;
+  --ifm-color-primary-darkest: #161550;
+  --ifm-color-primary-light: #22217d;
+  --ifm-color-primary-lighter: #242283;
+  --ifm-color-primary-lightest: #282794;
+  --ifm-link-color: #22209c;
+  --ifm-link-hover-color: var(--ifm-color-primary);
   --ifm-code-font-size: 95%;
 }
 
 html[data-theme='dark'] {
   --ifm-color-primary: #4e89e8;
   --ifm-color-primary-dark: #5a91ea;
+  --ifm-link-color: var(--ifm-color-primary);
   /* any other colors you wish to overwrite */
 }
 
