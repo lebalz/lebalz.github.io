@@ -1,6 +1,7 @@
 ---
 title: Dokku
 keywords: [dokku]
+sidebar_position: 2
 ---
 
 # Dokku
