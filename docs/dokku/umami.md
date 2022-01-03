@@ -1,5 +1,7 @@
 ---
 title: Umami
+description: Deploy Umami tracker with Dokku
+keywords: [umami, web, tracker, web analytics, dokku]
 ---
 
 # Umami [^1]
