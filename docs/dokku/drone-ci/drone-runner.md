@@ -51,10 +51,17 @@ dokku git:from-image drone-runner drone/drone-runner-docker:latest
 ```
 
 ## Update
-To update to a specific version (e.g. `1.8.0` or `latest`) lookup the tags on [https://hub.docker.com/r/drone/drone-runner-docker/tags](https://hub.docker.com/r/drone/drone-runner-docker/tags) and run on your dokku server:
+
+If you deployed `:latest`, then you would need to run
 
 ```bash
-docker pull drone/drone-runner-docker:1.8.0
+docker pull drone/drone-runner-docker:latest
+dokku ps:rebuild drone-runner
+```
+
+To update to a specific version (e.g. `1.8.0`) lookup the tags on [https://hub.docker.com/r/drone/drone-runner-docker/tags](https://hub.docker.com/r/drone/drone-runner-docker/tags) and run on your dokku server:
+
+```bash
 dokku git:from-image drone-runner drone/drone-runner-docker:1.8.0
 ```
 

@@ -79,7 +79,15 @@ HTTPS, resulting in an infinite loop.
 :::
 
 ## Update
-To update to a specific version (e.g. `2.7.3` or `latest`) lookup the tags on [https://hub.docker.com/r/drone/drone/tags](https://hub.docker.com/r/drone/drone/tags) and run on your dokku server:
+
+If you deployed `:latest`, then you would need to run
+
+```bash
+docker pull drone/drone:latest
+dokku ps:rebuild drone-server
+```
+
+To update to a specific version (e.g. `2.7.3`) lookup the tags on [https://hub.docker.com/r/drone/drone/tags](https://hub.docker.com/r/drone/drone/tags) and run on your dokku server:
 
 ```bash
 dokku git:from-image drone-server drone/drone:2.7.3
