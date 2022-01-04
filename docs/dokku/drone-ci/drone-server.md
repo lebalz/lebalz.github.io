@@ -48,7 +48,7 @@ dokku config:set drone-server DRONE_SERVER_PROTO=http
 # give yourself admin access - replace <github-username> with your actual github username 
 dokku config:set drone-server DRONE_USER_CREATE=username:<github-username>,admin:true
 
-# mount persistent directory for caching
+# mount persistent directory for drone's sqlite db
 dokku storage:mount drone-server /var/lib/dokku/data/storage/drone-server:/data
 
 # change port mapping
