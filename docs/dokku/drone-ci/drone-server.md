@@ -7,7 +7,7 @@ keywords: [drone, dokku, drone ci, drone server, ci]
 
 # Drone for Github
 
-To get started with Drone, read the [documentation](https://docs.drone.io/server/provider/gtihub/), where
+To get started with Drone, read the [documentation](https://docs.drone.io/server/provider/github/), where
 you can find the following snippet:
 
 ```bash {3-7}

@@ -4,12 +4,6 @@ type: docker
 name: default
 
 steps:
-
-- name: submodules
-  image: alpine/git
-  commands:
-  - git submodule update --init --recursive
-
 - name: restore-cache
   image: drillster/drone-volume-cache
   volumes:
@@ -53,7 +47,7 @@ steps:
 volumes:
   - name: cache
     host: 
-      path: /var/lib/dokku/data/storage/hfr-drone-runner/cache
+      path: /data
 
 trigger:
   branch:

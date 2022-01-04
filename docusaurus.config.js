@@ -39,7 +39,7 @@ const config = {
           routeBasePath: '/',
           showReadingTime: true,
           blogSidebarCount: 'ALL',
-          postsPerPage: 1,
+          postsPerPage: 15,
           blogSidebarTitle: 'Posts',
           // Please change this to your repo.
           editUrl:
