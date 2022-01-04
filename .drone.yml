@@ -47,7 +47,7 @@ steps:
 volumes:
   - name: cache
     host: 
-      path: /data
+      path: /tmp/cache
 
 trigger:
   branch:
