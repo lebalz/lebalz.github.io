@@ -2,7 +2,7 @@
 title: Speedup Build Time on Drone CI
 authors: [lebalz]
 tags: [drone ci, cache, drone]
-image: images/pipeline-cached.png
+image: ./images/pipeline-cached.png
 ---
 
 # Speedup Build Time on Drone CI
