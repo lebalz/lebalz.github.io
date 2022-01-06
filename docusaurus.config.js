@@ -51,12 +51,25 @@ const config = {
             remarkFlex
           ]
         },
+        pages: {
+          beforeDefaultRemarkPlugins: [
+            remarkImage
+          ],
+          remarkPlugins: [
+            remarkFlex
+          ]
+        },
         theme: {
           customCss: [
             require.resolve('./src/css/custom.scss'),
             require.resolve('./node_modules/react-image-gallery/styles/css/image-gallery.css')
           ]
         },
+        sitemap: {
+          trailingSlash: false,
+          priority: 0.9,
+          changefreq: 'daily'
+        }
       }),
     ],
   ],
