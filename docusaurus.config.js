@@ -17,6 +17,7 @@ const config = {
   favicon: 'img/favicon.ico',
   organizationName: 'lebalz', // Usually your GitHub org/user name.
   projectName: 'blog', // Usually your repo name.
+  trailingSlash: true,
   presets: [
     [
       'classic',
