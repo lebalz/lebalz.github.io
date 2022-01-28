@@ -67,7 +67,6 @@ const config = {
           ]
         },
         sitemap: {
-          trailingSlash: false,
           priority: 0.9,
           changefreq: 'daily'
         }
