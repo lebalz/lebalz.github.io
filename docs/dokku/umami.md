@@ -43,10 +43,13 @@ dokku proxy:ports-remove umami http:80:5000
 dokku proxy:ports-add umami http:80:3000
 
 # add a domain
-dokku domains:add drone-server umami.lebalz.ch
+dokku domains:add umami umami.lebalz.ch
 
 # optional: set email for letsencrypt
-dokku config:set --no-restart drone-server DOKKU_LETSENCRYPT_EMAIL=foo@bar.ch
+dokku config:set --no-restart umami DOKKU_LETSENCRYPT_EMAIL=foo@bar.ch
+
+# optional: set custom script name. Default is umami (might be known by ad blockers)
+dokku config:set --no-restart umami TRACKER_SCRIPT_NAME=myumami
 ```
 
 :::info Notes
