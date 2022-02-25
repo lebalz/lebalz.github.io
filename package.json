@@ -15,8 +15,8 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@docusaurus/core": "^2.0.0-beta.15",
-    "@docusaurus/preset-classic": "^2.0.0-beta.15",
+    "@docusaurus/core": "^2.0.0-beta.16",
+    "@docusaurus/preset-classic": "^2.0.0-beta.16",
     "@mdx-js/react": "^1.6.21",
     "@saucelabs/theme-github-codeblock": "^0.1.1",
     "clsx": "^1.1.1",
@@ -28,7 +28,7 @@
     "sass": "^1.45.2"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "^2.0.0-beta.15",
+    "@docusaurus/module-type-aliases": "^2.0.0-beta.16",
     "@tsconfig/docusaurus": "^1.0.4",
     "typescript": "^4.5.2"
   },
