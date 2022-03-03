@@ -134,7 +134,7 @@ const config = {
   scripts: [
     // Object format.
     {
-      src: 'https://umami.lebalz.ch/umami.js',
+      src: 'https://umami.lebalz.ch/tell-me.js',
       ['data-website-id']: 'fc37f18b-ef7a-4e4c-aebd-dc95acfcee02',
       ['data-domains']: 'lebalz.ch',
       async: true,
