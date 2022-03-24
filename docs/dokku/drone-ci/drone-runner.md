@@ -6,7 +6,7 @@ keywords: [drone, dokku, drone ci, drone runner, ci]
 ---
 # Drone Runner
 
-For the runner, follow the same steps as fot the server, but make sure you
+For the runner, follow the same steps as for the server, but make sure you
 follow the instructions for the [runners](https://docs.drone.io/runner/docker/installation/linux/).
 
 ```bash {3-7}
