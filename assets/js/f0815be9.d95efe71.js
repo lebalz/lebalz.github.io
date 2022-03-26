@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkmy_website=self.webpackChunkmy_website||[]).push([[498],{6234:function(e){e.exports=JSON.parse('{"permalink":"/tags/drone-ci","page":1,"postsPerPage":15,"totalPages":1,"totalCount":1,"blogDescription":"Blog","blogTitle":"Dev Blog"}')}}]);

@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkmy_website=self.webpackChunkmy_website||[]).push([[160],{8142:function(e){e.exports=JSON.parse('{"permalink":"/tags/drone","page":1,"postsPerPage":15,"totalPages":1,"totalCount":1,"previousPage":null,"nextPage":null,"blogDescription":"Blog","blogTitle":"Dev Blog"}')}}]);
