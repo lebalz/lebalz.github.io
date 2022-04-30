@@ -1,9 +1,10 @@
 ---
 title: Docker
 sidebar_position: 3
+tags: [snippets]
 ---
 
-# Some useful Docker Commands
+# Docker CLI Snippets
 
 ```bash
 # show images

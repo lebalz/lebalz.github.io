@@ -1,4 +1,8 @@
-# YARN
+---
+title: Yarn
+---
+
+# Yarn Install
 
 Quick & dirty (without nvm)
 

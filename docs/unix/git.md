@@ -1,4 +1,9 @@
-# GIT & SSH
+---
+title: GIT & SSH
+tags: [snippets]
+---
+
+# GIT & SSH Snippets
 
 ```bash
 sudo apt install git
