@@ -98,3 +98,12 @@ html[data-theme='dark'] .header-github-link {
     padding: 1em;
   }
 }
+
+.dsla-search-wrapper {
+  --aa-search-input-height: 34px;
+  .dsla-search-field {
+    .aa-DetachedSearchButton {
+      border-radius: 20px;
+    }
+  }
+}
