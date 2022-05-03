@@ -45,6 +45,9 @@ dokku config:set drone-server DRONE_RPC_SECRET=$(openssl rand -hex 32)
 dokku config:set drone-server DRONE_SERVER_HOST=drone.lebalz.ch
 dokku config:set drone-server DRONE_SERVER_PROTO=http
 
+# limit user registration to known users
+dokku config:set drone-server DRONE_USER_FILTER="lebalz,foobar"
+
 # give yourself admin access - replace <github-username> with your actual github username 
 dokku config:set drone-server DRONE_USER_CREATE=username:<github-username>,admin:true
 
@@ -76,6 +79,15 @@ Make sure you disable the HTTPS redirect option. Dokku terminates the SSL
 connection with Nginx and internally proxies requests to the container by HTTP.
 This makes Drone believe an HTTP request arrived and it issues a redirect to
 HTTPS, resulting in an infinite loop.
+:::
+
+:::danger Define `DRONE_USER_FILTER`
+Make sure to configure `DRONE_USER_FILTER` - otherwise everyone can authentify himself on your server and use your cpu time 🥵 (drone server has not any restrictions by default 🤯).
+
+```bash
+dokku config:set drone-server DRONE_USER_FILTER="lebalz,foobar"
+```
+
 :::
 
 ## Update
