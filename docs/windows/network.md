@@ -7,7 +7,7 @@ tags: [DNS. Network]
 
 ## Troubleshoot your Network
 
-```ps
+```powershell
 # clear dns cash
 ipconfig /flushdns
 
