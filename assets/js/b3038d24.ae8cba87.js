@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkmy_website=self.webpackChunkmy_website||[]).push([[1140],{9637:function(s){s.exports=JSON.parse('{"label":"DNS","permalink":"/synopsis/tags/dns","allTagsPath":"/synopsis/tags","count":1,"items":[{"id":"windows/network","title":"Network","description":"Troubleshoot your Network","permalink":"/synopsis/windows/network"}]}')}}]);

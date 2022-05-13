@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkmy_website=self.webpackChunkmy_website||[]).push([[4121],{8070:function(s){s.exports=JSON.parse('[{"label":"snippets","permalink":"/synopsis/tags/snippets","count":3},{"label":"DNS. Network","permalink":"/synopsis/tags/dns-network","count":1}]')}}]);
