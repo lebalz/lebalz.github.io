@@ -1,6 +1,6 @@
 ---
 title: Network
-tags: [DNS. Network]
+tags: [DNS, Network]
 ---
 
 # Windows Network
