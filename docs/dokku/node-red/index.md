@@ -75,6 +75,11 @@ bash /var/lib/dokku/data/storage/node-red/data/settings.js
         permissions: "*"
     }]
 },
+/* basic auth for routes deployed by nodes*/
+/*httpNodeAuth: {
+    user: "admin",
+    pass: "36422f0d25181b32ac0e41e4c11c62985914f3a27b1d682bbcc33735c3cb1b28"
+},*/
 ```
 
 and redeploy dokku instance
