@@ -13,7 +13,7 @@ nodered/node-red
 
 The instructions state that
 
-- the runner requires a directory `node_rad_data` to be mounted
+- the runner requires a directory `node_red_data` to be mounted
 - it listens on port `1880`
 - a user-friendly name used for your node is given
 - the docker name
