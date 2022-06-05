@@ -4,14 +4,6 @@ type: docker
 name: default
 
 steps:
-- name: report-build-status
-  image: plugins/webhook
-  settings:
-    urls: $REPORT_URL
-    debug: true
-  environment:
-    REPORT_URL:
-      from_scret: report_url
 - name: restore-cache
   image: drillster/drone-volume-cache
   volumes:
