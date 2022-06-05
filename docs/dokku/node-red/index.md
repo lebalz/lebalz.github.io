@@ -12,7 +12,7 @@ nodered/node-red
 ```
 
 
-[empty link]()
+[empty links]()
 
 The instructions state that
 
