@@ -11,9 +11,6 @@ docker run -it \
 nodered/node-red
 ```
 
-
-[empty links]()
-
 The instructions state that
 
 - the runner requires a directory `node_red_data` to be mounted
