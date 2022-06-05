@@ -15,7 +15,7 @@ steps:
       - ./node_modules
 
 - name: website
-  image: node:16.11.1
+  image: node:18
   commands:
   - mkdir -p $HOME/.ssh
   - ssh-keyscan -t rsa github.com >> $HOME/.ssh/known_hosts
