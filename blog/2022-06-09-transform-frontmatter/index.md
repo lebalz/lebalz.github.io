@@ -52,3 +52,20 @@ $2---
 
 # $1
 ```
+
+## Add new field to existing `sidebar_custom_props`
+
+Search:
+```
+---
+((.*\r?\n)+?)?sidebar_custom_props:
+(  .+\r?\n)+?((.*\r?\n)+?)?---
+```
+
+Replace:
+```
+---
+$1sidebar_custom_props:
+$3  foo: bar
+$4---
+```
