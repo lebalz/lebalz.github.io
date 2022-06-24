@@ -30,3 +30,5 @@ NETSH int ipv4 reset reset.log
 # reset ipv6 TCP/IP and DHCP Parameters
 NETSH int ipv6 reset reset.log
 ```
+
+Network DNS Location: `%SystemRoot%\System32\DNS\`
