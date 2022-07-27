@@ -56,30 +56,13 @@ dokku config:set --no-restart umami TRACKER_SCRIPT_NAME=myumami
 - The environment variable `DATABASE_URL` must not be set manually since it was automatically set when linking the database to the application.
 :::
 
-
-## Create database tables
-
-* Copy the content of the file `schema.postgresql.sql`
-* Open a connection to your dokku PostgreSQL instance: `dokku postgres:connect umami-postgres`
-* Paste the content of the file that you previously copied
-
-<details><summary>schema.postgresql.sql</summary>
-
-The Schema from [Github repository](https://github.com/mikecao/umami):
-
-```sql reference title=sql/schema.postgresql.sql
-https://github.com/mikecao/umami/blob/master/sql/schema.postgresql.sql
-```
-
-</details>
-
 ## Deploy the image
 
 ```bash
-dokku git:from-image umami ghcr.io/mikecao/umami:postgresql-latest
+dokku git:from-image umami docker.umami.is/umami-software/umami:postgresql-latest
 
 # optional: letsencrypt
-dokku letsencrypt drone-server
+dokku letsencrypt umami
 ```
 
 The default username is `admin` and the default password is `umami`.
@@ -88,10 +71,17 @@ The default username is `admin` and the default password is `umami`.
 
 ```bash
 # pull the latest image
-docker pull ghcr.io/mikecao/umami:postgresql-latest
+docker pull docker.umami.is/umami-software/umami:postgresql-latest
 
 # rebuild umami
 dokku ps:rebuild umami
+```
+
+## Upgrading from < v1.31
+
+```bash
+dokku ps:stop umami
+dokku git:from-image umami docker.umami.is/umami-software/umami:postgresql-latest
 ```
 
 ## Troubleshooting
