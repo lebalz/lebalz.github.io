@@ -44,6 +44,17 @@ dokku git:from-image gitlab gitlab/gitlab-ee:latest
 dokku letsencrypt gitlab
 ```
 
+## Admin login
+
+- user: **root**
+- pw: get it from `initial_root_password` 
+
+Get the admin password from `/etc/gitlab/initial_root_password` by running
+
+```bash
+dokku run gitlab cat /etc/gitlab/initial_root_password
+```
+
 ## Configuring Gandi Mail
 
 You can modify the `gitlab.rb` file directly on your host system:
