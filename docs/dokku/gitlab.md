@@ -25,6 +25,9 @@ dokku storage:mount gitlab /var/lib/dokku/data/storage/gitlab/logs:/var/log/gitl
 sudo -u dokku mkdir -p /var/lib/dokku/data/storage/gitlab/data
 dokku storage:mount gitlab /var/lib/dokku/data/storage/gitlab/data:/var/opt/gitlab
 
+# mount cgroup options
+dokku storage:mount gitlab /sys/fs/cgroup:/sys/fs/cgroup
+
 # configure environment of gitlab - important to use http:// and not https protocol, since gitlab runs behind
 # the nginx reverse proxy!
 dokku config:set gitlab GITLAB_OMNIBUS_CONFIG="external_url 'http://gitlab.gbsl.website'
@@ -100,4 +103,54 @@ end run
 
 ```irb
 Notify.test_email('USERNAME@gmail.com', 'Message Subject', 'Message Body').deliver_now
+```
+
+## Reduce Memory usage
+
+https://techoverflow.net/2020/04/18/how-i-reduced-gitlab-memory-consumption-in-my-docker-based-setup/
+
+```rb
+# Disable Prometheus monitoring
+prometheus_monitoring['enable'] = false
+
+# Reduce sidekiq concurrency
+sidekiq['concurrency'] = 2
+
+# Reduce the PostgreSQL shared memory
+postgresql['shared_buffers'] = "256MB"
+
+# use only a single puma server
+puma['worker_processes'] = 0
+
+sidekiq['max_concurrency'] = 5
+
+
+# ensure memory is released as soon as it gets freed
+
+gitlab_rails['env'] = {
+  'MALLOC_CONF' => 'dirty_decay_ms:1000,muzzy_decay_ms:1000'
+}
+
+gitaly['cgroups_count'] = 2
+gitaly['cgroups_mountpoint'] = '/sys/fs/cgroup'
+gitaly['cgroups_hierarchy_root'] = 'gitaly'
+gitaly['cgroups_memory_enabled'] = true
+gitaly['cgroups_memory_limit'] = 500000
+gitaly['cgroups_cpu_enabled'] = true
+gitaly['cgroups_cpu_shares'] = 512
+
+gitaly['concurrency'] = [
+  {
+    'rpc' => "/gitaly.SmartHTTPService/PostReceivePack",
+    'max_per_repo' => 3
+  }, {
+    'rpc' => "/gitaly.SSHService/SSHUploadPack",
+    'max_per_repo' => 3
+  }
+]
+gitaly['env'] = {
+  'LD_PRELOAD' => '/opt/gitlab/embedded/lib/libjemalloc.so',
+  'MALLOC_CONF' => 'dirty_decay_ms:1000,muzzy_decay_ms:1000',
+  'GITALY_COMMAND_SPAWN_MAX_PARALLEL' => '2'
+}
 ```
