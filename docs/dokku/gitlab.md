@@ -19,6 +19,24 @@ dokku proxy:ports-add gitlab http:80:80
 sudo -u dokku mkdir -p /var/lib/dokku/data/storage/gitlab/config
 dokku storage:mount gitlab /var/lib/dokku/data/storage/gitlab/config:/etc/gitlab
 
+# add gitlab.rb file
+
+cat << EOF >> /var/lib/dokku/data/storage/gitlab/config/gitlab.rb
+# GitLab URL
+##! URL on which GitLab will be reachable.
+##! For more details on configuring external_url see:
+##! https://docs.gitlab.com/omnibus/settings/configuration.html#configuring-the-external-url-for-gitlab
+external_url 'https://gitlab.example.ch'
+
+##! **Override only if you use a reverse proxy**
+##! Docs: https://docs.gitlab.com/omnibus/settings/nginx.html#setting-the-nginx-listen-port
+nginx['listen_port'] = 80
+
+##! **Override only if your reverse proxy internally communicates over HTTP**
+##! Docs: https://docs.gitlab.com/omnibus/settings/nginx.html#supporting-proxied-ssl
+nginx['listen_https'] = false
+EOF
+
 sudo -u dokku mkdir -p /var/lib/dokku/data/storage/gitlab/logs
 dokku storage:mount gitlab /var/lib/dokku/data/storage/gitlab/logs:/var/log/gitlab
 
@@ -30,10 +48,7 @@ dokku storage:mount gitlab /sys/fs/cgroup:/sys/fs/cgroup
 
 # configure environment of gitlab - important to use http:// and not https protocol, since gitlab runs behind
 # the nginx reverse proxy!
-dokku config:set gitlab GITLAB_OMNIBUS_CONFIG="external_url 'http://gitlab.gbsl.website'
-letsencrypt['enable']=false
-# Add any other gitlab.rb configuration here, each on its own line
-"
+dokku config:set gitlab GITLAB_OMNIBUS_CONFIG="external_url 'https://gitlab.example.ch'"
 
 # optional: set email for letsencrypt
 dokku config:set --no-restart node-red DOKKU_LETSENCRYPT_EMAIL=foo@bar.ch
