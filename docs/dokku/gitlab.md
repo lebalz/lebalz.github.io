@@ -120,6 +120,11 @@ end run
 Notify.test_email('USERNAME@gmail.com', 'Message Subject', 'Message Body').deliver_now
 ```
 
+### Reconfigure
+```bash
+dokku run gitlab gitlab-ctl reconfigure
+```
+
 ## Reduce Memory usage
 
 https://techoverflow.net/2020/04/18/how-i-reduced-gitlab-memory-consumption-in-my-docker-based-setup/
