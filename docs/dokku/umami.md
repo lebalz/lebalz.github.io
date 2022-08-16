@@ -45,11 +45,17 @@ dokku proxy:ports-add umami http:80:3000
 # add a domain
 dokku domains:add umami umami.lebalz.ch
 
+# optional: disable umami telemetry
+dokku config:set --no-restart umami DISABLE_TELEMETRY=1
+
 # optional: set email for letsencrypt
 dokku config:set --no-restart umami DOKKU_LETSENCRYPT_EMAIL=foo@bar.ch
 
 # optional: set custom script name. Default is umami (might be known by ad blockers)
 dokku config:set --no-restart umami TRACKER_SCRIPT_NAME=myumami
+
+# optional: set custom collect api endpoint (default: /api/collect)
+dokku config:set --no-restart umami COLLECT_API_ENDPOINT="/api/tellme"
 ```
 
 :::info Notes
