@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkmy_website=self.webpackChunkmy_website||[]).push([[8884],{7401:function(e){e.exports=JSON.parse('{"label":"drone ci","permalink":"/tags/drone-ci","allTagsPath":"/tags","count":2}')}}]);
