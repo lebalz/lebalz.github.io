@@ -62,7 +62,7 @@ return {
 }
 ```
 
-:::details Flow Source
+<details><summary>Flow Source</summary>
 
 Copy&Paste this and your ready to go (except the configuration of your bot...)
 
@@ -156,5 +156,4 @@ Copy&Paste this and your ready to go (except the configuration of your bot...)
     }
 ]
 ```
-:::
-
+</details>
