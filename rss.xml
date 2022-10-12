@@ -9,7 +9,7 @@
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
         <item>
-            <title><![CDATA[Speedup Build Time on Drone CI]]></title>
+            <title><![CDATA[A Telegram Bot for Drone CI]]></title>
             <link>https://lebalz.ch/2022/10/12/drone-ci-telegram-bot</link>
             <guid>/2022/10/12/drone-ci-telegram-bot</guid>
             <pubDate>Wed, 12 Oct 2022 00:00:00 GMT</pubDate>
