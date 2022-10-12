@@ -1,5 +1,5 @@
 ---
-title: Speedup Build Time on Drone CI
+title: A Telegram Bot for Drone CI
 authors: [lebalz]
 tags: [drone ci, telegram, node red, bot]
 image: ./images/flow.png
