@@ -30,6 +30,7 @@ In your `.drone.yml` file add a stage to report the build state:
 
 ```yml
 steps:
+...
 - name: notify
   image: plugins/webhook
   settings:
@@ -48,7 +49,7 @@ const { owner, name } = msg.payload.repo;
 const { link, status } = msg.payload.build;
 const success = status === 'success';
 const ico = success ? '✅' : '❌'   ;
-const repo = `https://github.com/${owner}/${name}`
+const repo = `https://github.com/${owner}/${name}`;
 
 return {
     payload: {
@@ -59,7 +60,7 @@ return {
             parse_mode : 'Markdown'
         }
     }
-}
+};
 ```
 
 <details><summary>Flow Source</summary>
