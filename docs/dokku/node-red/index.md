@@ -62,7 +62,7 @@ node-red-admin hash-pw
 Then edit the `settings.js` on your mounted directory:
 
 ```bash
-bash /var/lib/dokku/data/storage/node-red/data/settings.js
+nano /var/lib/dokku/data/storage/node-red/data/settings.js
 ```
 ... edit the `adminAuth` section:
 
