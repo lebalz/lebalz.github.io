@@ -36,6 +36,10 @@ steps:
   settings:
     urls:
       from_secret: NODE_RED_WEBHOOK
+  when:
+    status:
+    - success
+    - failure
 ```
 
 (I added a organization wide `NODE_RED_WEBHOOK` secret with the previously created [/api/drone-ci](#) endpoint)
