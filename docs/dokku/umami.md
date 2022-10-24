@@ -34,6 +34,15 @@ dokku apps:create umami
 dokku postgres:create umami
 dokku postgres:link umami umami
 
+# connect to your db
+dokku postgres:connect umami
+# in postgres, create extension for uuid generation
+CREATE EXTENSION pgcrypto;
+# ensure it works:
+SELECT gen_random_uuid();
+# exit
+exit
+
 # set env variables
 dokku config:set umami HASH_SALT=$(openssl rand -hex 32)
 dokku config:set umami DATABASE_TYPE=postgresql
@@ -81,6 +90,21 @@ docker pull docker.umami.is/umami-software/umami:postgresql-latest
 
 # rebuild umami
 dokku ps:rebuild umami
+```
+
+## Upgrading to v1.39
+
+Umami uses now the command `gen_random_uuid()` from the extension `pgcrypto`. This extension is normally not active. It must be first activated:
+
+```bash
+# connect to your db
+dokku postgres:connect umami
+# in postgres, create extension for uuid generation
+CREATE EXTENSION pgcrypto;
+# ensure it works:
+SELECT gen_random_uuid();
+# exit
+exit
 ```
 
 ## Upgrading from < v1.31
