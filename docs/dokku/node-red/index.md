@@ -105,3 +105,10 @@ dokku git:from-image node-red nodered/node-red:2.2.2-12
 ```
 
 The application will be rebuilt automatically.
+
+
+### Create multiple instances
+
+```py reference
+https://github.com/lebalz/blog/blob/main/docs/dokku/node-red/dokku-batch-script.py
+```
