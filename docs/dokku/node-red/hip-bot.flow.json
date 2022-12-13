@@ -1,0 +1,1096 @@
+[
+    {
+        "id": "22fffb5a5bbe4863",
+        "type": "tab",
+        "label": "Hip Bot",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "ee0eac0cf47f12c0",
+        "type": "postgresql",
+        "z": "22fffb5a5bbe4863",
+        "name": "CREATE TABLE",
+        "query": "create table if not exists hip_events (\n    id SERIAL PRIMARY KEY,\n    severity numeric,\n    tags TEXT[] DEFAULT '{}',\n    side CHAR(2) DEFAULT 'LR',\n    description TEXT DEFAULT '',\n    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,\n    updated_at  TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL\n)",
+        "postgreSQLConfig": "a0f0ab50632f88f2",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 380,
+        "y": 260,
+        "wires": [
+            [
+                "590887015cc8109b"
+            ]
+        ]
+    },
+    {
+        "id": "590887015cc8109b",
+        "type": "debug",
+        "z": "22fffb5a5bbe4863",
+        "name": "debug 11",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 560,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "d1f7ebd4f1841b76",
+        "type": "inject",
+        "z": "22fffb5a5bbe4863",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 140,
+        "y": 260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "9537b8eacf4f8c1e",
+        "type": "function",
+        "z": "22fffb5a5bbe4863",
+        "name": "EXTRACT DATA",
+        "func": "if (msg.payload.content.startsWith('/') || flow.get('pending')) {\n    return [null, null];\n}\nif (msg.payload.chatId !== 390956004) {\n    return [null, null];\n}\nif (msg.payload.type !== 'message') {\n    return [null, null];\n}\nlet {content} = msg.payload;\nconst severity_raw = content.match(/@(\\d+)\\W*(L|R|l|r)?/);\nif (!severity_raw) {\n    return [null, { payload: 'No Severity Found' }];\n}\ncontent = content.replace(severity_raw[0], '');\nlet severity = 0;\nlet side = 'LR';\ntry {\n    severity = Number.parseInt(severity_raw[1]);\n    if (severity_raw[2]) {\n        side = severity_raw[2].toUpperCase();\n    }\n} catch {\n    return [null, { payload: 'Severity not parseable' }];\n}\n\nif (severity > 10 || severity < 1) {\n    return [null, { payload: 'Severity must be between 1 and 10'}];\n}\nlet activity_raw = null;\nconst tags = [];\nwhile (activity_raw = content.match(/#(\\w+)/)) {\n    tags.push(activity_raw[1]);\n    content = content.replace(activity_raw[0], '');\n}\ncontent = content.trim();\n\nconst description = content || '';\nconst data = {\n    severity,\n    tags,\n    side,\n    description\n};\nreturn [{\n    payload: data,\n    queryParameters: data\n}, null];",
+        "outputs": 2,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 430,
+        "y": 440,
+        "wires": [
+            [
+                "3b6ec8b592fe3980"
+            ],
+            [
+                "602847666462a52c"
+            ]
+        ]
+    },
+    {
+        "id": "3b6ec8b592fe3980",
+        "type": "postgresql",
+        "z": "22fffb5a5bbe4863",
+        "name": "REPORT",
+        "query": "INSERT INTO hip_events \n(severity, description, tags, side)\nVALUES\n($severity, $description, $tags, $side)\nRETURNING *;",
+        "postgreSQLConfig": "a0f0ab50632f88f2",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 660,
+        "y": 440,
+        "wires": [
+            [
+                "ed8c0384e76e14d3"
+            ]
+        ]
+    },
+    {
+        "id": "227f449a2bd56074",
+        "type": "telegram sender",
+        "z": "22fffb5a5bbe4863",
+        "name": "On Error",
+        "bot": "e9e66e1f1877cbf5",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 800,
+        "y": 580,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "602847666462a52c",
+        "type": "function",
+        "z": "22fffb5a5bbe4863",
+        "name": "err",
+        "func": "return {\n    payload: {\n        type: 'message',\n        content: `${msg.payload}\n\nFormat:\n@1-10\n#tags\ndescription`,\n        chatId: 390956004\n    }\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 610,
+        "y": 540,
+        "wires": [
+            [
+                "227f449a2bd56074",
+                "8dd04639948ab8a3"
+            ]
+        ]
+    },
+    {
+        "id": "8dd04639948ab8a3",
+        "type": "debug",
+        "z": "22fffb5a5bbe4863",
+        "name": "debug 13",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 800,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "ed8c0384e76e14d3",
+        "type": "function",
+        "z": "22fffb5a5bbe4863",
+        "name": "ok",
+        "func": "if (msg.payload.length !== 1 || !msg.payload[0].severity) {\n    return null;\n}\nreturn {\n    payload: {\n        type: 'message',\n        content: `👍: ID: \\`${msg.payload[0].id}\\``,\n        chatId: 390956004,\n        options: {\n            parse_mode: 'Markdown'            \n        }\n    }\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 770,
+        "y": 440,
+        "wires": [
+            [
+                "13de0db7889c78b1"
+            ]
+        ]
+    },
+    {
+        "id": "13de0db7889c78b1",
+        "type": "telegram sender",
+        "z": "22fffb5a5bbe4863",
+        "name": "On Success",
+        "bot": "e9e66e1f1877cbf5",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 890,
+        "y": 440,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b6a3d4fc3b5d5e91",
+        "type": "postgresql",
+        "z": "22fffb5a5bbe4863",
+        "name": "",
+        "query": "SELECT * FROM hip_events order by created_at desc;",
+        "postgreSQLConfig": "a0f0ab50632f88f2",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 370,
+        "y": 360,
+        "wires": [
+            [
+                "829d04b454d178cc",
+                "7f1666949fb7b636"
+            ]
+        ]
+    },
+    {
+        "id": "89b5e0936774864c",
+        "type": "inject",
+        "z": "22fffb5a5bbe4863",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 160,
+        "y": 380,
+        "wires": [
+            [
+                "b6a3d4fc3b5d5e91"
+            ]
+        ]
+    },
+    {
+        "id": "7f1666949fb7b636",
+        "type": "debug",
+        "z": "22fffb5a5bbe4863",
+        "name": "debug 15",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 580,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "829d04b454d178cc",
+        "type": "function",
+        "z": "22fffb5a5bbe4863",
+        "name": "ChartJS",
+        "func": "if (msg.payload.length < 1) {\n    return null;\n}\nconst getT = (d) => (new Date(d)).getTime() / 1000 / 60 / 60;\nconst getDataPoint = (d) => ({ x: new Date(d.created_at), y: Number.parseInt(d.severity) });\nconst t0 = getT(msg.payload[msg.payload.length - 1].created_at);\nconst data = {\n    type: 'scatter',\n    data: {\n        datasets: [\n            {\n                label: 'R',\n                backgroundColor: 'rgb(255, 99, 132)',\n                borderColor: 'rgb(255, 99, 132)',\n                /*data: msg.payload.filter((d) => d.side.trim() === 'R').map((d, idx) => ({ x: d.id, y: Number.parseInt(d.severity) })),*/\n                data: msg.payload.filter((d) => d.side.trim() === 'R').map((d, idx) => getDataPoint(d)),\n                fill: false,\n                pointRadius: 10,\n                pointHoverRadius: 15,\n                showLine: false\n            },\n            {\n                label: 'L',\n                backgroundColor: '#F28E2B',\n                borderColor: '#F28E2B',\n                /*data: msg.payload.filter((d) => d.side.trim() === 'L').map((d, idx) => ({ x: d.id, y: Number.parseInt(d.severity) })),*/\n                data: msg.payload.filter((d) => d.side.trim() === 'L').map((d, idx) => getDataPoint(d)),\n                fill: false,\n                pointRadius: 10,\n                pointHoverRadius: 15,\n                showLine: false\n            },\n            {\n                label: 'LR',\n                backgroundColor: '#4E79A7',\n                borderColor: '#4E79A7',\n                /*data: msg.payload.filter((d) => d.side.trim() === 'LR').map((d, idx) => ({ x: d.id, y: Number.parseInt(d.severity) })),*/\n                data: msg.payload.filter((d) => d.side.trim() === 'LR').map((d, idx) => getDataPoint(d)),\n                fill: false,\n                pointRadius: 10,\n                pointHoverRadius: 15,\n                showLine: false\n            },\n        ]\n    },\n    options: {\n        responsive: true,\n        title: {\n            display: true,\n            text: \"Hüfte\"\n        },\n        legend: {\n            display: true\n        },\n        elements: {\n            point: {\n                pointStyle: \"circle\"\n            }\n        },\n        scales: {\n            xAxes: [{\n                type: 'time',\n                time: {\n                    unit: 'day'\n                },\n                display: true,\n                title: {\n                    display: true,\n                    text: 'Date'\n                },\n                scaleLabel: {\n                    display: true,\n                    labelString: \"Date\"\n                },\n                // ticks: {\n                //     major: {\n                //         enabled: true\n                //     }\n                // }\n            }],\n        }\n    }\n}\nmsg.payload = `https://quickchart.io/chart?bkg=white&c=${encodeURIComponent(JSON.stringify(data))}`;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 360,
+        "wires": [
+            [
+                "28797346f8e4d6d5"
+            ]
+        ]
+    },
+    {
+        "id": "28797346f8e4d6d5",
+        "type": "jimp-image",
+        "z": "22fffb5a5bbe4863",
+        "name": "Chart",
+        "data": "payload",
+        "dataType": "msg",
+        "ret": "buf",
+        "parameter1": "",
+        "parameter1Type": "msg",
+        "parameter2": "",
+        "parameter2Type": "msg",
+        "parameter3": "",
+        "parameter3Type": "msg",
+        "parameter4": "",
+        "parameter4Type": "msg",
+        "parameter5": "",
+        "parameter5Type": "msg",
+        "parameter6": "",
+        "parameter6Type": "msg",
+        "parameter7": "",
+        "parameter7Type": "msg",
+        "parameter8": "",
+        "parameter8Type": "msg",
+        "sendProperty": "payload",
+        "sendPropertyType": "msg",
+        "parameterCount": 0,
+        "jimpFunction": "none",
+        "selectedJimpFunction": {
+            "name": "none",
+            "fn": "none",
+            "description": "Just loads the image.",
+            "parameters": []
+        },
+        "x": 770,
+        "y": 360,
+        "wires": [
+            [
+                "0508e17f1f5d035d",
+                "ba4b88fba527a363"
+            ]
+        ]
+    },
+    {
+        "id": "0508e17f1f5d035d",
+        "type": "image viewer",
+        "z": "22fffb5a5bbe4863",
+        "name": "",
+        "width": "512",
+        "data": "payload",
+        "dataType": "msg",
+        "active": true,
+        "x": 1130,
+        "y": 400,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ba4b88fba527a363",
+        "type": "function",
+        "z": "22fffb5a5bbe4863",
+        "name": "MSG",
+        "func": "return {\n    payload: {\n        caption: 'Stats',\n        type : 'photo',\n        chatId: 390956004,\n        content: msg.payload,\n        options: {\n            parse_mode : 'Markdown'\n        }\n    }\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1010,
+        "y": 360,
+        "wires": [
+            [
+                "7dc7bc0cae866bdd"
+            ]
+        ]
+    },
+    {
+        "id": "7dc7bc0cae866bdd",
+        "type": "telegram sender",
+        "z": "22fffb5a5bbe4863",
+        "name": "Send",
+        "bot": "e9e66e1f1877cbf5",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 1130,
+        "y": 360,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f8561b2857070528",
+        "type": "telegram command",
+        "z": "22fffb5a5bbe4863",
+        "name": "/stats",
+        "command": "/stats",
+        "description": "Hüft Stats",
+        "registercommand": true,
+        "language": "",
+        "scope": "default",
+        "bot": "e9e66e1f1877cbf5",
+        "strict": false,
+        "hasresponse": false,
+        "useregex": false,
+        "removeregexcommand": false,
+        "outputs": 1,
+        "x": 150,
+        "y": 320,
+        "wires": [
+            [
+                "b6a3d4fc3b5d5e91"
+            ]
+        ]
+    },
+    {
+        "id": "59946767a0283df1",
+        "type": "telegram command",
+        "z": "22fffb5a5bbe4863",
+        "name": "/raw",
+        "command": "/raw",
+        "description": "raw records",
+        "registercommand": true,
+        "language": "",
+        "scope": "default",
+        "bot": "e9e66e1f1877cbf5",
+        "strict": false,
+        "hasresponse": true,
+        "useregex": false,
+        "removeregexcommand": false,
+        "outputs": 2,
+        "x": 130,
+        "y": 700,
+        "wires": [
+            [
+                "4ccad30adda06388"
+            ],
+            [
+                "4b31029c03c88676"
+            ]
+        ]
+    },
+    {
+        "id": "4ccad30adda06388",
+        "type": "function",
+        "z": "22fffb5a5bbe4863",
+        "name": "limit",
+        "func": "flow.set('pending', true);\nflow.set('command', '/raw');\nmsg.payload.content = 'Anzahl?';\n\nreturn [msg];",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 680,
+        "wires": [
+            [
+                "d9a684ce1d0e627e"
+            ]
+        ]
+    },
+    {
+        "id": "d9a684ce1d0e627e",
+        "type": "telegram sender",
+        "z": "22fffb5a5bbe4863",
+        "name": "",
+        "bot": "e9e66e1f1877cbf5",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 550,
+        "y": 680,
+        "wires": [
+            [
+                "faa398d2bf06aaf7"
+            ]
+        ]
+    },
+    {
+        "id": "4b31029c03c88676",
+        "type": "function",
+        "z": "22fffb5a5bbe4863",
+        "name": "respond",
+        "func": "if (flow.get('command') !== '/raw') {\n    return null;\n}\nif (flow.get('pending')) {\n    msg.queryParameters = { limit: msg.payload.content.toUpperCase() }\n}\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 740,
+        "wires": [
+            [
+                "2802ebb271af7f80"
+            ]
+        ]
+    },
+    {
+        "id": "2802ebb271af7f80",
+        "type": "postgresql",
+        "z": "22fffb5a5bbe4863",
+        "name": "",
+        "query": "SELECT * FROM hip_events\nORDER BY created_at desc\nLIMIT $limit;",
+        "postgreSQLConfig": "a0f0ab50632f88f2",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 570,
+        "y": 740,
+        "wires": [
+            [
+                "86af4b55bb44269b"
+            ]
+        ]
+    },
+    {
+        "id": "86af4b55bb44269b",
+        "type": "function",
+        "z": "22fffb5a5bbe4863",
+        "name": "ok",
+        "func": "flow.set('pending', false);\nmsg.payload.forEach(d => { \n    delete d.updated_at;\n    d.created_at = (new Date(d.created_at)).toLocaleString('de-CH').slice(0, -3);\n});\nreturn {\n    payload: {\n        type: 'message',\n        chatId: 390956004,\n        content: `\\`\\`\\`json\n${JSON.stringify(msg.payload, undefined, 2)}\n\\`\\`\\``,\n        options: {\n            parse_mode: 'Markdown'\n        }\n    }\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 690,
+        "y": 740,
+        "wires": [
+            [
+                "3b57f2afc25807c0"
+            ]
+        ]
+    },
+    {
+        "id": "3b57f2afc25807c0",
+        "type": "telegram sender",
+        "z": "22fffb5a5bbe4863",
+        "name": "Raw Data",
+        "bot": "e9e66e1f1877cbf5",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 800,
+        "y": 740,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "bfe7113501fad6ca",
+        "type": "inject",
+        "z": "22fffb5a5bbe4863",
+        "name": "Restart Telegram",
+        "props": [
+            {
+                "p": "payload.command",
+                "v": "restart",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 160,
+        "y": 40,
+        "wires": [
+            [
+                "12a2fefd84b6d94e"
+            ]
+        ]
+    },
+    {
+        "id": "fe91c2a7f8ac1d3a",
+        "type": "debug",
+        "z": "22fffb5a5bbe4863",
+        "name": "debug 17",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 580,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "596c9728ba09a795",
+        "type": "inject",
+        "z": "22fffb5a5bbe4863",
+        "name": "Start",
+        "props": [
+            {
+                "p": "payload.command",
+                "v": "start",
+                "vt": "str"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 130,
+        "y": 80,
+        "wires": [
+            [
+                "12a2fefd84b6d94e"
+            ]
+        ]
+    },
+    {
+        "id": "b70e5aebe15846b0",
+        "type": "inject",
+        "z": "22fffb5a5bbe4863",
+        "name": "Stop",
+        "props": [
+            {
+                "p": "payload.command",
+                "v": "stop",
+                "vt": "str"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 130,
+        "y": 120,
+        "wires": [
+            [
+                "12a2fefd84b6d94e"
+            ]
+        ]
+    },
+    {
+        "id": "448c33eac12e609c",
+        "type": "telegram receiver",
+        "z": "22fffb5a5bbe4863",
+        "name": "RECORD IN",
+        "bot": "e9e66e1f1877cbf5",
+        "saveDataDir": "",
+        "filterCommands": true,
+        "x": 130,
+        "y": 440,
+        "wires": [
+            [
+                "9537b8eacf4f8c1e"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "7671ddae0e9213b3",
+        "type": "telegram command",
+        "z": "22fffb5a5bbe4863",
+        "name": "/delete",
+        "command": "/delete",
+        "description": "delete record",
+        "registercommand": true,
+        "language": "",
+        "scope": "default",
+        "bot": "e9e66e1f1877cbf5",
+        "strict": false,
+        "hasresponse": true,
+        "useregex": false,
+        "removeregexcommand": false,
+        "outputs": 2,
+        "x": 130,
+        "y": 860,
+        "wires": [
+            [
+                "e42ae82398c57213"
+            ],
+            [
+                "52bc6f06fa9402ab"
+            ]
+        ]
+    },
+    {
+        "id": "e42ae82398c57213",
+        "type": "function",
+        "z": "22fffb5a5bbe4863",
+        "name": "ID",
+        "func": "flow.set('pending', true);\nflow.set('command', '/delete')\n\nmsg.payload.content = 'ID?';\n\nreturn [msg];",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 840,
+        "wires": [
+            [
+                "c5de5adf38f0a89c"
+            ]
+        ]
+    },
+    {
+        "id": "c5de5adf38f0a89c",
+        "type": "telegram sender",
+        "z": "22fffb5a5bbe4863",
+        "name": "",
+        "bot": "e9e66e1f1877cbf5",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 590,
+        "y": 840,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "52bc6f06fa9402ab",
+        "type": "function",
+        "z": "22fffb5a5bbe4863",
+        "name": "respond",
+        "func": "if (flow.get('command') !== '/delete') {\n    return null;\n}\nconst id = Number.parseInt(msg.payload.content, 10);\nif (Number.isNaN(id) || id < 1) {\n    return null;\n}\nif (flow.get('pending')) {\n    msg.queryParameters = { id: id }\n} else {\n    return null;\n}\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 900,
+        "wires": [
+            [
+                "5db5d61bd02e584e"
+            ]
+        ]
+    },
+    {
+        "id": "5db5d61bd02e584e",
+        "type": "postgresql",
+        "z": "22fffb5a5bbe4863",
+        "name": "",
+        "query": "SELECT * FROM hip_events\nWHERE id=$id;",
+        "postgreSQLConfig": "a0f0ab50632f88f2",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 570,
+        "y": 900,
+        "wires": [
+            [
+                "99e5b54757e94a70"
+            ]
+        ]
+    },
+    {
+        "id": "99e5b54757e94a70",
+        "type": "function",
+        "z": "22fffb5a5bbe4863",
+        "name": "show record to delete",
+        "func": "if (msg.payload.length !== 1) {\n    flow.set('pending', false);\n    return null;\n}\nvar opts = {\n    reply_to_message_id: msg.payload.messageId,\n    reply_markup: JSON.stringify({\n        \"inline_keyboard\": [[\n            {\n                \"text\": \"Delete? YES\",\n                \"callback_data\": \"YES\"\n            },\n            {\n                \"text\": \"No\",\n                \"callback_data\": \"NO\"\n            }]\n        ]\n    }),\n    parse_mode: 'Markdown'\n};\nflow.set('to_delete', msg.payload[0].id);\nmsg.payload.content = `\\`\\`\\`json\n${JSON.stringify(msg.payload, undefined, 2)}\n\\`\\`\\``;\nmsg.payload.options = opts;\nmsg.payload.type = 'message';\nmsg.payload.chatId = 390956004;\n\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 800,
+        "y": 900,
+        "wires": [
+            [
+                "dddac448c579c8b0"
+            ]
+        ]
+    },
+    {
+        "id": "dddac448c579c8b0",
+        "type": "telegram sender",
+        "z": "22fffb5a5bbe4863",
+        "name": "Inline Keyboard",
+        "bot": "e9e66e1f1877cbf5",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 920,
+        "y": 900,
+        "wires": [
+            [
+                "23220303.4a427c"
+            ]
+        ]
+    },
+    {
+        "id": "faa398d2bf06aaf7",
+        "type": "debug",
+        "z": "22fffb5a5bbe4863",
+        "name": "debug 18",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 800,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "12a2fefd84b6d94e",
+        "type": "telegram control",
+        "z": "22fffb5a5bbe4863",
+        "name": "",
+        "bot": "e9e66e1f1877cbf5",
+        "outputs": 1,
+        "checkconnection": false,
+        "hostname": "",
+        "interval": 10,
+        "timeout": 1,
+        "x": 400,
+        "y": 40,
+        "wires": [
+            [
+                "fe91c2a7f8ac1d3a"
+            ]
+        ]
+    },
+    {
+        "id": "20636f59.fed13",
+        "type": "telegram event",
+        "z": "22fffb5a5bbe4863",
+        "name": "/delete callback",
+        "bot": "e9e66e1f1877cbf5",
+        "event": "callback_query",
+        "autoanswer": true,
+        "x": 160,
+        "y": 1000,
+        "wires": [
+            [
+                "f0a3c788.7bbb18"
+            ]
+        ]
+    },
+    {
+        "id": "8e746981.f48368",
+        "type": "telegram sender",
+        "z": "22fffb5a5bbe4863",
+        "name": "Sender",
+        "bot": "e9e66e1f1877cbf5",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 1140,
+        "y": 1100,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "2c6089c4.883006",
+        "type": "function",
+        "z": "22fffb5a5bbe4863",
+        "name": "YES",
+        "func": "// Hide the keyboard and forget the messageId\nconst id = flow.get('to_delete');\nconst mid = flow.get('messageId');\nflow.set('to_delete', undefined);\nflow.set('messageId', null);\nconst data = {\n    type: 'deleteMessage',\n    content: mid,\n    chatId: 390956004\n}\nmsg.queryParameters = { id: id };\nmsg.response = data;\n// You could also send a editMessageReplyMarkup with an empty reply_markup here\nreturn msg;\n",
+        "outputs": "1",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 570,
+        "y": 1000,
+        "wires": [
+            [
+                "02c98a485f901324"
+            ]
+        ]
+    },
+    {
+        "id": "23220303.4a427c",
+        "type": "function",
+        "z": "22fffb5a5bbe4863",
+        "name": "save messageId",
+        "func": "// We store the messageId to be able to edit this reply in the callback query. \nflow.set('messageId', msg.payload.sentMessageId);\nreturn [ msg ];\n",
+        "outputs": "1",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1120,
+        "y": 900,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f0a3c788.7bbb18",
+        "type": "switch",
+        "z": "22fffb5a5bbe4863",
+        "name": "check delete",
+        "property": "payload.content",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "YES",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "NO",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 370,
+        "y": 1000,
+        "wires": [
+            [
+                "2c6089c4.883006"
+            ],
+            [
+                "8e23029e.001b7"
+            ]
+        ]
+    },
+    {
+        "id": "8e23029e.001b7",
+        "type": "function",
+        "z": "22fffb5a5bbe4863",
+        "name": "NO",
+        "func": "const mid = flow.get('messageId');\nflow.set('to_delete', undefined);\nflow.set('messageId', null);\nflow.set('pending', false);\n\nvar show_alert = 'true'; // you can set this to true to open a dialog with the answer in the client.\nconst data = {\n    type: 'deleteMessage',\n    content: mid,\n    chatId: 390956004\n}\n\n// msg.payload.content contains the callback data from the keyboard.\n// You may change this value here.\nmsg.payload = data;\n\nreturn msg;\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 590,
+        "y": 1100,
+        "wires": [
+            [
+                "8e746981.f48368"
+            ]
+        ]
+    },
+    {
+        "id": "02c98a485f901324",
+        "type": "postgresql",
+        "z": "22fffb5a5bbe4863",
+        "name": "query",
+        "query": "DELETE from hip_events \nWHERE id=$id\nRETURNING *;",
+        "postgreSQLConfig": "a0f0ab50632f88f2",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 690,
+        "y": 1000,
+        "wires": [
+            [
+                "15ce070fcf405098",
+                "b785c5d06e54f669"
+            ]
+        ]
+    },
+    {
+        "id": "15ce070fcf405098",
+        "type": "function",
+        "z": "22fffb5a5bbe4863",
+        "name": "check",
+        "func": "flow.set('pending', false);\nif (msg.payload.length !== 1) {\n    return null;\n}\nmsg.payload = msg.response;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 930,
+        "y": 1040,
+        "wires": [
+            [
+                "8e746981.f48368"
+            ]
+        ]
+    },
+    {
+        "id": "8105bc67aa3c925c",
+        "type": "inject",
+        "z": "22fffb5a5bbe4863",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 140,
+        "y": 1480,
+        "wires": [
+            [
+                "bbdc956592cd03b5"
+            ]
+        ]
+    },
+    {
+        "id": "bbdc956592cd03b5",
+        "type": "function",
+        "z": "22fffb5a5bbe4863",
+        "name": "function 2",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 1480,
+        "wires": [
+            [
+                "5c8e0e1c0e7aa2f7"
+            ]
+        ]
+    },
+    {
+        "id": "5c8e0e1c0e7aa2f7",
+        "type": "debug",
+        "z": "22fffb5a5bbe4863",
+        "name": "debug 19",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 560,
+        "y": 1480,
+        "wires": []
+    },
+    {
+        "id": "b785c5d06e54f669",
+        "type": "function",
+        "z": "22fffb5a5bbe4863",
+        "name": "send deleted msg",
+        "func": "if (msg.payload.length !== 1) {\n    return null;\n}\nconst item = msg.payload[0];\ndelete item.updated_at;\ndelete item.created_at;\nreturn {\n    payload: {\n        type: 'message',\n        content: `DELETED:\n\\`\\`\\`json\n${JSON.stringify(msg.payload, undefined, 2)}\n\\`\\`\\``,\n        chatId: 390956004,\n        options: {\n            parse_mode: 'Markdown'\n        }\n    }\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 890,
+        "y": 1000,
+        "wires": [
+            [
+                "8e746981.f48368"
+            ]
+        ]
+    },
+    {
+        "id": "a0f0ab50632f88f2",
+        "type": "postgreSQLConfig",
+        "name": "",
+        "host": "",
+        "hostFieldType": "str",
+        "port": "",
+        "portFieldType": "num",
+        "database": "",
+        "databaseFieldType": "str",
+        "ssl": "false",
+        "sslFieldType": "bool",
+        "applicationName": "",
+        "applicationNameType": "str",
+        "max": "10",
+        "maxFieldType": "num",
+        "idle": "1000",
+        "idleFieldType": "num",
+        "connectionTimeout": "10000",
+        "connectionTimeoutFieldType": "num",
+        "user": "",
+        "userFieldType": "str",
+        "password": "",
+        "passwordFieldType": "str"
+    },
+    {
+        "id": "e9e66e1f1877cbf5",
+        "type": "telegram bot",
+        "botname": "Hip Bot",
+        "usernames": "",
+        "chatids": "",
+        "baseapiurl": "",
+        "updatemode": "polling",
+        "pollinterval": "300",
+        "usesocks": false,
+        "sockshost": "",
+        "socksprotocol": "socks5",
+        "socksport": "6667",
+        "socksusername": "anonymous",
+        "sockspassword": "",
+        "bothost": "",
+        "botpath": "",
+        "localbotport": "8443",
+        "publicbotport": "8443",
+        "privatekey": "",
+        "certificate": "",
+        "useselfsignedcertificate": false,
+        "sslterminated": false,
+        "verboselogging": false
+    }
+]
