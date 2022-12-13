@@ -1,0 +1,804 @@
+[
+    {
+        "id": "90443e24e46bdde5",
+        "type": "tab",
+        "label": "Digitec",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "11e782da492c5620",
+        "type": "inject",
+        "z": "90443e24e46bdde5",
+        "name": "00:03",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "03 23 * * *",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 130,
+        "y": 100,
+        "wires": [
+            [
+                "37e3500d3e2b375b"
+            ]
+        ]
+    },
+    {
+        "id": "64cbdbb71c9283c8",
+        "type": "http request",
+        "z": "90443e24e46bdde5",
+        "name": "Digitec",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://www.digitec.ch/de/adventcalendar",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 570,
+        "y": 100,
+        "wires": [
+            [
+                "5d42e30e322ba6a6"
+            ]
+        ]
+    },
+    {
+        "id": "5d42e30e322ba6a6",
+        "type": "function",
+        "z": "90443e24e46bdde5",
+        "name": "Scrape-Config",
+        "func": "return {\n    ...msg,\n    mapping: {\n        image: {\n            selector: '#current article img',\n            attr: 'src'\n        },\n        descriptions: {\n            listItem: '#current article>div[class^=\"sc-\"]'\n        },\n        link: {\n            selector: '#current article a[aria-label]',\n            attr: 'href'\n        }\n    }\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 820,
+        "y": 160,
+        "wires": [
+            [
+                "cfd03c5813ab32a0"
+            ]
+        ]
+    },
+    {
+        "id": "655a66ee4bbf5f07",
+        "type": "function",
+        "z": "90443e24e46bdde5",
+        "name": "Extract",
+        "func": "var {image, descriptions, link} = msg.payload.scrapped;\nconst parts = msg.responseUrl.split('/');\nconst host = `${parts[0]}//${parts[2]}`;\nconst img_url = `${image.split('?')[0]}?impolicy=ProductTileImage&resizeWidth=512&cropWidth=512`\nvar data = {\n    image_url: `${host}${img_url}`,\n    status: descriptions[1],\n    price: descriptions[3],\n    description: descriptions[4],\n    link: `${host}${link}`,\n}\nreturn {\n    ...msg,\n    host: host,\n    payload: data\n};",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 480,
+        "y": 340,
+        "wires": [
+            [
+                "9b781fc27df82460",
+                "fc2bd437e7c522f4"
+            ]
+        ]
+    },
+    {
+        "id": "cfd03c5813ab32a0",
+        "type": "scrape",
+        "z": "90443e24e46bdde5",
+        "name": "Scrape",
+        "mapping": "{}",
+        "x": 330,
+        "y": 300,
+        "wires": [
+            [
+                "655a66ee4bbf5f07",
+                "fc2bd437e7c522f4"
+            ]
+        ]
+    },
+    {
+        "id": "9b781fc27df82460",
+        "type": "jimp-image",
+        "z": "90443e24e46bdde5",
+        "name": "",
+        "data": "payload.image_url",
+        "dataType": "msg",
+        "ret": "buf",
+        "parameter1": "",
+        "parameter1Type": "msg",
+        "parameter2": "",
+        "parameter2Type": "msg",
+        "parameter3": "",
+        "parameter3Type": "msg",
+        "parameter4": "",
+        "parameter4Type": "msg",
+        "parameter5": "",
+        "parameter5Type": "msg",
+        "parameter6": "",
+        "parameter6Type": "msg",
+        "parameter7": "",
+        "parameter7Type": "msg",
+        "parameter8": "",
+        "parameter8Type": "msg",
+        "sendProperty": "payload.image",
+        "sendPropertyType": "msg",
+        "parameterCount": 0,
+        "jimpFunction": "none",
+        "selectedJimpFunction": {
+            "name": "none",
+            "fn": "none",
+            "description": "Just loads the image.",
+            "parameters": []
+        },
+        "x": 630,
+        "y": 340,
+        "wires": [
+            [
+                "bcd4bfc3eb1f8bb5",
+                "f0b3213bd0613314"
+            ]
+        ]
+    },
+    {
+        "id": "eec7c631a0c74f36",
+        "type": "image viewer",
+        "z": "90443e24e46bdde5",
+        "name": "Digitec",
+        "width": "220",
+        "data": "payload.image",
+        "dataType": "msg",
+        "active": true,
+        "x": 790,
+        "y": 580,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f92efad6219a780e",
+        "type": "telegram sender",
+        "z": "90443e24e46bdde5",
+        "name": "Send",
+        "bot": "63327fc7aa2503d2",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 950,
+        "y": 340,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "bcd4bfc3eb1f8bb5",
+        "type": "function",
+        "z": "90443e24e46bdde5",
+        "name": "",
+        "func": "const { description, link, price, status, image } = msg.payload;\n\nconst caption = `*${price}*\n_${status}_\n[👉 ${description}](${link})`;\n\nreturn {\n    payload: {\n        caption: caption,\n        type : 'photo',\n        chatId: msg.chatIds,\n        content: image,\n        options: {\n            parse_mode : 'Markdown'\n        }\n    }\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 800,
+        "y": 340,
+        "wires": [
+            [
+                "f92efad6219a780e"
+            ]
+        ]
+    },
+    {
+        "id": "f4986ba143b3078a",
+        "type": "http request",
+        "z": "90443e24e46bdde5",
+        "name": "Galaxus",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://www.galaxus.ch/de/adventcalendar",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 580,
+        "y": 160,
+        "wires": [
+            [
+                "5d42e30e322ba6a6"
+            ]
+        ]
+    },
+    {
+        "id": "f0b3213bd0613314",
+        "type": "switch",
+        "z": "90443e24e46bdde5",
+        "name": "",
+        "property": "host",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "cont",
+                "v": "digitec.ch",
+                "vt": "str"
+            },
+            {
+                "t": "cont",
+                "v": "galaxus.ch",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 290,
+        "y": 460,
+        "wires": [
+            [
+                "eec7c631a0c74f36"
+            ],
+            [
+                "acf9099d69557809"
+            ]
+        ]
+    },
+    {
+        "id": "acf9099d69557809",
+        "type": "image viewer",
+        "z": "90443e24e46bdde5",
+        "name": "Galaxus",
+        "width": "220",
+        "data": "payload.image",
+        "dataType": "msg",
+        "active": true,
+        "x": 480,
+        "y": 580,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c7b738d08ffb253a",
+        "type": "telegram command",
+        "z": "90443e24e46bdde5",
+        "name": "/get",
+        "command": "/get",
+        "description": "",
+        "registercommand": false,
+        "language": "",
+        "scope": "default",
+        "bot": "63327fc7aa2503d2",
+        "strict": false,
+        "hasresponse": true,
+        "useregex": false,
+        "removeregexcommand": false,
+        "outputs": 2,
+        "x": 130,
+        "y": 160,
+        "wires": [
+            [
+                "c71b5690622813ce"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "37e3500d3e2b375b",
+        "type": "function",
+        "z": "90443e24e46bdde5",
+        "name": "receivers",
+        "func": "const chatIds = flow.get('chatIds') || [];\nreturn {\n    ...msg,\n    chatIds: chatIds\n};",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 260,
+        "y": 100,
+        "wires": [
+            [
+                "69092d3706d61861"
+            ]
+        ]
+    },
+    {
+        "id": "c71b5690622813ce",
+        "type": "function",
+        "z": "90443e24e46bdde5",
+        "name": "single-audience",
+        "func": "return {\n    ...msg,\n    chatIds: [msg.payload.chatId]\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 160,
+        "wires": [
+            [
+                "64cbdbb71c9283c8",
+                "f4986ba143b3078a"
+            ]
+        ]
+    },
+    {
+        "id": "98c202cb32c9e8b0",
+        "type": "telegram sender",
+        "z": "90443e24e46bdde5",
+        "name": "Hi",
+        "bot": "63327fc7aa2503d2",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 910,
+        "y": 980,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "770e330c10fa300f",
+        "type": "inject",
+        "z": "90443e24e46bdde5",
+        "name": "Initialize",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "str",
+        "x": 120,
+        "y": 860,
+        "wires": [
+            [
+                "b24f3d0d2489b07f"
+            ]
+        ]
+    },
+    {
+        "id": "6ef1155d4908fa8c",
+        "type": "file in",
+        "z": "90443e24e46bdde5",
+        "name": "READ",
+        "filename": "/data/digitec-bot-chat-ids.json",
+        "filenameType": "str",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "utf8",
+        "allProps": false,
+        "x": 350,
+        "y": 860,
+        "wires": [
+            [
+                "a36bc26153b893e3"
+            ]
+        ]
+    },
+    {
+        "id": "e1fec5f01ec13805",
+        "type": "function",
+        "z": "90443e24e46bdde5",
+        "name": "DECODE",
+        "func": "const chatIds = [...new Set(msg.payload.chatIds || [])];\nflow.set('chatIds', chatIds);\nmsg.payload.chatIds = chatIds;\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 740,
+        "y": 880,
+        "wires": [
+            [
+                "81afecde9aa0db42"
+            ]
+        ]
+    },
+    {
+        "id": "0269642c535a6ead",
+        "type": "json",
+        "z": "90443e24e46bdde5",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 550,
+        "y": 860,
+        "wires": [
+            [
+                "e1fec5f01ec13805"
+            ]
+        ]
+    },
+    {
+        "id": "81afecde9aa0db42",
+        "type": "debug",
+        "z": "90443e24e46bdde5",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 930,
+        "y": 880,
+        "wires": []
+    },
+    {
+        "id": "299d68300e237ee5",
+        "type": "telegram event",
+        "z": "90443e24e46bdde5",
+        "name": "MEMBERS",
+        "bot": "63327fc7aa2503d2",
+        "event": "my_chat_member",
+        "autoanswer": false,
+        "x": 110,
+        "y": 980,
+        "wires": [
+            [
+                "4ac9160006a9d39c"
+            ]
+        ]
+    },
+    {
+        "id": "4ac9160006a9d39c",
+        "type": "function",
+        "z": "90443e24e46bdde5",
+        "name": "MODIFY chatIds",
+        "func": "const {new_chat_member, chatId}=msg.payload;\nlet chatIds =  [...new Set(flow.get('chatIds') || [])];\nif (new_chat_member.status === 'kicked') {\n    chatIds = chatIds.filter(id => id !== chatId);\n} else {\n    chatIds.push(chatId);\n}\nreturn {\n    state: new_chat_member.status,\n    chatId: chatId,\n    payload: {\n        chatIds: [...new Set(chatIds)]\n    }\n};",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 980,
+        "wires": [
+            [
+                "a90065ad6add633e",
+                "5c05adb1ed84f807",
+                "e1fec5f01ec13805"
+            ]
+        ]
+    },
+    {
+        "id": "d389d6fde7fe164b",
+        "type": "file",
+        "z": "90443e24e46bdde5",
+        "name": "WRITE",
+        "filename": "/data/digitec-bot-chat-ids.json",
+        "filenameType": "str",
+        "appendNewline": true,
+        "createDir": false,
+        "overwriteFile": "true",
+        "encoding": "utf8",
+        "x": 720,
+        "y": 1060,
+        "wires": [
+            [
+                "6039f7192d0b3342"
+            ]
+        ]
+    },
+    {
+        "id": "a90065ad6add633e",
+        "type": "json",
+        "z": "90443e24e46bdde5",
+        "name": "",
+        "property": "payload",
+        "action": "str",
+        "pretty": false,
+        "x": 570,
+        "y": 1060,
+        "wires": [
+            [
+                "d389d6fde7fe164b"
+            ]
+        ]
+    },
+    {
+        "id": "4b3ea3c21428c85a",
+        "type": "function",
+        "z": "90443e24e46bdde5",
+        "name": "member",
+        "func": "return {\n    payload: {\n        type: 'message',\n        content: 'Hi',\n        chatId: msg.chatId\n    }\n}\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 740,
+        "y": 980,
+        "wires": [
+            [
+                "98c202cb32c9e8b0"
+            ]
+        ]
+    },
+    {
+        "id": "d62146527090161d",
+        "type": "telegram command",
+        "z": "90443e24e46bdde5",
+        "name": "/start",
+        "command": "/start",
+        "description": "",
+        "registercommand": false,
+        "language": "",
+        "scope": "default",
+        "bot": "63327fc7aa2503d2",
+        "strict": false,
+        "hasresponse": true,
+        "useregex": false,
+        "removeregexcommand": false,
+        "outputs": 2,
+        "x": 130,
+        "y": 220,
+        "wires": [
+            [
+                "c71b5690622813ce"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "6039f7192d0b3342",
+        "type": "debug",
+        "z": "90443e24e46bdde5",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 930,
+        "y": 1060,
+        "wires": []
+    },
+    {
+        "id": "5c05adb1ed84f807",
+        "type": "switch",
+        "z": "90443e24e46bdde5",
+        "name": "new",
+        "property": "state",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "member",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 570,
+        "y": 980,
+        "wires": [
+            [
+                "4b3ea3c21428c85a"
+            ]
+        ]
+    },
+    {
+        "id": "e745ed7e8b81f834",
+        "type": "comment",
+        "z": "90443e24e46bdde5",
+        "name": "Scraping",
+        "info": "",
+        "x": 60,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "bc2be5187a180285",
+        "type": "comment",
+        "z": "90443e24e46bdde5",
+        "name": "User Management",
+        "info": "",
+        "x": 90,
+        "y": 920,
+        "wires": []
+    },
+    {
+        "id": "f6a64380dc429775",
+        "type": "comment",
+        "z": "90443e24e46bdde5",
+        "name": "Initialize the chatIds",
+        "info": "",
+        "x": 90,
+        "y": 800,
+        "wires": []
+    },
+    {
+        "id": "69092d3706d61861",
+        "type": "switch",
+        "z": "90443e24e46bdde5",
+        "name": ">0",
+        "property": "chatIds",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nempty"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 390,
+        "y": 100,
+        "wires": [
+            [
+                "64cbdbb71c9283c8",
+                "f4986ba143b3078a"
+            ]
+        ]
+    },
+    {
+        "id": "b24f3d0d2489b07f",
+        "type": "file",
+        "z": "90443e24e46bdde5",
+        "name": "WRITE",
+        "filename": "/data/digitec-bot-chat-ids.json",
+        "filenameType": "str",
+        "appendNewline": false,
+        "createDir": true,
+        "overwriteFile": "false",
+        "encoding": "utf8",
+        "x": 240,
+        "y": 860,
+        "wires": [
+            [
+                "6ef1155d4908fa8c"
+            ]
+        ]
+    },
+    {
+        "id": "a36bc26153b893e3",
+        "type": "function",
+        "z": "90443e24e46bdde5",
+        "name": "|| []",
+        "func": "return {\n    ...msg,\n    payload: msg.payload || JSON.stringify({ chatIds: [] })\n};",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 450,
+        "y": 860,
+        "wires": [
+            [
+                "0269642c535a6ead"
+            ]
+        ]
+    },
+    {
+        "id": "fc2bd437e7c522f4",
+        "type": "debug",
+        "z": "90443e24e46bdde5",
+        "name": "debug 7",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 540,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "ea027a3d1a247cdd",
+        "type": "http request",
+        "z": "90443e24e46bdde5",
+        "name": "Digitec",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://www.digitec.ch/de/daily-deal",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 570,
+        "y": 40,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8d5f8d75b4ca516b",
+        "type": "http request",
+        "z": "90443e24e46bdde5",
+        "name": "Galaxus",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://www.galaxus.ch/de/daily-deal",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 720,
+        "y": 40,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "015448678f685197",
+        "type": "function",
+        "z": "90443e24e46bdde5",
+        "name": "Scrape-Config",
+        "func": "return {\n    ...msg,\n    mapping: {\n        image: {\n            selector: '.liveshoppingbigProduct img',\n            attr: 'src'\n        },\n        descriptions: {\n            listItem: '.liveshoppingbigProduct div[class^=\"bigLayout_container__\"]>div[class^=\"sc-\"]'\n        },\n        link: {\n            selector: '.liveshoppingbigProduct>a',\n            attr: 'href'\n        }\n    }\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 900,
+        "y": 20,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "63327fc7aa2503d2",
+        "type": "telegram bot",
+        "botname": "Digitec Daily Product",
+        "usernames": "",
+        "chatids": "",
+        "baseapiurl": "",
+        "updatemode": "polling",
+        "pollinterval": "1000",
+        "usesocks": false,
+        "sockshost": "",
+        "socksport": "6667",
+        "socksusername": "anonymous",
+        "sockspassword": "",
+        "bothost": "",
+        "botpath": "",
+        "localbotport": "8443",
+        "publicbotport": "8443",
+        "privatekey": "",
+        "certificate": "",
+        "useselfsignedcertificate": false,
+        "sslterminated": false,
+        "verboselogging": false
+    }
+]
