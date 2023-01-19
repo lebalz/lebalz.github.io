@@ -17,3 +17,17 @@ ssh-keygen
 
 cat ~/.ssh/id_rsa.pub
 ```
+
+## Ignore changes from tracked files
+
+Ignore all further changes, but you don't want git to remove current file from the repository:
+
+```bash
+git update-index --assume-unchanged <file>
+```
+
+... and reenable it again
+
+```bash
+git update-index --no-assume-unchanged <file>
+```
