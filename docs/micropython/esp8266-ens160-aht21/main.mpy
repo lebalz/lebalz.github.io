@@ -1,0 +1,108 @@
+from PiicoDev_ENS160 import PiicoDev_ENS160 # import the device driver
+import time, machine
+import aht
+import ssd1306
+import network
+import urequests
+import ujson as json
+
+TEMPERATURE_SHIFT = -8
+i2c = machine.I2C(scl=machine.Pin(5), sda=machine.Pin(4), freq=100000)
+ens160 = PiicoDev_ENS160(i2c)   # Initialise the ENS160 module
+
+display = ssd1306.SSD1306_I2C(64, 48, i2c)
+# disable access point modus
+ap_if = network.WLAN(network.AP_IF)
+ap_if.active(False)
+
+def show(lines, offset=0):
+    display.fill(0)
+    for line in range(len(lines)):
+        display.text(lines[line], 0, line * 8 + offset, 1)
+    display.show()
+
+show(['Start'], 20)
+
+def do_connect():
+    wlan = network.WLAN(network.STA_IF)
+    wlan.active(True)
+    show(['Connect'], 20)
+    
+    if not wlan.isconnected():
+        cntr = 1
+        print('connecting to network...')
+        wlan.connect('<WIFI-SSID>', 'xxx')
+        while not wlan.isconnected():
+            show(['Connect', '.' * cntr], 20)
+            cntr += 1
+            time.sleep(0.5)
+
+    print('network config:', wlan.ifconfig())
+    show(['Done'], 20)
+
+    return wlan
+
+
+
+# Example SCL pin and SDA pin for WEMOS D1 mini Lite
+aht21 = aht.AHT2x(i2c, crc=True)
+wlan = do_connect()
+
+while True:
+    # Read from the sensor
+    aqi = ens160.aqi
+    tvoc = ens160.tvoc
+    eco2 = ens160.eco2
+    hum = aht21.humidity
+    temp = aht21.temperature + TEMPERATURE_SHIFT # type: ignore
+
+    if aqi.value == 0: # invalid
+        ens160.reset()
+        time.sleep(0.1)
+        continue
+    
+    # Print air quality metrics
+    print('    AQI: ' + str(aqi.value) + ' [' + str(aqi.rating) +']')
+    print('   TVOC: ' + str(tvoc) + ' ppb')
+    print('   eCO2: ' + str(eco2.value) + ' ppm [' + str(eco2.rating) +']')
+    print(' Status: ' + ens160.operation)
+    # To print one of measures:
+    print("Humidity: {:.2f}".format(hum))
+    print("Temperature: {:.2f}".format(temp))
+
+    print('--------------------------------')
+
+
+    data = {
+        'ECO2': eco2.value,
+        'AQI': aqi.value,
+        'TVOC': tvoc,
+        'ENS160': ens160.operation,
+        'HUM': hum,
+        'TEMP': temp,
+        'AHT21': 1
+    }
+    print(json.dumps(data))
+    print(f'WIFI: {wlan.isconnected()}')
+    if (wlan.isconnected()):
+        try:
+            res = urequests.post('http://node-red-nb5t.onrender.com.proxy.gbsl.website/api/sensor', json=data)
+            print(res.content)
+            res.close()
+            send = True
+        except:
+            send = False
+    else:
+        do_connect()
+        send = True
+
+
+    show([
+        f'Q: {aqi.value}/4',
+        f'T: {tvoc}',
+        f'C: {eco2.value}',
+        f'H: {hum:.2f}',
+        f'T: {temp:.2f}',
+        f'''-->: {'1' if send else 'X'}'''
+    ])
+    time.sleep(2)
