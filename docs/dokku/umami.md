@@ -24,7 +24,7 @@ It states the following:
 :::warning Prerequirements
 The following Dokku plugins are required
 - Dokkus [Postgres](https://github.com/dokku/dokku-postgres)
-- 
+- Letsencrypt [Letsencrypt](https://github.com/dokku/dokku-letsencrypt)
 :::
 
 ```bash
@@ -86,7 +86,7 @@ The default username is `admin` and the default password is `umami`.
 
 ```bash
 # pull the latest image
-docker pull docker.umami.is/umami-software/umami:postgresql-latest
+docker pull docker.umami.dev/umami-software/umami:postgresql-latest
 
 # rebuild umami
 dokku ps:rebuild umami
@@ -111,7 +111,7 @@ exit
 
 ```bash
 dokku ps:stop umami
-dokku git:from-image umami docker.umami.is/umami-software/umami:postgresql-latest
+dokku git:from-image umami docker.umami.dev/umami-software/umami:postgresql-latest
 ```
 
 ## Troubleshooting
