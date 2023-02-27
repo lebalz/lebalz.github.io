@@ -5,6 +5,17 @@ const lightCodeTheme = require('prism-react-renderer/themes/github');
 const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 const remarkFlex = require('./src/plugins/remark-flex');
 const remarkImage = require('./src/plugins/remark-images');
+const remarkDeflist = require('remark-deflist-simple');
+
+const REMARK_PLUGINS = {
+  beforeDefaultRemarkPlugins: [
+    remarkImage
+  ],
+  remarkPlugins: [
+    remarkFlex,
+    remarkDeflist
+  ]
+};
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -24,18 +35,14 @@ const config = {
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
+          ...REMARK_PLUGINS,
           sidebarPath: require.resolve('./sidebars.js'),
           routeBasePath: 'synopsis',
           // Please change this to your repo.
-          editUrl: 'https://github.com/lebalz/blog/edit/main/',
-          beforeDefaultRemarkPlugins: [
-            remarkImage
-          ],
-          remarkPlugins: [
-            remarkFlex
-          ],
+          editUrl: 'https://github.com/lebalz/blog/edit/main/'
         },
         blog: {
+          ...REMARK_PLUGINS,
           blogTitle: 'Dev Blog',
           routeBasePath: '/',
           showReadingTime: true,
@@ -44,21 +51,10 @@ const config = {
           blogSidebarTitle: 'Posts',
           // Please change this to your repo.
           editUrl:
-            'https://github.com/lebalz/blog/edit/main/',
-          beforeDefaultRemarkPlugins: [
-            remarkImage
-          ],
-          remarkPlugins: [
-            remarkFlex
-          ]
+            'https://github.com/lebalz/blog/edit/main/'
         },
         pages: {
-          beforeDefaultRemarkPlugins: [
-            remarkImage
-          ],
-          remarkPlugins: [
-            remarkFlex
-          ]
+          ...REMARK_PLUGINS
         },
         theme: {
           customCss: [
@@ -88,6 +84,11 @@ const config = {
             docId: 'index',
             position: 'left',
             label: 'Knowledgebase',
+          },
+          {
+            to: 'recipes/',
+            position: 'left',
+            label: 'Rezepte',
           },
           {
             href: 'https://github.com/lebalz/blog',
@@ -146,7 +147,18 @@ const config = {
         // /404.html is never indexed
         indexPages: false,
       }
-    ]
+    ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        ...REMARK_PLUGINS,
+        id: 'recipes',
+        path: 'recipes',
+        routeBasePath: 'recipes',
+        sidebarPath: require.resolve('./sidebarsRecipes.js'),
+        // ... other options
+      }
+    ],
   ],
   scripts: [
     // Object format.

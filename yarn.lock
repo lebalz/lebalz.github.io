@@ -7500,6 +7500,13 @@ relateurl@^0.2.7:
   resolved "https://registry.yarnpkg.com/relateurl/-/relateurl-0.2.7.tgz#54dbf377e51440aca90a4cd274600d3ff2d888a9"
   integrity sha1-VNvzd+UUQKypCkzSdGANP/LYiKk=
 
+remark-deflist-simple@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/remark-deflist-simple/-/remark-deflist-simple-1.0.0.tgz#b9c61584507f5fe0dbf5dd5dac24eddb0608c344"
+  integrity sha512-1yZMovfjDgn4HgBSpiBeRn1wqbhJmTMAQPboEXWxS7M1pr9nLHspdKS0W3UtgF1B2tBTTbZ3baRG71qzW9oepw==
+  dependencies:
+    unist-util-visit "^2.0.3"
+
 remark-emoji@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/remark-emoji/-/remark-emoji-2.2.0.tgz#1c702090a1525da5b80e15a8f963ef2c8236cac7"
