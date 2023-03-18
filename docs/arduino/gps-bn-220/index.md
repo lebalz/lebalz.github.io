@@ -21,6 +21,8 @@ https://github.com/lebalz/blog/blob/main/docs/arduino/gps-bn-220/gps-basic-examp
 
 With the TinyGPS++ library, you can parse the NMEA data and get the latitude, longitude, altitude, speed, date, time, etc.
 
+Download the latest version of the library from [👉 TinyGPS++](https://github.com/mikalhart/TinyGPSPlus/releases/tag/v1.0.3a) and install it in the Arduino IDE.
+
 ```ino reference
 https://github.com/lebalz/blog/blob/main/docs/arduino/gps-bn-220/gps-bn-220.ino
 ```
