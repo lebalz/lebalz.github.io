@@ -18,6 +18,28 @@ ssh-keygen
 cat ~/.ssh/id_rsa.pub
 ```
 
+## Restore SSH Keys [^1]
+
+1. Change the file permission
+
+  ```bash
+  sudo chown user:user ~/.ssh/id_rsa*
+  sudo chmod 600 ~/.ssh/id_rsa
+  sudo chmod 644 ~/.ssh/id_rsa.pub
+  ```
+2. (Re-)Start the ssh-agent
+
+  ```bash
+  exec ssh-agent bash
+  ```
+
+3. Add your SSH private key to the ssh-agent
+
+  ```bash
+  ssh-add ~/.ssh/id_rsa
+  ```
+
+
 ## Ignore changes from tracked files
 
 Ignore all further changes, but you don't want git to remove current file from the repository:
@@ -31,3 +53,5 @@ git update-index --assume-unchanged <file>
 ```bash
 git update-index --no-assume-unchanged <file>
 ```
+
+[^1]: Source: [Snippet by Colematt](https://gist.github.com/colematt/3645b50b20254a7c1a5a8608757626b2)
