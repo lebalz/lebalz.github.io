@@ -40,7 +40,7 @@
     "local-history.path": "/home/balz/.local-history/",
     "eslint.options": {
         "quotes": ["single", { "allowTemplateLiterals": true, "avoidEscape": true }],
-        "extensions": [".js", ".jsx", ".ts", ".tsx". ".mdx"]
+        "extensions": [".js", ".jsx", ".ts", ".tsx", ".mdx"]
     },
     "eslint.validate": [
         "markdwon",
