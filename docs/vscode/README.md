@@ -112,12 +112,12 @@
         "when": "terminalFocus"
     },
     {
-        "key": "ctrl+right",
+        "key": "alt+right",
         "command": "workbench.action.terminal.focusNextPane",
         "when": "terminalFocus"
     },
     {
-        "key": "ctrl+left",
+        "key": "alt+left",
         "command": "workbench.action.terminal.focusPreviousPane",
         "when": "terminalFocus"
     },
@@ -166,10 +166,6 @@
         "key": "ctrl+shift+up",
         "command": "cursorColumnSelectUp",
         "when": "textInputFocus"
-    },
-    {
-        "key": "ctrl+p ctrl+p",
-        "command": "extension.markdown-pdf.pdf"
     }
 ]
 ```
