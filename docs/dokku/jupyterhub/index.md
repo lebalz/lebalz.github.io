@@ -15,7 +15,7 @@ The following plugins are required and must be installed on your dokku host:
 - [postgres](https://github.com/dokku/dokku-postgres)
 - [letsencrypt](https://github.com/dokku/dokku-letsencrypt)
 
-## Create jupyterhub
+## Create jupyterhub app folder
 
 [github.com/lebalz/dokku-jupyterhub](https://github.com/lebalz/dokku-jupyterhub)
 
@@ -35,6 +35,18 @@ Create a new git project with the following files:
 There are two Dockerfiles - the one in the root is used to build the jupyterhub image, the one in the images folder is used to build the users jupyterlab image.
 
 The `POST_DEPLOY_SCRIPT` is used to build the users jupyterlab image after each deploy.
+
+
+To intialize a new repository with git:
+
+```bash
+git init
+git add .
+git commit -m "initial commit"
+
+# add dokku remote
+git remote add dokku dokku@<your-ip>:jupyterhub
+```
 
 
 ### ./Dockerfile
@@ -70,7 +82,7 @@ COPY images ./images
 ### 
 
 <details>
-<summary>`./jupyterhub_config.py`</summary>
+<summary><code>./jupyterhub_config.py</code></summary>
 
 ```python
 import os
@@ -260,9 +272,7 @@ c.Spawner.default_url = '/lab'
 </details>
 
 <details>
-<summary>
-`./my_azuread.py`
-</summary>
+<summary><code>./my_azuread.py</code></summary>
 
 ```python
 """
@@ -385,7 +395,7 @@ class LocalMyAzureAdOAuthenticator(LocalAuthenticator, MyAzureAdOAuthenticator):
 
 The runtime image must be available on the dokku server. It is possbible to build it after each deploy (postdeploy script) or to pull the image manually on the dokku host from a registry.
 
-### Option 1: Pull an image yourself
+### Option 1: Pull an existing image
 1. remove or rename the `POST_DEPLOY_SCRIPT` from the repository, otherwise it will be used to build the image... (`mv POST_DEPLOY_SCRIPT _POST_DEPLOY_SCRIPT`)
 2. pull the preferred image and configure your jupyterhub to use it:
 ```sh
@@ -395,7 +405,7 @@ docker pull jupyter/scipy-notebook:latest
 dokku config:set $APP DOCKER_JUPYTER_IMAGE="jupyter/scipy-notebook:latest"
 ```
 
-### Option2: Setup postdeploy script
+### Option2: `./images/Dockerfile`
 
 (ensure you have the [post-deploy-script](https://github.com/lebalz/dokku-post-deploy-script) plugin installed on your dokku host)
 
@@ -414,7 +424,7 @@ dokku config:set $APP DOCKER_JUPYTER_IMAGE="jupyter/scipy-notebook:latest"
     echo "start build"
     (cd images && docker build . -t $TAG)
     ```
-3. Setup your [images/Dockerfile]
+3. Setup your `images/Dockerfile`
    ```docker
     FROM jupyter/minimal-notebook:lab-4.0.2
 
@@ -450,19 +460,6 @@ dokku config:set $APP DOCKER_JUPYTER_IMAGE="jupyter/scipy-notebook:latest"
     ```bash
     dokku config:set --no-restart $APP DOKKU_POST_DEPLOY_SCRIPT_DEPENDENCIES="images/Dockerfile;images/overrides.json"
     ```
-
-
-
-and intialize it with git:
-
-```bash
-git init
-git add .
-git commit -m "initial commit"
-
-# add dokku remote
-git remote add dokku dokku@<your-ip>:jupyterhub
-```
 
 
 

@@ -18,24 +18,15 @@
   --ifm-link-color: #22209c;
   --ifm-link-hover-color: var(--ifm-color-primary);
   --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0,0,0,.1);
 }
 
-html[data-theme='dark'] {
+[data-theme='dark'] {
   --ifm-color-primary: #4e89e8;
   --ifm-color-primary-dark: #5a91ea;
   --ifm-link-color: var(--ifm-color-primary);
   /* any other colors you wish to overwrite */
-}
-
-.docusaurus-highlight-code-line {
-  background-color: rgba(0, 0, 0, 0.1);
-  display: block;
-  margin: 0 calc(-1 * var(--ifm-pre-padding));
-  padding: 0 var(--ifm-pre-padding);
-}
-
-html[data-theme='dark'] .docusaurus-highlight-code-line {
-  background-color: rgba(0, 0, 0, 0.3);
+  --docusaurus-highlighted-code-line-bg: rgba(66,66,66,.35);
 }
 
 
