@@ -98,6 +98,13 @@ const config = {
           },
         ],
       },
+      algolia: {
+        appId: process.env.ALGOLIA_APP_ID || "no-id",
+        apiKey: process.env.ALGOLIA_API_KEY || "no-key",
+        indexName: process.env.ALGOLIA_INDEX_NAME || "no-index",
+        contextualSearch: true,
+        searchPagePath: 'search',
+      },
       footer: {
         style: 'dark',
         links: [

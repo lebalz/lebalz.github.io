@@ -28,6 +28,12 @@ steps:
     GIT_USER: $DRONE_COMMIT_AUTHOR
     GITHUB_PRIVATE_KEY:
       from_secret: "git_deploy_private_key"
+    ALGOLIA_APP_ID:
+      from_secret: "algolia_app_id"
+    ALGOLIA_API_KEY:
+      from_secret: "algolia_api_key"
+    ALGOLIA_INDEX_NAME:
+      from_secret: "algolia_index_name"
     UMAMI_ID:
       from_secret: "umami_id"
     UMAMI_SRC:
