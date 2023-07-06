@@ -132,23 +132,6 @@ const config = {
     'docusaurus-plugin-sass',
     '@saucelabs/theme-github-codeblock',
     [
-      require.resolve("@cmfcmf/docusaurus-search-local"),
-      {
-        // Whether to also index the titles of the parent categories in the sidebar of a doc page.
-        // 0 disables this feature.
-        // 1 indexes the direct parent category in the sidebar of a doc page
-        // 2 indexes up to two nested parent categories of a doc page
-        // 3...
-        //
-        // Do _not_ use Infinity, the value must be a JSON-serializable integer.
-        indexDocSidebarParentCategories: 5,
-
-        // whether to index static pages
-        // /404.html is never indexed
-        indexPages: false,
-      }
-    ],
-    [
       '@docusaurus/plugin-content-docs',
       {
         ...REMARK_PLUGINS,
@@ -163,8 +146,8 @@ const config = {
   scripts: [
     // Object format.
     {
-      src: 'https://umami.lebalz.ch/tell-me.js',
-      ['data-website-id']: 'fc37f18b-ef7a-4e4c-aebd-dc95acfcee02',
+      src: process.env.UMAMI_URL || 'localhost:3000',
+      ['data-website-id']: process.env.UMAMI_ID || '',
       ['data-domains']: 'lebalz.ch',
       async: true,
       defer: true
