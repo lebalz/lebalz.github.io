@@ -386,7 +386,7 @@ class LocalMyAzureAdOAuthenticator(LocalAuthenticator, MyAzureAdOAuthenticator):
 The runtime image must be available on the dokku server. It is possbible to build it after each deploy (postdeploy script) or to pull the image manually on the dokku host from a registry.
 
 ### Option 1: Pull an image yourself
-1. remove or rename the [POST_DEPLOY_SCRIPT](POST_DEPLOY_SCRIPT) from the repository, otherwise it will be used to build the image... (`mv POST_DEPLOY_SCRIPT _POST_DEPLOY_SCRIPT`)
+1. remove or rename the `POST_DEPLOY_SCRIPT` from the repository, otherwise it will be used to build the image... (`mv POST_DEPLOY_SCRIPT _POST_DEPLOY_SCRIPT`)
 2. pull the preferred image and configure your jupyterhub to use it:
 ```sh
 docker pull jupyter/scipy-notebook:latest
@@ -404,7 +404,7 @@ dokku config:set $APP DOCKER_JUPYTER_IMAGE="jupyter/scipy-notebook:latest"
    dokku config:set $APP DOCKER_JUPYTER_IMAGE="jupyter/lebalz:latest"
    ```
 
-2. Add a [POST_DEPLOY_SCRIPT](POST_DEPLOY_SCRIPT) to the root (already done here).
+2. Add a `POST_DEPLOY_SCRIPT` to the root (already done here).
 
     ```bash
     #!/bin/bash
