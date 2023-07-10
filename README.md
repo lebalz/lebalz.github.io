@@ -2,6 +2,8 @@
 
 [![Build Status](https://drone.gbsl.website/api/badges/lebalz/blog/status.svg)](https://drone.gbsl.website/lebalz/blog)
 
+https://lebalz.ch
+
 This website is built using [Docusaurus 2](https://docusaurus.io/), a modern static website generator.
 
 ### Installation
