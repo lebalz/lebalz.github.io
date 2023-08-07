@@ -36,8 +36,8 @@ steps:
       from_secret: "algolia_index_name"
     UMAMI_ID:
       from_secret: "umami_id"
-    UMAMI_SRC:
-      from_secret: "umami_src"
+    UMAMI_URL:
+      from_secret: "umami_url"
   when:
     event:
       include:
