@@ -54,4 +54,16 @@ git update-index --assume-unchanged <file>
 git update-index --no-assume-unchanged <file>
 ```
 
+## Create new Repo with `main` Branch
+
+```bash
+echo "# asdfghjhgfdsa" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin git@github.com:lebalz/<reponame>.git
+git push -u origin main
+```
+
 [^1]: Source: [Snippet by Colematt](https://gist.github.com/colematt/3645b50b20254a7c1a5a8608757626b2)
