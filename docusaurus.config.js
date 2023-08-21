@@ -153,7 +153,7 @@ const config = {
   scripts: [
     // Object format.
     {
-      src: process.env.UMAMI_URL || 'localhost:3000',
+      src: process.env.UMAMI_SRC || 'localhost:3000',
       ['data-website-id']: process.env.UMAMI_ID || '',
       ['data-domains']: 'lebalz.ch',
       async: true,
