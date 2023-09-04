@@ -66,4 +66,30 @@ git remote add origin git@github.com:lebalz/<reponame>.git
 git push -u origin main
 ```
 
+## Git Submodules
+
+### Sync Submodule
+In order to add a Git submodule, use the `git submodule add` command and specify the URL of the Git remote repository to be included as a submodule.
+
+`git submodule add <remote_url> <destination_folder>`
+
+```bash
+git submodule add https://github.com/project/project.git vendors
+```
+
+### Pull Submodule
+To pull a Git submodule, use the `git submodule update` command with the `–init` and the `–recursive` options.
+
+```bash
+git submodule update --init --recursive
+```
+
+### Sync
+In order to update an existing Git submodule, you need to execute the `git submodule update` with the `–remote` and the `–merge` option.
+
+```bash
+git submodule update --remote --merge
+```
+
+
 [^1]: Source: [Snippet by Colematt](https://gist.github.com/colematt/3645b50b20254a7c1a5a8608757626b2)
