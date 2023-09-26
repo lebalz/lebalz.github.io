@@ -1,5 +1,5 @@
 const visit = require("unist-util-visit");
-const { parseOptions } = require('./helpers');
+const { parseOptions } = require('./helpers.cjs');
 
 const NEWLINE = "\n";
 

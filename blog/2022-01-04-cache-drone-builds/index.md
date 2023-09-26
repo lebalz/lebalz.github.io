@@ -76,7 +76,10 @@ volumes:
       path: /var/lib/dokku/data/storage/drone-runner/cache
 ```
 
-<details><summary>Full .drone.yml</summary>
+<details>
+  <summary>
+    Full .drone.yml
+  </summary>
 
 ```yml title=.drone.yml
 ---

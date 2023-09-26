@@ -6,7 +6,7 @@ const escapeHtml = require('escape-html');
 const posixPath = require('@docusaurus/utils').posixPath;
 const escapePath = require('@docusaurus/utils').escapePath;
 const toMessageRelativeFilePath = require('@docusaurus/utils').toMessageRelativeFilePath;
-const { parseOptions, cleanedText } = require('./helpers');
+const { parseOptions, cleanedText } = require('./helpers.cjs');
 const getFileLoaderUtils = require('@docusaurus/utils').getFileLoaderUtils;
 
 /**

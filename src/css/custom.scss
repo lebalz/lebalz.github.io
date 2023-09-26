@@ -129,6 +129,7 @@ div.flex {
     }
 
     .card__image {
+      line-height: 0;
       :first-child {
         margin: 0;
         margin-left: auto;

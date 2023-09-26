@@ -69,7 +69,10 @@ return {
 };
 ```
 
-<details><summary>Flow Source</summary>
+<details>
+    <summary>
+        Flow Source
+    </summary>
 
 Copy&Paste this and your ready to go (except the configuration of your bot...)
 
