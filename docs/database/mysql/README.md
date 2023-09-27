@@ -1,5 +1,4 @@
 # MySQL
-
 ## Create Roles and grant privileges
 
 ```sql
@@ -30,3 +29,10 @@ lower_case_table_names = 1
 max_connections = 1000
 max_connect_errors=10000
 ```
+
+:::tip Current Configuration
+
+```sql
+SHOW VARIABLES;
+```
+:::
