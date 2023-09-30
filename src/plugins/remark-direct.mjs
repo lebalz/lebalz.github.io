@@ -1,5 +1,37 @@
 import { visit } from 'unist-util-visit'
 import {all} from 'known-css-properties';
+
+/** for creating cards or flex: :::cards, :::flex */
+const CONTAINER_DIRECTIVES = ['cards', 'flex'];
+const DEFAULT_CLASSES = {
+    cards: {
+        container: 'flex-cards flex',
+        item: 'item card',
+        content: 'card__body',
+        image: 'card__image'
+    },
+    flex: {
+        container: 'flex',
+        item: 'item',
+        content: 'content'
+    }
+}
+
+/** for dividing into multiple cards: ::br */
+const LEAVE_DIRECTIVE = 'br';
+
+const ALIASES = {
+    width: 'minWidth',
+    min: 'minWidth',
+    align: 'alignItems',
+    grow: 'flexGrow',
+    cols: 'columns',
+    basis: 'flexBasis',
+    justify: 'justifyContent',
+    class: 'className',
+    classes: 'className'
+};
+
 /**
  * 
  * @param {string} dashed dashed string, e.g. hello-bello
@@ -27,10 +59,9 @@ const dashedString = (camelCased) => {
 /**
  * 
  * @param {{[key: string]: string}} attributes 
- * @param {boolean} transform2CamelCase
  * @param {{[key: string]: string}} keyAliases
  */
-const transformAttributes = (attributes, transform2CamelCase = false, keyAliases = {class: 'className'}) => {
+const transformAttributes = (attributes, keyAliases = ALIASES) => {
     const options = {
         styles: {},
         className: '',
@@ -42,7 +73,7 @@ const transformAttributes = (attributes, transform2CamelCase = false, keyAliases
             k = keyAliases[k];
         }
         if (all.includes(dashedString(k))) {
-            options.styles[camelCased(k)] = value;
+            options.styles[camelCased(k)] = value === '' ? true : value;
         }
         if (k === 'className') {
             options.className = value;
@@ -67,10 +98,10 @@ const indicesOf = (nodes, tags) => {
 }
 
 /**
- * 
+ * Images are wrapped in paragraphs by default - this removes the wrapping
  * @param {import('unist').Parent['children']} nodes
  */
-const unwrapImages = (nodes) => {
+const flattenImages = (nodes) => {
     return nodes.map((node) => {
         if (node.type === 'paragraph' && node.children.length === 1 && node.children[0].type === 'image') {
             return node.children[0];
@@ -79,95 +110,122 @@ const unwrapImages = (nodes) => {
     })
 }
 
-// This plugin is an example to turn `::youtube` into iframes.
-function myRemarkPlugin() {
-    /**
-     * @param {import('mdast').Root} tree
-     *   Tree.
-     * @param {import('vfile').VFile} file
-     *   File.
-     * @returns {undefined}
-     *   Nothing.
-     */
-    return (tree, file) => {
-        visit(tree, function (node) {
-            if (node.type === 'containerDirective') {
-                if (node.name !== 'cards') {
-                    return;
-                }
-                const data = node.data || (node.data = {})
-                const attributes = transformAttributes(node.attributes || {})
-                data.hName = 'div'
-                data.hProperties = {
+/**
+ * 
+ * @param {number[]} indices 
+ * @param {number} lastPosition the 'end' of the last range
+ * @param {boolean} filterCommonEnd if true, the last range will be filtered out if start === lastPosition - 1
+ */
+const indicesToRanges = (indices, lastPosition, filterCommonEnd = false) => {
+    const all = [...indices, lastPosition];
+    return all.map((index, idx) => {
+        const start = idx === 0 ? 0 : all[idx - 1] + 1;
+        const end = index;
+        if (start === 0 && end === 0) {
+            return null;
+        }
+        if (filterCommonEnd && start === lastPosition - 1) {
+            return null;
+        }
+        return {start, end};
+    }).filter((pos) => pos !== null);
+}
+
+/**
+ * 
+ * @param {{tag: string, className: string, children: {className: string}}[]} optionsInput
+ * @returns {import('unified').Transformer}
+ */
+const plugin = function plugin(optionsInput = {}) {
+    return function transformer(root) {
+        visit(root, function (node) {
+            if (node.type !== 'containerDirective') {
+                return;
+            }
+            if (!CONTAINER_DIRECTIVES.includes(node.name)) {
+                return;
+            }
+
+            const attributes = transformAttributes(node.attributes || {})
+            node.data = {
+                hName: 'div',
+                hProperties: {
                     ...attributes.attributes,
-                    className: `flex-cards flex ${attributes.className}`,
+                    className: `${DEFAULT_CLASSES[node.name].container} ${attributes.className}`,
                     style: attributes.styles,
                 }
-                const breaks = indicesOf(node.children, [{key: 'type', value: 'leafDirective'}, {key: 'name', value: 'br'}]);
-                breaks.push(node.children.length);
-                if (breaks[0] !== 0) {
-                    breaks.unshift(-1);
-                }
-                const wrapperChildren = [];
-                for (var idx = 0; idx < breaks.length - 1; idx++) {
-                    const divider = node.children[breaks[idx]];
-                    const dividerProps = transformAttributes(divider ? divider.attributes || {} : {});
+            }
 
-                    const rawChildren = unwrapImages(node.children.slice(breaks[idx] + 1, breaks[idx + 1]));
-                    const imgs = indicesOf(rawChildren, [{value: 'image', key: 'type'}]);
-                    const children = imgs.length > 0 ? [] : rawChildren;
+            const brIndices = indicesOf(
+                node.children, 
+                [
+                    {key: 'type', value: 'leafDirective'},
+                    {key: 'name', value: LEAVE_DIRECTIVE}
+                ]
+            );
+            
+            const contentRanges = indicesToRanges(brIndices, node.children.length);
 
-                    if (imgs.length > 0) {
-                        if (imgs[imgs.length-1] !== rawChildren.length - 1) {
-                            imgs.push(rawChildren.length);
+            const wrapperChildren = [];
+            contentRanges.forEach((pos) => {
+                const divider = node.children[pos.start - 1];
+                const dividerProps = transformAttributes(divider ? divider.attributes || {} : {});
+                let children = [];
+                if (node.name === 'flex') {
+                    children = node.children.slice(pos.start, pos.end);
+                } else if (node.name === 'cards') {
+                    const rawChildren = flattenImages(node.children.slice(pos.start, pos.end));
+                    const imgAndCodeIndices = [...new Set([
+                        ...indicesOf(rawChildren, [{value: 'image', key: 'type'}]),
+                        ...indicesOf(rawChildren, [{value: 'code', key: 'type'}])
+                    ])].sort();
+                    
+                    const bodyRanges = indicesToRanges(imgAndCodeIndices, rawChildren.length);
+                    bodyRanges.forEach((range) => {
+                        const img = rawChildren[range.start - 1];
+                        if (img) {
+                            children.push({
+                                type: 'content',
+                                data: {
+                                    hName: 'div',
+                                    hProperties: {
+                                        className: DEFAULT_CLASSES[node.name].image,
+                                    }
+                                },
+                                children: [img]
+                            });
                         }
-                        for (var iidx = 0; iidx < imgs.length; iidx++) {
-                            const imgIdx = imgs[iidx];
-                            if (imgIdx > 0) {
-                                children.push({
-                                    type: 'content',
-                                    data: {
-                                        hName: 'div',
-                                        hProperties: {
-                                            className: 'card__body',
-                                        }
-                                    },
-                                    children: rawChildren.slice(imgs[iidx - 1] + 1, imgIdx)
-                                });
-                            }
-                            if (imgIdx < rawChildren.length) {
-                                children.push({
-                                    type: 'content',
-                                    data: {
-                                        hName: 'div',
-                                        hProperties: {
-                                            className: 'card__image',
-                                        }
-                                    },
-                                    children: rawChildren.slice(imgs[iidx], imgs[iidx] + 1)
-                                });
-                            }
+                        const body = rawChildren.slice(range.start, range.end);
+                        if (body.length > 0) {
+                            children.push({
+                                type: 'content',
+                                data: {
+                                    hName: 'div',
+                                    hProperties: {
+                                        className: DEFAULT_CLASSES[node.name].content,
+                                    }
+                                },
+                                children: body
+                            });
                         }
-                    }
-                    wrapperChildren.push({
-                        type: 'flexHTML',
-                        data: {
-                            hName: 'div',
-                            hProperties: {
-                                ...dividerProps.attributes,
-                                className: `item card ${dividerProps.className}`,
-                                style: {
-                                    ...dividerProps.styles
-                                }
-                            }
-                        },
-                        children: children
                     });
                 }
-                node.children = wrapperChildren;
-            }
+                wrapperChildren.push({
+                    type: 'flexHTML',
+                    data: {
+                        hName: 'div',
+                        hProperties: {
+                            ...dividerProps.attributes,
+                            className: `${DEFAULT_CLASSES[node.name].item} ${dividerProps.className}`,
+                            style: dividerProps.styles
+                        }
+                    },
+                    children: children
+                });
+            });
+            node.children = wrapperChildren;
         })
     }
 }
 
-export default myRemarkPlugin;
+export default plugin;
