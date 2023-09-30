@@ -38,11 +38,10 @@ module.exports = async function createConfigAsync() {
           docs: {
             beforeDefaultRemarkPlugins: [
               // (await import('./src/plugins/remark-images.cjs')).default
-              (await import('./src/plugins/remark-direct.mjs')).default,
             ],
             remarkPlugins: [
-              // // (await import('./src/plugins/remark-flex.cjs')).default,
-              // (await import('remark-deflist-simple')).default,
+              (await import('./src/plugins/remark-flex-cards.mjs')).default,
+              (await import('remark-deflist')).default,
             ],
             sidebarPath: require.resolve('./sidebars.js'),
             routeBasePath: 'synopsis',
@@ -54,8 +53,8 @@ module.exports = async function createConfigAsync() {
               // (await import('./src/plugins/remark-images.cjs')).default
             ],
             remarkPlugins: [
-              // // (await import('./src/plugins/remark-flex.cjs')).default,
-              // (await import('remark-deflist-simple')).default,
+              (await import('./src/plugins/remark-flex-cards.mjs')).default,
+              (await import('remark-deflist')).default,
             ],
             blogTitle: 'Dev Blog',
             routeBasePath: '/',
@@ -72,8 +71,8 @@ module.exports = async function createConfigAsync() {
               // (await import('./src/plugins/remark-images.cjs')).default
             ],
             remarkPlugins: [
-              // // (await import('./src/plugins/remark-flex.cjs')).default,
-              // (await import('remark-deflist-simple')).default,
+              (await import('./src/plugins/remark-flex-cards.mjs')).default,
+              (await import('remark-deflist')).default,
             ],
           },
           theme: {
@@ -162,11 +161,11 @@ module.exports = async function createConfigAsync() {
         '@docusaurus/plugin-content-docs',
         {
           beforeDefaultRemarkPlugins: [
-            // (await import('./src/plugins/remark-images.cjs')).default
+              // (await import('./src/plugins/remark-images.cjs')).default
           ],
           remarkPlugins: [
-            // // (await import('./src/plugins/remark-flex.cjs')).default,
-            // (await import('remark-deflist-simple')).default,
+            (await import('./src/plugins/remark-flex-cards.mjs')).default,
+            (await import('remark-deflist')).default,
           ],
           id: 'recipes',
           path: 'recipes',

@@ -5,10 +5,8 @@ sidebar_position: 1
 # Knowledgebase
 
 :::cards
-
-hi
-
-*** --a=1
-
-fucker :D
+::br{background='var(--ifm-color-primary)'}
+Hello
+::br
+and welcome to the knowledgebase!
 :::
