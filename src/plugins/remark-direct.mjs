@@ -1,12 +1,65 @@
 import { visit } from 'unist-util-visit'
+import {all} from 'known-css-properties';
+/**
+ * 
+ * @param {string} dashed dashed string, e.g. hello-bello
+ * @returns string
+ */
+const camelCased = (dashed) => {
+    return dashed.replace(/-([a-zA-Z])/g, (g) => g[1].toUpperCase());
+}
+
+/**
+ * 
+ * @param {string} camelCased dashed string, e.g. hello-bello
+ * @returns string
+ */
+const dashedString = (camelCased) => {
+    const match = camelCased.match(/[A-Z]/g);
+    if (!match) {
+        return camelCased;
+    }
+    return match.reduce((acc, c) => {
+        return acc.replace(c, `-${c.toLowerCase()}`);
+    }, camelCased);
+}
+
+/**
+ * 
+ * @param {{[key: string]: string}} attributes 
+ * @param {boolean} transform2CamelCase
+ * @param {{[key: string]: string}} keyAliases
+ */
+const transformAttributes = (attributes, transform2CamelCase = false, keyAliases = {class: 'className'}) => {
+    const options = {
+        styles: {},
+        className: '',
+        attributes: {},
+    };
+    for (const [key, value] of Object.entries(attributes)) {
+        let k = key;
+        if (k in keyAliases) {
+            k = keyAliases[k];
+        }
+        if (all.includes(dashedString(k))) {
+            options.styles[camelCased(k)] = value;
+        }
+        if (k === 'className') {
+            options.className = value;
+        }
+        options.attributes[k] = value;
+    }
+    return options;
+}
+
 /**
  * 
  * @param {import('unist').Parent['children']} nodes 
- * @param {{value: string, key: string}} tag 
+ * @param {{value: string, key: string}[]} tags
  */
-const indicesOf = (nodes, tag) => {
+const indicesOf = (nodes, tags) => {
     return nodes.reduce((acc, node, idx) => {
-        if (node[tag.key] === tag.value) {
+        if (tags.every(t => node[t.key] === t.value)) {
             acc.push(idx);
         }
         return acc;
@@ -37,27 +90,20 @@ function myRemarkPlugin() {
      *   Nothing.
      */
     return (tree, file) => {
-        const lines = file.value.split('\n');
         visit(tree, function (node) {
-            if (
-                node.type === 'containerDirective' ||
-                node.type === 'leafDirective' ||
-                node.type === 'textDirective'
-            ) {
+            if (node.type === 'containerDirective') {
                 if (node.name !== 'cards') {
                     return;
                 }
                 const data = node.data || (node.data = {})
-                const attributes = node.attributes || {}
-
+                const attributes = transformAttributes(node.attributes || {})
                 data.hName = 'div'
                 data.hProperties = {
-                    className: 'flex-cards flex',
+                    ...attributes.attributes,
+                    className: `flex-cards flex ${attributes.className}`,
+                    style: attributes.styles,
                 }
-                if (node.children.length === 0) {
-                    return;
-                }
-                const breaks = indicesOf(node.children, {value: 'thematicBreak', key: 'type'});
+                const breaks = indicesOf(node.children, [{key: 'type', value: 'leafDirective'}, {key: 'name', value: 'br'}]);
                 breaks.push(node.children.length);
                 if (breaks[0] !== 0) {
                     breaks.unshift(-1);
@@ -65,15 +111,12 @@ function myRemarkPlugin() {
                 const wrapperChildren = [];
                 for (var idx = 0; idx < breaks.length - 1; idx++) {
                     const divider = node.children[breaks[idx]];
-                    if (divider && divider.type === 'thematicBreak') {
-                        const props = divider.attributes || {};
-                        const txt = lines.slice(divider.position.start.line - 1, divider.position.end.line).join('\n');
-                        console.log('divider', lines);
-                        console.log('divider', divider.attributes, divider.data);
-                    }
+                    const dividerProps = transformAttributes(divider ? divider.attributes || {} : {});
+
                     const rawChildren = unwrapImages(node.children.slice(breaks[idx] + 1, breaks[idx + 1]));
-                    const imgs = indicesOf(rawChildren, {value: 'image', key: 'type'});
+                    const imgs = indicesOf(rawChildren, [{value: 'image', key: 'type'}]);
                     const children = imgs.length > 0 ? [] : rawChildren;
+
                     if (imgs.length > 0) {
                         if (imgs[imgs.length-1] !== rawChildren.length - 1) {
                             imgs.push(rawChildren.length);
@@ -111,7 +154,11 @@ function myRemarkPlugin() {
                         data: {
                             hName: 'div',
                             hProperties: {
-                                className: 'item card',
+                                ...dividerProps.attributes,
+                                className: `item card ${dividerProps.className}`,
+                                style: {
+                                    ...dividerProps.styles
+                                }
                             }
                         },
                         children: children
