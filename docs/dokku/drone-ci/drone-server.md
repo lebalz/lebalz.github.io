@@ -70,18 +70,18 @@ dokku git:from-image drone-server drone/drone:latest
 dokku letsencrypt drone-server
 ```
 
-:::info `DRONE_RPC_SECRET`
+:::info[`DRONE_RPC_SECRET`]
 Required string value provides the shared secret generated in the previous step. This is used to authenticate the rpc connection between the server and runners. The server and runner must be provided the same secret value. A secure random string can be generated with `openssl rand -hex 32`.
 :::
 
-:::danger Careful `DRONE_SERVER_PROTO`
+:::danger[Careful `DRONE_SERVER_PROTO`]
 Make sure you disable the HTTPS redirect option. Dokku terminates the SSL
 connection with Nginx and internally proxies requests to the container by HTTP.
 This makes Drone believe an HTTP request arrived and it issues a redirect to
 HTTPS, resulting in an infinite loop.
 :::
 
-:::danger Define `DRONE_USER_FILTER`
+:::danger[Define `DRONE_USER_FILTER`]
 Make sure to configure `DRONE_USER_FILTER` - otherwise everyone can authentify himself on your server and use your cpu time 🥵 (drone server has not any restrictions by default 🤯).
 
 ```bash

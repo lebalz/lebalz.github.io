@@ -1,10 +1,10 @@
 # Schoggi Muffins
 
 
-:::cards --class=recipe
+:::cards[--class=recipe]
 ![](images/muffins.jpg)
 
-:::flex --class=step --align-items=center
+:::flex[--class=step --align-items=center]
 200 g
 : schwarze Schoggi
 150 g
@@ -12,7 +12,7 @@
 ***
 Schmelzen
 :::
-:::flex --class=step --align-items=center
+:::flex[--class=step --align-items=center]
 4
 : Eigelb
 200 g
@@ -22,7 +22,7 @@ schaumig rühren
 :::
 
 
-:::flex --class=step --align-items=center
+:::flex[--class=step --align-items=center]
 100 g
 : Mehl
 ***
@@ -30,7 +30,7 @@ beigeben + geschmolzene Masse auch
 :::
 
 
-:::flex --class=step --align-items=center
+:::flex[--class=step --align-items=center]
 4
 : Eiweiss
 ***

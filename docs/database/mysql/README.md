@@ -30,7 +30,7 @@ max_connections = 1000
 max_connect_errors=10000
 ```
 
-:::tip Current Configuration
+:::tip[Current Configuration]
 
 ```sql
 SHOW VARIABLES;
