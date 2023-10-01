@@ -15,6 +15,86 @@ const ALIASES = {
 
 /**
  * 
+ * @param {string} s 
+ * @returns 
+ */
+export const captialize = (s) => {
+    if (!s) {
+        return s;
+    }
+    return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+/**
+ * 
+ * @param {string} key 
+ * @param {number, bool, string} value 
+ * @param {{type: string, value: any, raw: string} | {type: 'Identifier', name: string}} expression 
+ * @returns 
+ */
+export const toMdxJsxExpressionAttribute = (key, value, expression) => {
+    return {
+        type: 'mdxJsxAttribute',
+        name: key,
+        value: {
+            type: 'mdxJsxAttributeValueExpression',
+            value: value,
+            data: {
+                estree: {
+                    type: 'Program',
+                    body: [
+                    {
+                        type: 'ExpressionStatement',
+                        expression: expression
+                    }
+                    ],
+                    sourceType: 'module',
+                    comments: []
+                }
+            }
+        }
+    }
+}
+
+export const toJsxAttribute = (key, value) => {
+    if (Number.isFinite(value)) {
+        return toMdxJsxExpressionAttribute(
+            key,
+            `${value}`,
+            {
+                type: 'Literal',
+                value: value,
+                raw: `${value}`
+            }
+        );
+    }
+    if (typeof value === 'boolean') {
+        if (value) {
+            return {
+                type: "mdxJsxAttribute",
+                name: key,
+                value: null
+            };
+        }
+        return toMdxJsxExpressionAttribute(
+            key,
+            `${value}`,
+            {
+                type: 'Literal',
+                value: value,
+                raw: `${value}`
+            }
+        );
+    }
+    return {
+        type: "mdxJsxAttribute",
+        name: key,
+        value: value === '' ? null : value
+    };
+}
+
+/**
+ * 
  * @param {string} dashed dashed string, e.g. hello-bello
  * @returns string
  */

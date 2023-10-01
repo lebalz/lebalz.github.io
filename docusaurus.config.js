@@ -41,6 +41,20 @@ module.exports = async function createConfigAsync() {
             ],
             remarkPlugins: [
               (await import('./src/plugins/remark-flex-cards.mjs')).default,
+              [
+                (await import('./src/plugins/remark-mdi.mjs')).default,
+                {
+                  colorMapping: {
+                    green: 'var(--ifm-color-success)',
+                    red: 'var(--ifm-color-danger)',
+                    orange: 'var(--ifm-color-warning)',
+                    yellow: '#edcb5a',
+                    blue: '#3578e5',
+                    cyan: '#01f0bc'
+                  },
+                  defaultSize: '1.25em'
+                }
+              ],
               (await import('remark-deflist')).default,
             ],
             sidebarPath: require.resolve('./sidebars.js'),
