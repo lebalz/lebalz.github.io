@@ -61,6 +61,27 @@ dokku git:from-image gitlab gitlab/gitlab-ee:15.11.13-ee.0
 dokku letsencrypt gitlab
 ```
 
+:::important On Ubuntu >=22.04
+In Ubuntu 22.04+ cgrub v2 is used, what is not compatible with the current dockerized gitlab setup. To use cgrub v1, add the following command to `CGRUB_CMDLINE_LINUX`:
+
+Check if you have cgrub v2: `grep cgroup /proc/filesystems`.
+
+```bash title="/etc/default/grub"
+# nano /etc/default/grub
+
+GRUB_CMDLINE_LINUX="cgroup_enable=memory cgroup_memory=1 swapaccount=1 systemd.unified_cgroup_hierarchy=0"
+```
+
+and then run
+
+```bash
+sudo update-grub
+```
+and reboot...
+
+after that you should find the `memory`-folder under `/sys/fs/crgoup/memory`.
+:::
+
 ## Admin login
 
 - user: **root**
