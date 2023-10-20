@@ -54,8 +54,7 @@ dokku config:set gitlab GITLAB_OMNIBUS_CONFIG="external_url 'https://gitlab.exam
 dokku config:set --no-restart node-red DOKKU_LETSENCRYPT_EMAIL=foo@bar.ch
 
 # assign image to gitlab
-dokku git:from-image gitlab gitlab/gitlab-ee:latest
-
+dokku git:from-image gitlab gitlab-ee:15.11.13-ee.0
 
 
 # optional: letsencrypt
