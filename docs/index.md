@@ -16,3 +16,7 @@ and welcome to the knowledgebase!
 ::br{.noFlex}
 :mdi[book-open-page-variant]{color=teal size=20em }
 :::
+
+[[x]]
+
+:k[x]

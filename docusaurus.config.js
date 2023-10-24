@@ -41,6 +41,7 @@ module.exports = async function createConfigAsync() {
             ],
             remarkPlugins: [
               (await import('./src/plugins/remark-flex-cards.mjs')).default,
+              (await import('./src/plugins/remark-kbd.mjs')).default,
               [
                 (await import('./src/plugins/remark-mdi.mjs')).default,
                 {
