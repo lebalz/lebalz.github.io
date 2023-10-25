@@ -9,6 +9,8 @@ dokku postgres:create planka
 dokku postgres:link planka planka
 
 dokku config:set planka BASE_URL=https://domain.com
+dokku domains:add planka domain.com
+
 dokku config:set planka SECRET_KEY_BASE=$(openssl rand -base64 48)
 
 dokku config:set planka DEFAULT_ADMIN_EMAIL=demo@demo.demo
