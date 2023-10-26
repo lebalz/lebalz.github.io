@@ -1,6 +1,6 @@
 # Dev Blog
 
-[![Build Status](https://drone.gbsl.website/api/badges/lebalz/blog/status.svg)](https://drone.gbsl.website/lebalz/blog)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/65de528c-bb96-4d1f-8d92-b70fff1bcac9/deploy-status)](https://app.netlify.com/sites/melodious-selkie-c8bb28/deploys)
 
 https://lebalz.ch
 
