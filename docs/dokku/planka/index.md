@@ -68,7 +68,7 @@ planka:
       cmd: "docker run --rm --volumes-from planka.web.1 -v /tmp/planka-backup/volumes:/backup ubuntu cp -r /app/public/project-background-images /backup/project-background-images"
       stage: "pre-backup"
     volume-attachments:
-      cmd: "docker run --rm --volumes-from planka.web.1 -v /tmp/planka-backup/volumes:/backup ubuntu cp -r /app/public/attachments /backup/attachments"
+      cmd: "docker run --rm --volumes-from planka.web.1 -v /tmp/planka-backup/volumes:/backup ubuntu cp -r /app/private/attachments /backup/attachments"
       stage: "pre-backup"
     postgres:
       cmd: "dokku postgres:export planka"
@@ -78,3 +78,14 @@ planka:
       cmd: "rm -rm /tmp/planka-backup"
       stage: "post-backup"
 ```
+
+### Restore Volumes
+Copy the backup volumes to `/tmp/planka/volumes` and then run
+
+```bash
+docker run --rm --volumes-from planka.web.1 -v /tmp/planka/volumes:/backup ubuntu cp -rf /backup/user-avatars /app/public/
+docker run --rm --volumes-from planka.web.1 -v /tmp/planka/volumes:/backup ubuntu cp -rf /backup/project-background-images /app/public/
+docker run --rm --volumes-from planka.web.1 -v /tmp/planka/volumes:/backup ubuntu cp -rf /backup/attachments /app/private/
+```
+
+
