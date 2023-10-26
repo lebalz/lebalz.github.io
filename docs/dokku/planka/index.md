@@ -50,3 +50,31 @@ dokku config:set planka OIDC_IGNORE_ROLES=true
 docker pull ghcr.io/plankanban/planka:latest
 dokku ps:rebuild planka
 ```
+
+## Backup Config
+When backing up with [👉 dokku-keeper](https://github.com/lebalz/dokku-keeper)
+
+```yml title="backup_config.yml"
+planka:
+  files:
+    - "/home/dokku/planka/ENV"
+  folders:
+    - "/tmp/planka-backup/volumes"
+  commands:
+    volume-user-avatars:
+      cmd: "docker run --rm --volumes-from planka.web.1 -v /tmp/planka-backup/volumes:/backup ubuntu cp -r /app/public/user-avatars /backup/user-avatars"
+      stage: "pre-backup"
+    volume-project-background-images:
+      cmd: "docker run --rm --volumes-from planka.web.1 -v /tmp/planka-backup/volumes:/backup ubuntu cp -r /app/public/project-background-images /backup/project-background-images"
+      stage: "pre-backup"
+    volume-attachments:
+      cmd: "docker run --rm --volumes-from planka.web.1 -v /tmp/planka-backup/volumes:/backup ubuntu cp -r /app/public/attachments /backup/attachments"
+      stage: "pre-backup"
+    postgres:
+      cmd: "dokku postgres:export planka"
+      to: "/database/planka.dump"
+      stage: backup
+    cleanup:
+      cmd: "rm -rm /tmp/planka-backup"
+      stage: "post-backup"
+```
