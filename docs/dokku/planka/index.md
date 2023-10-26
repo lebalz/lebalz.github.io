@@ -4,7 +4,7 @@
 
 ## Dokku installation
 
-- [👉 docker-compose.yml]([https://docs.planka.cloud/docs/installation/docker/production_version](https://github.com/plankanban/planka/blob/master/docker-compose.yml))
+- [👉 docker-compose.yml](https://github.com/plankanban/planka/blob/master/docker-compose.yml)
 - [👉 Docker Installation](https://docs.planka.cloud/docs/installation/docker/production_version)
 
 ```bash
