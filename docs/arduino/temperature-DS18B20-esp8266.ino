@@ -19,20 +19,26 @@ OneWire oneWire(ONE_WIRE_BUS);
 // Pass oneWire reference to DallasTemperature library
 DallasTemperature sensors(&oneWire);
 
-bool configured = true;
+bool is_top = true;
 void setup(void)
 {
   Serial.begin(9600);
-  
+  Serial.println("Start");
   display.init();
   display.flipScreenVertically();
+  display.clear();
   sensors.begin();  // Start up the library
+  String start = "Starting...";
+  display.drawStringMaxWidth(2, 5, 64, (const char*)start.c_str());;
+  display.display();
+  delay(1000);
 }
 
 void loop(void)
 { 
   // Send the command to get temperatures
-  sensors.requestTemperatures(); 
+  sensors.requestTemperatures();
+  is_top = !is_top;
 
   //print the temperature in Celsius
   // Serial.print(millis()/1000.0);
@@ -41,10 +47,12 @@ void loop(void)
   Serial.println(temp);
   String title = "Temperatur:";
   String tempstr = String(temp, 2) + "° C";
+  String process = is_top ? "_ " : " _";
   display.clear();
   display.drawStringMaxWidth(2, 5, 64, (const char*)title.c_str());
-  display.drawStringMaxWidth(2, 28, 64, (const char*)tempstr.c_str());
+  display.drawStringMaxWidth(2, 22, 64, (const char*)tempstr.c_str());
+  display.drawStringMaxWidth(2, 32, 64, (const char*)process.c_str());
   display.display();
   
-  delay(100);
+  delay(500);
 }
