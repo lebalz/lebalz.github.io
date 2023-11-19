@@ -35,7 +35,7 @@ Some content
 
         # Details element example
 
-        Hello <Icon path={mdiRobot} size={1.5} /> world!
+        Hello <Icon path={mdiRobot} size={1.5} className=\\"mdi-icon\\" /> world!
         "`);
     });
 
@@ -51,7 +51,7 @@ Some content
 
         # Details element example
 
-        Hello <Icon path={mdiRobot} color=\\"teal\\" size=\\"20em\\" /> world!
+        Hello <Icon path={mdiRobot} color=\\"teal\\" size=\\"20em\\" className=\\"mdi-icon\\" /> world!
         "`);
     });
 
@@ -69,7 +69,7 @@ Some content
         
         # Details element example
 
-        Hello <Icon path={mdiRobot} size={1.5} /> world!
+        Hello <Icon path={mdiRobot} size={1.5} className=\\"mdi-icon\\" /> world!
         "`);
     });
 });

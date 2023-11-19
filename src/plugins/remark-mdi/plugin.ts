@@ -3,7 +3,6 @@ import type { Plugin, Processor, Transformer } from 'unified';
 import type { MdxJsxFlowElement, MdxJsxTextElement, MdxjsEsm } from 'mdast-util-mdx';
 import type { TextDirective } from 'mdast-util-directive';
 import { camelCased, captialize, toJsxAttribute, toMdxJsxExpressionAttribute, transformAttributes } from '../helpers';
-import { as, at } from 'vitest/dist/reporters-5f784f42.js';
 import { Paragraph, Parent, Text } from 'mdast';
 
 const MDI_PROPS = [
@@ -128,17 +127,6 @@ const IMPORT_MDI_ICONS = (icons: string[]) => {
             }
         }
     };
-}
-
-interface MdiNode extends Parent {
-    type: 'MdiIcon';
-    data: {
-        hName: string;
-        hProperties: {
-            style: Partial<CSSStyleDeclaration>;
-        };
-    };
-    children: MdxJsxFlowElement[];
 }
 
 const plugin: Plugin = function plugin(
