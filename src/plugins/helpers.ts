@@ -1,4 +1,6 @@
-import {all} from 'known-css-properties';
+import { all as KnownCssProperties } from 'known-css-properties';
+import { MdxJsxAttribute } from 'mdast-util-mdx';
+import { Parent } from 'unist';
 
 
 const ALIASES = {
@@ -13,40 +15,32 @@ const ALIASES = {
     classes: 'className'
 };
 
-/**
- * 
- * @param {string} s 
- * @returns 
- */
-export const captialize = (s) => {
+export const captialize = (s: string) => {
     if (!s) {
         return s;
     }
     return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-/**
- * 
- * @param {string} key 
- * @param {number, bool, string} value 
- * @param {{type: string, value: any, raw: string} | {type: 'Identifier', name: string}} expression 
- * @returns 
- */
-export const toMdxJsxExpressionAttribute = (key, value, expression) => {
+export const toMdxJsxExpressionAttribute = (
+    key: string,
+    value: number | boolean | string,
+    expression: { type: string, value: any, raw: string } | { type: 'Identifier', name: string }
+): MdxJsxAttribute => {
     return {
         type: 'mdxJsxAttribute',
         name: key,
         value: {
             type: 'mdxJsxAttributeValueExpression',
-            value: value,
+            value: `${value}`,
             data: {
                 estree: {
                     type: 'Program',
                     body: [
-                    {
-                        type: 'ExpressionStatement',
-                        expression: expression
-                    }
+                        {
+                            type: 'ExpressionStatement',
+                            expression: expression as any
+                        }
                     ],
                     sourceType: 'module',
                     comments: []
@@ -56,7 +50,7 @@ export const toMdxJsxExpressionAttribute = (key, value, expression) => {
     }
 }
 
-export const toJsxAttribute = (key, value) => {
+export const toJsxAttribute = (key: string, value: string | number | boolean): MdxJsxAttribute => {
     if (Number.isFinite(value)) {
         return toMdxJsxExpressionAttribute(
             key,
@@ -89,25 +83,24 @@ export const toJsxAttribute = (key, value) => {
     return {
         type: "mdxJsxAttribute",
         name: key,
-        value: value === '' ? null : value
+        value: value === '' ? null : `${value}`
     };
 }
 
 /**
  * 
- * @param {string} dashed dashed string, e.g. hello-bello
- * @returns string
+ * @param dashed dashed string, e.g. hello-bello
+ * @returns camelCased string, e.g. helloBello
  */
-export const camelCased = (dashed) => {
+export const camelCased = (dashed: string): string => {
     return dashed.replace(/-([a-zA-Z])/g, (g) => g[1].toUpperCase());
 }
 
 /**
- * 
- * @param {string} camelCased dashed string, e.g. hello-bello
- * @returns string
+ * @param camelCased dashed string, e.g. hellBello
+ * @returns dashed string, e.g. hello-bello
  */
-export const dashedString = (camelCased) => {
+export const dashedString = (camelCased: string): string => {
     const match = camelCased.match(/[A-Z]/g);
     if (!match) {
         return camelCased;
@@ -117,14 +110,23 @@ export const dashedString = (camelCased) => {
     }, camelCased);
 }
 
+interface Options {
+    style: {[key: string]: string | boolean};
+    className: string;
+    attributes: {[key: string]: string | number | boolean};
+}
+
 /**
  * 
- * @param {{[key: string]: string}} attributes 
- * @param {{[key: string]: string}} keyAliases
+ * @param attributes 
+ * @param keyAliases
  */
-export const transformAttributes = (attributes, keyAliases = ALIASES) => {
-    const options = {
-        styles: {},
+export const transformAttributes = (
+    attributes: {[key: string]: string},
+    keyAliases: {[key: string]: string} = ALIASES
+) => {
+    const options: Options = {
+        style: {},
         className: '',
         attributes: {},
     };
@@ -133,10 +135,9 @@ export const transformAttributes = (attributes, keyAliases = ALIASES) => {
         if (k in keyAliases) {
             k = keyAliases[k];
         }
-        if (all.includes(dashedString(k))) {
-            options.styles[camelCased(k)] = value === '' ? true : value;
-        }
-        if (k === 'className') {
+        if (KnownCssProperties.includes(dashedString(k))) {
+            options.style[camelCased(k)] = value === '' ? true : value;
+        } else if (k === 'className') {
             options.className = value;
         }
         options.attributes[k] = value;
@@ -144,12 +145,7 @@ export const transformAttributes = (attributes, keyAliases = ALIASES) => {
     return options;
 }
 
-/**
- * 
- * @param {import('unist').Parent['children']} nodes 
- * @param {{value: string, key: string}[]} tags
- */
-export const indicesOf = (nodes, tags) => {
+export const indicesOf = (nodes: Parent['children'], tags: {value: string, key: string}[]) => {
     return nodes.reduce((acc, node, idx) => {
         if (tags.every(t => node[t.key] === t.value)) {
             acc.push(idx);
@@ -158,14 +154,7 @@ export const indicesOf = (nodes, tags) => {
     }, []);
 }
 
-
-/**
- * 
- * @param {number[]} indices 
- * @param {number} lastPosition the 'end' of the last range
- * @param {boolean} filterCommonEnd if true, the last range will be filtered out if start === lastPosition - 1
- */
-export const indicesToRanges = (indices, lastPosition, filterCommonEnd = false) => {
+export const indicesToRanges = (indices: number[], lastPosition: number, filterCommonEnd: boolean = false) => {
     const all = [...indices, lastPosition];
     return all.map((index, idx) => {
         const start = idx === 0 ? 0 : all[idx - 1] + 1;
@@ -176,6 +165,6 @@ export const indicesToRanges = (indices, lastPosition, filterCommonEnd = false) 
         if (filterCommonEnd && start === lastPosition - 1) {
             return null;
         }
-        return {start, end};
+        return { start, end };
     }).filter((pos) => pos !== null);
 }

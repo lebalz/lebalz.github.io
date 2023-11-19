@@ -2,7 +2,7 @@ import type { Config } from '@docusaurus/types';
 import * as Preset from '@docusaurus/preset-classic';
 
 const { themes } = require('prism-react-renderer');
-import fucktails from './src/plugins/remark-mdi';
+import mdiPlugin from './src/plugins/remark-mdi/plugin';
 
 const lightCodeTheme = themes.github;
 const darkCodeTheme = themes.dracula;
@@ -38,7 +38,20 @@ const config: Config = {
       {
         docs: {
           beforeDefaultRemarkPlugins: [
-            fucktails
+            [
+              mdiPlugin,
+              {
+                colorMapping: {
+                  green: 'var(--ifm-color-success)',
+                  red: 'var(--ifm-color-danger)',
+                  orange: 'var(--ifm-color-warning)',
+                  yellow: '#edcb5a',
+                  blue: '#3578e5',
+                  cyan: '#01f0bc'
+                },
+                defaultSize: '1.25em'
+              }
+            ]
             // (await import('./src/plugins/remark-images.cjs')).default
           ],
           remarkPlugins: [
