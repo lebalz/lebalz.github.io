@@ -36,8 +36,7 @@ Some content
     });
 
     it("accepts closing ]] without converting to kbd", async () => {
-        const input = `Hello ctrl]] world!
-        `;
+        const input = `Hello ctrl]] world!`;
         const result = await process(input);
         expect(result).toMatchInlineSnapshot(`
         "Hello ctrl]] world!
@@ -45,8 +44,7 @@ Some content
     });
 
     it("accepts opening [[ without converting to kbd", async () => {
-        const input = `Hello [[ctrl world!
-        `;
+        const input = `Hello [[ctrl world!`;
         const result = await process(input);
         expect(result).toMatchInlineSnapshot(`
         "Hello \\\\[\\\\[ctrl world!
@@ -54,8 +52,7 @@ Some content
     });
 
     it("accepts unbalanced opening and closing brackets", async () => {
-        const input = `Hello [[ctrl]] [[ world!
-        `;
+        const input = `Hello [[ctrl]] [[ world!`;
         const result = await process(input);
         expect(result).toMatchInlineSnapshot(`
         "Hello <kbd>ctrl</kbd> \\\\[\\\\[ world!
@@ -63,8 +60,7 @@ Some content
     });
 
     it("accepts unbalanced opening and closing brackets", async () => {
-        const input = `Hello [[ctrl]] ]] world!
-        `;
+        const input = `Hello [[ctrl]] ]] world!`;
         const result = await process(input);
         expect(result).toMatchInlineSnapshot(`
         "Hello <kbd>ctrl</kbd> ]] world!
