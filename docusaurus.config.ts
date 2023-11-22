@@ -8,19 +8,6 @@ import flexCardsPlugin from './src/plugins/remark-flex-cards/plugin';
 
 const lightCodeTheme = themes.github;
 const darkCodeTheme = themes.dracula;
-// const remarkFlex = require('./src/plugins/remark-flex.cjs');
-// const remarkImage = require('./src/plugins/remark-images.cjs');
-// const remarkDeflist = require('remark-deflist-simple');
-
-// const REMARK_PLUGINS = {
-//   beforeDefaultRemarkPlugins: [
-//     remarkImage
-//   ],
-//   remarkPlugins: [
-//     remarkFlex,
-//     remarkDeflist
-//   ]
-// };
 const REMARK_PLUGINS = {
   remarkPlugins: [
     flexCardsPlugin,
