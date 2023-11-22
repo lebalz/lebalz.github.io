@@ -1,9 +1,9 @@
 import { visit } from 'unist-util-visit';
 import type { Plugin, Processor, Transformer } from 'unified';
-import type { MdxJsxFlowElement, MdxJsxTextElement, MdxjsEsm } from 'mdast-util-mdx';
+import type { MdxJsxTextElement, MdxjsEsm } from 'mdast-util-mdx';
 import type { TextDirective } from 'mdast-util-directive';
 import { camelCased, captialize, toJsxAttribute, toMdxJsxExpressionAttribute, transformAttributes } from '../helpers';
-import { Paragraph, Parent, Text } from 'mdast';
+import { Parent, Text } from 'mdast';
 
 const MDI_PROPS = [
     {

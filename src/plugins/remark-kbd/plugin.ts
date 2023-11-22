@@ -1,8 +1,7 @@
 import { visit, CONTINUE } from 'unist-util-visit';
 import type { Plugin, Processor, Transformer } from 'unified';
 import type { MdxJsxTextElement } from 'mdast-util-mdx';
-import { Content, Parent, PhrasingContent, Text } from 'mdast';
-import { toString } from 'mdast-util-to-string';
+import { Parent, PhrasingContent, Text } from 'mdast';
 
 /**
  * negative lookbehind:
