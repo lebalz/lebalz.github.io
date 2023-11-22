@@ -109,6 +109,91 @@ Some content
         `);
     });
 
+    it("sets css properties", async () => {
+      
+      const input = alignLeft(`
+          :::flex{.red alignItems='center'}
+          center
+          ::br
+          item
+          :::
+      `);
+      const result = await process(input);
+      expect(result).toMatchInlineSnapshot(`
+        "<div className=\\"flex red\\" style={{\\"alignItems\\":\\"center\\"}}>
+          <div className=\\"item\\">
+            <div className=\\"content\\">
+              center
+            </div>
+          </div>
+
+          <div className=\\"item\\">
+            <div className=\\"content\\">
+              item
+            </div>
+          </div>
+        </div>
+        "
+      `);
+    });
+
+    it("sets css properties for content blocks", async () => {
+      
+      const input = alignLeft(`
+          :::flex
+          center
+          ::br{.red alignItems='center'}
+          item
+          :::
+      `);
+      const result = await process(input);
+      expect(result).toMatchInlineSnapshot(`
+        "<div className=\\"flex\\">
+          <div className=\\"item\\">
+            <div className=\\"content\\">
+              center
+            </div>
+          </div>
+
+          <div className=\\"item red\\" style={{\\"alignItems\\":\\"center\\"}}>
+            <div className=\\"content\\">
+              item
+            </div>
+          </div>
+        </div>
+        "
+      `);
+    });
+
+    
+    it("can edit the properties of the first content blocks", async () => {
+      
+      const input = alignLeft(`
+          :::flex
+          ::br{.red alignItems='center'}
+          center
+          ::br
+          item
+          :::
+      `);
+      const result = await process(input);
+      expect(result).toMatchInlineSnapshot(`
+        "<div className=\\"flex\\">
+          <div className=\\"item red\\" style={{\\"alignItems\\":\\"center\\"}}>
+            <div className=\\"content\\">
+              center
+            </div>
+          </div>
+
+          <div className=\\"item\\">
+            <div className=\\"content\\">
+              item
+            </div>
+          </div>
+        </div>
+        "
+      `);
+    });
 });
 
 

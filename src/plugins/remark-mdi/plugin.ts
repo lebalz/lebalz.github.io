@@ -2,7 +2,7 @@ import { visit } from 'unist-util-visit';
 import type { Plugin, Processor, Transformer } from 'unified';
 import type { MdxJsxTextElement, MdxjsEsm } from 'mdast-util-mdx';
 import type { TextDirective } from 'mdast-util-directive';
-import { camelCased, captialize, toJsxAttribute, toMdxJsxExpressionAttribute, transformAttributes } from '../helpers';
+import { camelCased, captialize, toJsxAttribute, transformAttributes } from '../helpers';
 import { Parent, Text } from 'mdast';
 
 const MDI_PROPS = [
@@ -175,14 +175,6 @@ const plugin: Plugin = function plugin(
             if (!includedMdiIcons.has(mdiIcon)) {
                 newMdiIcons.add(mdiIcon);
             }
-            const path = toMdxJsxExpressionAttribute(
-                'path',
-                mdiIcon,
-                {
-                    type: 'Identifier',
-                    name: mdiIcon
-                }
-            );
             const rawAttributes = transformAttributes(directive.attributes || {});
             if (!('size' in rawAttributes.attributes)) {
                 delete rawAttributes.style['size']

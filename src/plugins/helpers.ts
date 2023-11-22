@@ -1,5 +1,6 @@
+import { Expression } from '@mdx-js/mdx/lib/plugin/recma-document';
 import { all as KnownCssProperties } from 'known-css-properties';
-import { MdxJsxAttribute } from 'mdast-util-mdx';
+import { MdxJsxAttribute, MdxJsxAttributeValueExpression } from 'mdast-util-mdx';
 import { Parent } from 'unist';
 
 
@@ -24,15 +25,15 @@ export const captialize = (s: string) => {
 
 export const toMdxJsxExpressionAttribute = (
     key: string,
-    value: number | boolean | string,
-    expression: { type: string, value: any, raw: string } | { type: 'Identifier', name: string }
+    value: number | boolean | string | Object,
+    expression: { type: string, value: any, raw: string } | { type: 'Identifier', name: string } | Expression
 ): MdxJsxAttribute => {
     return {
         type: 'mdxJsxAttribute',
         name: key,
         value: {
             type: 'mdxJsxAttributeValueExpression',
-            value: `${value}`,
+            value: typeof value === 'object' ? JSON.stringify(value) : `${value}`,
             data: {
                 estree: {
                     type: 'Program',
@@ -50,7 +51,8 @@ export const toMdxJsxExpressionAttribute = (
     }
 }
 
-export const toJsxAttribute = (key: string, value: string | number | boolean): MdxJsxAttribute => {
+
+export const toJsxAttribute = (key: string, value: string | number | boolean | Object): MdxJsxAttribute => {
     if (Number.isFinite(value)) {
         return toMdxJsxExpressionAttribute(
             key,
@@ -78,6 +80,32 @@ export const toJsxAttribute = (key: string, value: string | number | boolean): M
                 value: value,
                 raw: `${value}`
             }
+        );
+    }
+    if (typeof value === 'object') {
+        const expression: Expression = {
+            type: 'ObjectExpression',
+            properties: Object.entries(value).map(([k, v]) => ({
+                type: 'Property',
+                method: false,
+                shorthand: false,
+                computed: false,
+                key: {
+                    type: 'Identifier',
+                    name: k
+                },
+                value: {
+                    type: 'Literal',
+                    value: v,
+                    raw: JSON.stringify(v)
+                },
+                kind: 'init'
+            }))
+        } 
+        return toMdxJsxExpressionAttribute(
+            key,
+            value,
+            expression
         );
     }
     return {
@@ -111,9 +139,9 @@ export const dashedString = (camelCased: string): string => {
 }
 
 interface Options {
-    style: {[key: string]: string | boolean};
+    style: { [key: string]: string | boolean };
     className: string;
-    attributes: {[key: string]: string | number | boolean};
+    attributes: { [key: string]: string | number | boolean };
 }
 
 /**
@@ -122,8 +150,8 @@ interface Options {
  * @param keyAliases
  */
 export const transformAttributes = (
-    attributes: {[key: string]: string},
-    keyAliases: {[key: string]: string} = ALIASES
+    attributes: { [key: string]: string },
+    keyAliases: { [key: string]: string } = ALIASES
 ) => {
     const options: Options = {
         style: {},
@@ -145,7 +173,7 @@ export const transformAttributes = (
     return options;
 }
 
-export const indicesOf = (nodes: Parent['children'], tags: {value: string, key: string}[]) => {
+export const indicesOf = (nodes: Parent['children'], tags: { value: string, key: string }[]) => {
     return nodes.reduce((acc, node, idx) => {
         if (tags.every(t => node[t.key] === t.value)) {
             acc.push(idx);

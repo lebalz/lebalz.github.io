@@ -13,9 +13,9 @@ and welcome to the knowledgebase!
 :::
  
 :::flex{alignItems=center justifyContent=center}
+:mdi[silo-outline]
 ::br{.noFlex}
 :mdi[book-open-page-variant]{color=teal size=20em spin}
 :::
 
-[[ctrl + :mdi[microsoft-windows]]]
 

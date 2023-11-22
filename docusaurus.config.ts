@@ -4,6 +4,7 @@ import * as Preset from '@docusaurus/preset-classic';
 const { themes } = require('prism-react-renderer');
 import mdiPlugin from './src/plugins/remark-mdi/plugin';
 import kbdPlugin from './src/plugins/remark-kbd/plugin';
+import flexCardsPlugin from './src/plugins/remark-flex-cards/plugin';
 
 const lightCodeTheme = themes.github;
 const darkCodeTheme = themes.dracula;
@@ -40,6 +41,7 @@ const config: Config = {
         docs: {
           beforeDefaultRemarkPlugins: [
             // (await import('./src/plugins/remark-images.cjs')).default
+            flexCardsPlugin,
           ],
           remarkPlugins: [
             [

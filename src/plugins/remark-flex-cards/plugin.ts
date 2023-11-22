@@ -1,9 +1,9 @@
 import { visit, CONTINUE, SKIP } from 'unist-util-visit';
 import type { Plugin, Processor, Transformer } from 'unified';
-import type { MdxJsxFlowElement, MdxJsxTextElement } from 'mdast-util-mdx';
+import type { MdxJsxFlowElement } from 'mdast-util-mdx';
 import { BlockContent, Content, DefinitionContent, Image, Paragraph, Parent, PhrasingContent, Text } from 'mdast';
 import { ContainerDirective, LeafDirective } from 'mdast-util-directive';
-import { indicesOf, indicesToRanges, transformAttributes } from '../helpers';
+import { toJsxAttribute, toMdxJsxExpressionAttribute, transformAttributes } from '../helpers';
 import { Node } from 'unist';
 
 /** for creating cards or flex: :::cards, :::flex */
@@ -129,7 +129,6 @@ const visitImages = (paragraph: Paragraph, item: Parent) => {
     }
 }
 
-
 const visitChildren = (block: Node, type: ContainerDirectiveName) => {
     const items: Parent[] = [];
     visit(block, (node, idx, parent: Parent) => {
@@ -139,6 +138,10 @@ const visitChildren = (block: Node, type: ContainerDirectiveName) => {
         if (node.type === 'leafDirective' && (node as LeafDirective).name === LeafDirectiveNames.Break) {
             const directive = node as LeafDirective;
             const block = generateItem(type, directive.attributes?.class);
+            const attributes = transformAttributes(directive.attributes);
+            if (Object.keys(attributes.style).length > 0) {
+                block.attributes.push(toJsxAttribute('style', attributes.style));
+            }
             parent.children.splice(idx, 1, block);
             items.push(block);
             return CONTINUE;
@@ -174,6 +177,7 @@ const visitor = (ast: Node) => {
             return;
         }
         const type = container.name as ContainerDirectiveName;
+        const attributes = transformAttributes(container.attributes);
         const block = {
           type: 'mdxJsxFlowElement',
           name: 'div',
@@ -181,14 +185,17 @@ const visitor = (ast: Node) => {
             {
               type: 'mdxJsxAttribute',
               name: 'className',
-              value: `${DEFAULT_CLASSES[type].container} ${container.attributes?.class || ''}`.trim()
-            }
+              value: `${DEFAULT_CLASSES[type].container} ${attributes.className}`.trim()
+            },
           ],
           children: container.children as (BlockContent | DefinitionContent)[],
           data: {
             "_mdxExplicitJsx": true
           }
         } as MdxJsxFlowElement;
+        if (Object.keys(attributes.style).length > 0) {
+            block.attributes.push(toJsxAttribute('style', attributes.style));
+        }
         visitor(block);
         parent.children.splice(idx, 1, block);
         visitChildren(block, type);
