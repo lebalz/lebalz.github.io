@@ -21,7 +21,27 @@ const darkCodeTheme = themes.dracula;
 //     remarkDeflist
 //   ]
 // };
+const REMARK_PLUGINS = {
+  remarkPlugins: [
+    flexCardsPlugin,
+    [
+      mdiPlugin,
+      {
+        colorMapping: {
+          green: 'var(--ifm-color-success)',
+          red: 'var(--ifm-color-danger)',
+          orange: 'var(--ifm-color-warning)',
+          yellow: '#edcb5a',
+          blue: '#3578e5',
+          cyan: '#01f0bc'
+        },
+        defaultSize: '1.25em'
+      }
+    ],
+    kbdPlugin,
+  ]
 
+}
 
 const config: Config = {
   title: 'Blog',
@@ -40,26 +60,8 @@ const config: Config = {
       {
         docs: {
           beforeDefaultRemarkPlugins: [
-            // (await import('./src/plugins/remark-images.cjs')).default
-            flexCardsPlugin,
           ],
-          remarkPlugins: [
-            [
-              mdiPlugin,
-              {
-                colorMapping: {
-                  green: 'var(--ifm-color-success)',
-                  red: 'var(--ifm-color-danger)',
-                  orange: 'var(--ifm-color-warning)',
-                  yellow: '#edcb5a',
-                  blue: '#3578e5',
-                  cyan: '#01f0bc'
-                },
-                defaultSize: '1.25em'
-              }
-            ],
-            kbdPlugin,
-          ],
+          remarkPlugins: REMARK_PLUGINS.remarkPlugins,
           sidebarPath: require.resolve('./sidebars.js'),
           routeBasePath: 'synopsis',
           // Please change this to your repo.
@@ -69,10 +71,7 @@ const config: Config = {
           beforeDefaultRemarkPlugins: [
             // (await import('./src/plugins/remark-images.cjs')).default
           ],
-          remarkPlugins: [
-            // (await import('./src/plugins/remark-flex-cards.mjs')).default,
-            // (await import('remark-deflist')).default,
-          ],
+          remarkPlugins: REMARK_PLUGINS.remarkPlugins,
           blogTitle: 'Dev Blog',
           routeBasePath: '/',
           showReadingTime: true,
@@ -87,10 +86,7 @@ const config: Config = {
           beforeDefaultRemarkPlugins: [
             // (await import('./src/plugins/remark-images.cjs')).default
           ],
-          remarkPlugins: [
-            // (await import('./src/plugins/remark-flex-cards.mjs')).default,
-            // (await import('remark-deflist')).default,
-          ],
+          remarkPlugins: REMARK_PLUGINS.remarkPlugins,
         },
         theme: {
           customCss: [
@@ -178,10 +174,7 @@ const config: Config = {
         beforeDefaultRemarkPlugins: [
           // (await import('./src/plugins/remark-images.cjs')).default
         ],
-        remarkPlugins: [
-          // (await import('./src/plugins/remark-flex-cards.mjs')).default,
-          // (await import('remark-deflist')).default,
-        ],
+        remarkPlugins: REMARK_PLUGINS.remarkPlugins,
         id: 'recipes',
         path: 'recipes',
         routeBasePath: 'recipes',
