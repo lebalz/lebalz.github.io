@@ -3,8 +3,9 @@ import type { Plugin, Processor, Transformer } from 'unified';
 import type { MdxJsxFlowElement } from 'mdast-util-mdx';
 import { BlockContent, Content, DefinitionContent, Image, Paragraph, Parent } from 'mdast';
 import { ContainerDirective, LeafDirective } from 'mdast-util-directive';
-import { toJsxAttribute, transformAttributes } from '../helpers';
+import { Options, toJsxAttribute, transformAttributes } from '../helpers';
 import { Node } from 'unist';
+import { c } from 'vitest/dist/reporters-5f784f42.js';
 
 /** for creating cards or flex: :::cards, :::flex */
 enum ContainerDirectiveName {
@@ -14,6 +15,26 @@ enum ContainerDirectiveName {
 
 enum LeafDirectiveNames {
     Break = 'br'
+}
+const MIN_WIDTH = '50px';
+
+const configureFlexOptions = (options: Options) => {
+    if (!('flexBasis' in options.style)) {
+        const { columns, minWidth, gap } = options.style;
+        const cols = columns ? Number.parseInt(columns as string, 10) : undefined;
+        if (cols && minWidth) {
+            options.style.flexBasis = `max(${minWidth}, ${100 / cols}% - calc(${cols-1} * ${gap || '0.4em'}))`;
+            delete options.style.columns;
+            delete options.style.minWidth;
+        } else if (cols) {
+            options.style.flexBasis = `max(${MIN_WIDTH}, ${100 / cols}% - calc(${cols-1} * ${gap || '0.4em'}))`;
+            delete options.style.columns;
+        } else if (minWidth) {
+            options.style.flexBasis = minWidth;
+            delete options.style.minWidth;
+        }
+    }
+    return options;
 }
 
 const DEFAULT_CLASSES: {[key in ContainerDirectiveName]: {container: string, item: string, content: string}} = {
@@ -85,7 +106,7 @@ const generateItem = (type: ContainerDirectiveName, className?: string): MdxJsxF
     } as MdxJsxFlowElement;
 }
 
-const visitChildren = (block: Node, type: ContainerDirectiveName) => {
+const visitChildren = (block: Node, type: ContainerDirectiveName, defaultStyle: {[key: string]: string | number | boolean} = {}) => {
     const items: Parent[] = [];
     visit(block, (node, idx, parent: Parent) => {
         if (!parent) {
@@ -94,9 +115,10 @@ const visitChildren = (block: Node, type: ContainerDirectiveName) => {
         if (node.type === 'leafDirective' && (node as LeafDirective).name === LeafDirectiveNames.Break) {
             const directive = node as LeafDirective;
             const block = generateItem(type, directive.attributes?.class);
-            const attributes = transformAttributes(directive.attributes);
-            if (Object.keys(attributes.style).length > 0) {
-                block.attributes.push(toJsxAttribute('style', attributes.style));
+            const attributes = configureFlexOptions(transformAttributes(directive.attributes));
+            const style = {...attributes.style, ...defaultStyle};
+            if (Object.keys(style).length > 0) {
+                block.attributes.push(toJsxAttribute('style', style));
             }
             parent.children.splice(idx, 1, block);
             items.push(block);
@@ -105,6 +127,9 @@ const visitChildren = (block: Node, type: ContainerDirectiveName) => {
         /** ensure at least one item is present */
         if (items.length === 0) {
             const item = generateItem(type);
+            if (Object.keys(defaultStyle).length > 0) {
+                item.attributes.push(toJsxAttribute('style', defaultStyle));
+            }
             items.push(item);
             /**
              * insert the new block before the current node
@@ -151,7 +176,13 @@ const visitor = (ast: Node) => {
             return;
         }
         const type = container.name as ContainerDirectiveName;
-        const attributes = transformAttributes(container.attributes);
+        const attributes = configureFlexOptions(transformAttributes(container.attributes));
+        const itemStyle: {[key: string]: string | number | boolean} = {};
+        if ('flexBasis' in attributes.style) {
+            itemStyle.flexBasis = attributes.style.flexBasis;
+            delete attributes.style.flexBasis;
+        }
+
         const block = {
           type: 'mdxJsxFlowElement',
           name: 'div',
@@ -172,7 +203,7 @@ const visitor = (ast: Node) => {
         }
         visitor(block);
         parent.children.splice(idx, 1, block);
-        visitChildren(block, type);
+        visitChildren(block, type, itemStyle);
     })
 }
 

@@ -138,7 +138,7 @@ export const dashedString = (camelCased: string): string => {
     }, camelCased);
 }
 
-interface Options {
+export interface Options {
     style: { [key: string]: string | boolean };
     className: string;
     attributes: { [key: string]: string | number | boolean };

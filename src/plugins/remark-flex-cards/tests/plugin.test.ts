@@ -194,6 +194,34 @@ Some content
         "
       `);
     });
+
+    it("sets css properties for items", async () => {
+      
+      const input = alignLeft(`
+          :::flex{flexBasis='200px'}
+          center
+          ::br
+          item
+          :::
+      `);
+      const result = await process(input);
+      expect(result).toMatchInlineSnapshot(`
+        "<div className=\\"flex\\">
+          <div className=\\"item\\" style={{\\"flexBasis\\":\\"200px\\"}}>
+            <div className=\\"content\\">
+              center
+            </div>
+          </div>
+
+          <div className=\\"item\\" style={{\\"flexBasis\\":\\"200px\\"}}>
+            <div className=\\"content\\">
+              item
+            </div>
+          </div>
+        </div>
+        "
+      `);
+    });
 });
 
 
