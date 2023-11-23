@@ -48,6 +48,30 @@ describe('#iamge', () => {
         `);
     });
 
+    it("sets width with --width=", async () => {
+      const input = `# Heading
+
+          ![Caption --width=200px](https://example.com/image.png)
+      `;
+      const result = await process(input);
+      expect(result).toMatchInlineSnapshot(`
+        "# Heading
+
+        <figure options={{\\"width\\":\\"200px\\"}}>
+          ![Caption](https://example.com/image.png)
+
+          <figcaption>
+            <span style={{flexGrow: 1}} />
+
+            Caption
+
+            <span style={{flexGrow: 1}} />
+          </figcaption>
+        </figure>
+        "
+      `);
+  });
+
     
     it("extracts caption", async () => {
         const input = `# Heading

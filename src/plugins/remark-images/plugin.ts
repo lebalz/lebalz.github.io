@@ -4,7 +4,7 @@ import type { MdxJsxFlowElement } from 'mdast-util-mdx';
 import { Content, Image, Paragraph, Parent } from 'mdast';
 import path from 'path';
 import fs from 'fs';
-import { toJsxAttribute, transformAttributes } from '../helpers';
+import { cleanedText, parseOptions, toJsxAttribute, transformAttributes } from '../helpers';
 import { as } from 'vitest/dist/reporters-5f784f42.js';
 
 const DEFAULT_TAG_NAMES = {
@@ -97,10 +97,14 @@ const plugin: Plugin = function plugin(
             }
             if (node.type === 'image') {
                 const image = node as Image;
+                /** get image options and set cleaned alt text */
+                const cleanedAlt = cleanedText(image.alt || '');
+                const options = parseOptions(image.alt || '');
+                image.alt = cleanedAlt;
                 const figure = {
                     type: 'mdxJsxFlowElement',
                     name: optionsInput?.tagNames?.figure || DEFAULT_TAG_NAMES.figure,
-                    attributes: [],
+                    attributes: Object.keys(options).length > 0 ? [toJsxAttribute('options', options)] : [],
                     children: [node as Content],
                     data: {
                         _mdxExplicitJsx: true
@@ -119,8 +123,9 @@ const plugin: Plugin = function plugin(
                         _mdxExplicitJsx: true
                     }
                 } as MdxJsxFlowElement
-                if (image.alt) {
-                    const altAst = this.parse(image.alt as string) as Parent;
+
+                if (cleanedAlt) {
+                    const altAst = this.parse(cleanedAlt) as Parent;
                     const isWrappedByParagraph = altAst.children.length === 1 && altAst.children[0].type === 'paragraph';
                     const sanitized = isWrappedByParagraph ? (altAst.children[0] as Paragraph) : altAst;
                     (caption.children as Content[]).splice(0, 0, ...[SPACER_SPAN, ...sanitized.children, SPACER_SPAN])
@@ -143,7 +148,7 @@ const plugin: Plugin = function plugin(
                                 _mdxExplicitJsx: true
                             }
                         } as MdxJsxFlowElement;
-                        if (!image.alt) {
+                        if (!cleanedAlt) {
                             caption.children.splice(caption.children.length, 0, SPACER_SPAN)
                         }
                         caption.children.splice(caption.children.length, 0, bibNode)

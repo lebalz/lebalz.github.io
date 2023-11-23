@@ -3,6 +3,10 @@ import { all as KnownCssProperties } from 'known-css-properties';
 import { MdxJsxAttribute, MdxJsxAttributeValueExpression } from 'mdast-util-mdx';
 import { Parent } from 'unist';
 
+// matches options in strings: "--width=200px --height=20%" -> {width: '20px', height='20%'}
+const OPTION_REGEX = /(^|\s+)--(?<key>[a-zA-Z\-]+)\s*=\s*(?<value>[\d\S-]+)/
+const BOOLEAN_REGEX = /(^|\s+)--(?<key>[a-zA-Z\-]+)\s*/
+
 
 const ALIASES = {
     width: 'minWidth',
@@ -173,26 +177,38 @@ export const transformAttributes = (
     return options;
 }
 
-export const indicesOf = (nodes: Parent['children'], tags: { value: string, key: string }[]) => {
-    return nodes.reduce((acc, node, idx) => {
-        if (tags.every(t => node[t.key] === t.value)) {
-            acc.push(idx);
-        }
-        return acc;
-    }, []);
+export const cleanedText = (rawText: string) => {
+    return rawText.replace(new RegExp(OPTION_REGEX, 'g'), '').replace(new RegExp(BOOLEAN_REGEX, 'g'), '').trim();
 }
 
-export const indicesToRanges = (indices: number[], lastPosition: number, filterCommonEnd: boolean = false) => {
-    const all = [...indices, lastPosition];
-    return all.map((index, idx) => {
-        const start = idx === 0 ? 0 : all[idx - 1] + 1;
-        const end = index;
-        if (start === 0 && end === 0) {
-            return null;
+export const parseOptions = (rawText: string, transform2CamelCase = false, keyAliases: {[key: string]: string} = {}) => {
+    const css = {}
+    let raw = rawText;
+    const optKey = (key: string) => {
+        let k = key;
+        if (k in keyAliases) {
+            k = keyAliases[k];
         }
-        if (filterCommonEnd && start === lastPosition - 1) {
-            return null;
+        if (transform2CamelCase) {
+            k = camelCased(k);
         }
-        return { start, end };
-    }).filter((pos) => pos !== null);
+        return k;
+    }
+    while (OPTION_REGEX.test(raw)) {
+        const match = raw.match(OPTION_REGEX);
+        raw = raw.replace(OPTION_REGEX, '');
+        const { key, value } = match.groups;
+        if (key) {
+            css[optKey(key)] = value;
+        }
+    }
+    while (BOOLEAN_REGEX.test(raw)) {
+        const match = raw.match(BOOLEAN_REGEX);
+        raw = raw.replace(BOOLEAN_REGEX, '');
+        const { key } = match.groups;
+        if (key) {
+            css[optKey(key)] = true;
+        }
+    }
+    return css;
 }
