@@ -5,12 +5,19 @@ const { themes } = require('prism-react-renderer');
 import mdiPlugin from './src/plugins/remark-mdi/plugin';
 import kbdPlugin from './src/plugins/remark-kbd/plugin';
 import flexCardsPlugin from './src/plugins/remark-flex-cards/plugin';
+import imagePlugin from './src/plugins/remark-images/plugin';
 
 const lightCodeTheme = themes.github;
 const darkCodeTheme = themes.dracula;
 const REMARK_PLUGINS = {
-  remarkPlugins: [
+  beforeDefaultRemarkPlugins: [
     flexCardsPlugin,
+    // [
+    //   imagePlugin,
+    //   {tagNames: {sourceRef: 'SourceRef', figure: 'Figure'}}
+    // ],
+  ],
+  remarkPlugins: [
     [
       mdiPlugin,
       {
@@ -41,13 +48,19 @@ const config: Config = {
   organizationName: 'lebalz', // Usually your GitHub org/user name.
   projectName: 'blog', // Usually your repo name.
   trailingSlash: true,
+  markdown: {
+    mdx1Compat: {
+      admonitions: false,
+      comments: false,
+      headingIds: false
+    }
+  },
   presets: [
     [
       'classic',
       {
         docs: {
-          beforeDefaultRemarkPlugins: [
-          ],
+          beforeDefaultRemarkPlugins: REMARK_PLUGINS.beforeDefaultRemarkPlugins,
           remarkPlugins: REMARK_PLUGINS.remarkPlugins,
           sidebarPath: require.resolve('./sidebars.js'),
           routeBasePath: 'synopsis',
@@ -55,9 +68,7 @@ const config: Config = {
           editUrl: 'https://github.com/lebalz/blog/edit/main/'
         },
         blog: {
-          beforeDefaultRemarkPlugins: [
-            // (await import('./src/plugins/remark-images.cjs')).default
-          ],
+          beforeDefaultRemarkPlugins: REMARK_PLUGINS.beforeDefaultRemarkPlugins,
           remarkPlugins: REMARK_PLUGINS.remarkPlugins,
           blogTitle: 'Dev Blog',
           routeBasePath: '/',
@@ -70,9 +81,7 @@ const config: Config = {
             'https://github.com/lebalz/blog/edit/main/'
         },
         pages: {
-          beforeDefaultRemarkPlugins: [
-            // (await import('./src/plugins/remark-images.cjs')).default
-          ],
+          beforeDefaultRemarkPlugins: REMARK_PLUGINS.beforeDefaultRemarkPlugins,
           remarkPlugins: REMARK_PLUGINS.remarkPlugins,
         },
         theme: {
@@ -158,9 +167,7 @@ const config: Config = {
     [
       '@docusaurus/plugin-content-docs',
       {
-        beforeDefaultRemarkPlugins: [
-          // (await import('./src/plugins/remark-images.cjs')).default
-        ],
+        beforeDefaultRemarkPlugins: REMARK_PLUGINS.beforeDefaultRemarkPlugins,
         remarkPlugins: REMARK_PLUGINS.remarkPlugins,
         id: 'recipes',
         path: 'recipes',

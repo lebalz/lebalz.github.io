@@ -11,7 +11,7 @@ I use drone ci to build and deploy my github pages. Like that i don't have to wa
 
 ![Stages](images/pipeline-old.png)
 
-<!--truncate-->
+{/* truncate */}
 
 The `website` Stage, where the static page is compiled with Webpacker, consumed the most time. No big deal for pages with few dependencies (e.g. a clean install of Docusaurus), where a complete build takes around 1 minute on a [Hetzner CPX41](https://www.hetzner.com/cloud) (8 VCPUs, *AMD EPYC 2nd* with 16 GB Ram). But for pages with many dependecies it took me around 8 minutes for the page to be built.
 
