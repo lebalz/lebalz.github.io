@@ -1,9 +1,9 @@
-import { visit, CONTINUE, SKIP } from 'unist-util-visit';
+import { visit, SKIP } from 'unist-util-visit';
 import type { Plugin, Processor, Transformer } from 'unified';
 import type { MdxJsxFlowElement } from 'mdast-util-mdx';
-import { BlockContent, Content, DefinitionContent, Image, Paragraph, Parent, PhrasingContent, Text } from 'mdast';
+import { BlockContent, Content, DefinitionContent, Image, Paragraph, Parent } from 'mdast';
 import { ContainerDirective, LeafDirective } from 'mdast-util-directive';
-import { toJsxAttribute, toMdxJsxExpressionAttribute, transformAttributes } from '../helpers';
+import { toJsxAttribute, transformAttributes } from '../helpers';
 import { Node } from 'unist';
 
 /** for creating cards or flex: :::cards, :::flex */
@@ -29,16 +29,7 @@ const DEFAULT_CLASSES: {[key in ContainerDirectiveName]: {container: string, ite
     }
 }
 
-const flattenImages = (nodes: Content[]) => {
-    return nodes.map((node) => {
-        if (node.type === 'paragraph' && node.children.length === 1 && node.children[0].type === 'image') {
-            return node.children[0];
-        }
-        return node;
-    })
-}
-
-const generateContent = (type: ContainerDirectiveName): MdxJsxFlowElement => {
+const generateContent = (type: ContainerDirectiveName): MdxJsxFlowElement & {data: {type: 'content'}} => {
     return {
         type: 'mdxJsxFlowElement',
         name: 'div',
@@ -57,7 +48,7 @@ const generateContent = (type: ContainerDirectiveName): MdxJsxFlowElement => {
     }
 }
 
-const generateImage = (image: Paragraph): MdxJsxFlowElement => {
+const generateImage = (image: Paragraph): MdxJsxFlowElement & {data: {type: 'image'}} => {
     return {
         type: 'mdxJsxFlowElement',
         name: 'div',
@@ -87,46 +78,11 @@ const generateItem = (type: ContainerDirectiveName, className?: string): MdxJsxF
                 value: `${DEFAULT_CLASSES[type].item} ${className || ''}`.trim()
             }
         ],
-        children: [generateContent(type)],
+        children: [],
         data: {
             "_mdxExplicitJsx": true
         }
     } as MdxJsxFlowElement;
-}
-
-const visitImages = (paragraph: Paragraph, item: Parent) => {
-    const currentContent = () => item.children[item.children.length - 1] as Parent;
-    visit(paragraph, (node, idx, parent: Parent) => {
-        if (!parent) {
-            return;
-        }
-        if (node.type === 'image') {
-            const image = generateImage({
-                type: 'paragraph',
-                children: [node]
-            } as Paragraph);
-            parent.children.splice(idx, 1);
-            item.children.push(image as Content);
-            return [SKIP, idx];
-        } else {
-            if (item.children.length === 1) {
-                return SKIP;
-            }
-            if ((currentContent().data as {type?: string})?.type !== 'content') {
-                item.children.push(generateContent(ContainerDirectiveName.Cards));
-                parent.children.splice(idx, 1);
-            }
-            currentContent().children.push(node as PhrasingContent);
-            return [SKIP, idx];
-        }
-    });
-    const firstContent = item.children[0] as Parent;
-    if (firstContent.children.length === 1 && firstContent.children[0].type === 'paragraph') {
-        const paragraph = firstContent.children[0] as Paragraph;
-        if (paragraph.children.length === 0) {
-            item.children.splice(0, 1);
-        }
-    }
 }
 
 const visitChildren = (block: Node, type: ContainerDirectiveName) => {
@@ -144,8 +100,9 @@ const visitChildren = (block: Node, type: ContainerDirectiveName) => {
             }
             parent.children.splice(idx, 1, block);
             items.push(block);
-            return CONTINUE;
+            return SKIP;
         }
+        /** ensure at least one item is present */
         if (items.length === 0) {
             const item = generateItem(type);
             items.push(item);
@@ -156,11 +113,28 @@ const visitChildren = (block: Node, type: ContainerDirectiveName) => {
             // and visit the current node again
             return [SKIP, idx + 1];
         }
-        const wrapper = items[items.length - 1].children[0] as Parent;
-        wrapper.children.push(node as Content);
+        /** flatten images in paragraphs */
         if (type === ContainerDirectiveName.Cards && node.type === 'paragraph') {
-            visitImages(node as Paragraph, items[items.length - 1]);
+            parent.children.splice(idx, 1, ...(node as Paragraph).children);
+            return [SKIP, idx];
         }
+        const item = items[items.length - 1];
+        /** process image */
+        if (type === ContainerDirectiveName.Cards && node.type === 'image') {
+            const image = generateImage({
+                type: 'paragraph',
+                children: [node as Image]
+            });
+            item.children.push(image);
+            parent.children.splice(idx, 1);
+            return [SKIP, idx];
+        }
+        let content = item.children[item.children.length - 1] as Parent;
+        if (!content || (content.data as {type?: string})?.type !== 'content') {
+            content = generateContent(type);
+            item.children.push(content as MdxJsxFlowElement);
+        }
+        content.children.push(node as Content);
         parent.children.splice(idx, 1);
         /** since the current position was removed, visit the current index again */
         return [SKIP, idx]

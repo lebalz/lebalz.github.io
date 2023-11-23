@@ -199,129 +199,221 @@ Some content
 
 
 describe('#cards', () => {
-    it("does nothing if there's no card", async () => {
-        const input = `# Heading
+  it("does nothing if there's no card", async () => {
+      const input = `# Heading
 
 Some content
 `;
-        const result = await process(input);
-        expect(result).toBe(input);
-    });
-    it("can convert cards", async () => {
-        const input = alignLeft(`# Details element example
-            :::cards
-            Hello world!
-            ::br
-            Hello moon!
-            :::
-            Byyye!
-        `);
-        const result = await process(input);
-        expect(result).toMatchInlineSnapshot(`
-          "# Details element example
+      const result = await process(input);
+      expect(result).toBe(input);
+  });
+  it("can convert cards", async () => {
+      const input = alignLeft(`# Details element example
+          :::cards
+          Hello world!
+          ::br
+          Hello moon!
+          :::
+          Byyye!
+      `);
+      const result = await process(input);
+      expect(result).toMatchInlineSnapshot(`
+        "# Details element example
 
-          <div className=\\"flex-cards flex\\">
-            <div className=\\"item card\\">
-              <div className=\\"card__body\\">
-                Hello world!
-              </div>
-            </div>
-
-            <div className=\\"item card\\">
-              <div className=\\"card__body\\">
-                Hello moon!
-              </div>
+        <div className=\\"flex-cards flex\\">
+          <div className=\\"item card\\">
+            <div className=\\"card__body\\">
+              Hello world!
             </div>
           </div>
 
-          Byyye!
-          "
-        `);
-    });
-    it("can convert nested cards", async () => {
-        const input = alignLeft(`# Details element example
-            ::::cards
-            Nesting Level 1
-            ::br
-            Content with a cards section
-            :::cards
-            Boo!
-            ::br
-            Yaa!
-            :::
-            ::::
-            Byyye!
-        `);
-        const result = await process(input);
-        expect(result).toMatchInlineSnapshot(`
-          "# Details element example
-
-          <div className=\\"flex-cards flex\\">
-            <div className=\\"item card\\">
-              <div className=\\"card__body\\">
-                Nesting Level 1
-              </div>
+          <div className=\\"item card\\">
+            <div className=\\"card__body\\">
+              Hello moon!
             </div>
+          </div>
+        </div>
 
-            <div className=\\"item card\\">
-              <div className=\\"card__body\\">
-                Content with a cards section
+        Byyye!
+        "
+      `);
+  });
+  it("can convert nested cards", async () => {
+      const input = alignLeft(`# Details element example
+          ::::cards
+          Nesting Level 1
+          ::br
+          Content with a cards section
+          :::cards
+          Boo!
+          ::br
+          Yaa!
+          :::
+          ::::
+          Byyye!
+      `);
+      const result = await process(input);
+      expect(result).toMatchInlineSnapshot(`
+        "# Details element example
 
-                <div className=\\"flex-cards flex\\">
-                  <div className=\\"item card\\">
-                    <div className=\\"card__body\\">
-                      Boo!
-                    </div>
+        <div className=\\"flex-cards flex\\">
+          <div className=\\"item card\\">
+            <div className=\\"card__body\\">
+              Nesting Level 1
+            </div>
+          </div>
+
+          <div className=\\"item card\\">
+            <div className=\\"card__body\\">
+              Content with a cards section
+
+              <div className=\\"flex-cards flex\\">
+                <div className=\\"item card\\">
+                  <div className=\\"card__body\\">
+                    Boo!
                   </div>
+                </div>
 
-                  <div className=\\"item card\\">
-                    <div className=\\"card__body\\">
-                      Yaa!
-                    </div>
+                <div className=\\"item card\\">
+                  <div className=\\"card__body\\">
+                    Yaa!
                   </div>
                 </div>
               </div>
             </div>
           </div>
+        </div>
 
+        Byyye!
+        "
+      `);
+  });
+
+  it("can convert cards with an image", async () => {
+      const input = alignLeft(`
+          :::cards
+          ![Some Image](https://via.placeholder.com/150)
+          Hello world!
+          ::br
+          Hello moon!
+          :::
           Byyye!
-          "
-        `);
-    });
-
-    it("can convert cards with an image", async () => {
-        const input = alignLeft(`
-            :::cards
-            ![Some Image](https://via.placeholder.com/150)
-            Hello world!
-            ::br
-            Hello moon!
-            :::
-            Byyye!
-        `);
-        const result = await process(input);
-        expect(result).toMatchInlineSnapshot(`
-          "<div className=\\"flex-cards flex\\">
-            <div className=\\"item card\\">
-              <div className=\\"card__image\\">
-                ![Some Image](https://via.placeholder.com/150)
-              </div>
-
-              <div className=\\"card__body\\">
-
-                Hello world!
-              </div>
+      `);
+      const result = await process(input);
+      expect(result).toMatchInlineSnapshot(`
+        "<div className=\\"flex-cards flex\\">
+          <div className=\\"item card\\">
+            <div className=\\"card__image\\">
+              ![Some Image](https://via.placeholder.com/150)
             </div>
 
-            <div className=\\"item card\\">
-              <div className=\\"card__body\\">
-                Hello moon!
-              </div>
+            <div className=\\"card__body\\">
+
+              Hello world!
             </div>
           </div>
 
+          <div className=\\"item card\\">
+            <div className=\\"card__body\\">
+              Hello moon!
+            </div>
+          </div>
+        </div>
+
+        Byyye!
+        "
+      `);
+  });
+
+
+  it("can convert cards with multiple image", async () => {
+    const input = alignLeft(`
+        :::cards
+        Hii
+        ![Some Image](https://via.placeholder.com/150)
+        Hello world!
+        ::br
+        Hello moon!
+        ![Some Image](https://via.placeholder.com/150)
+        :::
+        Byyye!
+    `);
+    const result = await process(input);
+    expect(result).toMatchInlineSnapshot(`
+      "<div className=\\"flex-cards flex\\">
+        <div className=\\"item card\\">
+          <div className=\\"card__body\\">
+            Hii
+
+          </div>
+
+          <div className=\\"card__image\\">
+            ![Some Image](https://via.placeholder.com/150)
+          </div>
+
+          <div className=\\"card__body\\">
+
+            Hello world!
+          </div>
+        </div>
+
+        <div className=\\"item card\\">
+          <div className=\\"card__body\\">
+            Hello moon!
+
+          </div>
+
+          <div className=\\"card__image\\">
+            ![Some Image](https://via.placeholder.com/150)
+          </div>
+        </div>
+      </div>
+
+      Byyye!
+      "
+    `);
+});
+
+  it("can convert nested cards with an image", async () => {
+      const input = alignLeft(`
+          ::::cards
+          ![Some Image](https://via.placeholder.com/150)
+          :::cards
+          Hello
+          ::br
+          Hello moon!
+          :::
+          ::::
           Byyye!
-          "
-        `);
-    });
+      `);
+      const result = await process(input);
+      expect(result).toMatchInlineSnapshot(`
+        "<div className=\\"flex-cards flex\\">
+          <div className=\\"item card\\">
+            <div className=\\"card__image\\">
+              ![Some Image](https://via.placeholder.com/150)
+            </div>
+
+            <div className=\\"card__body\\">
+              <div className=\\"flex-cards flex\\">
+                <div className=\\"item card\\">
+                  <div className=\\"card__body\\">
+                    Hello
+                  </div>
+                </div>
+
+                <div className=\\"item card\\">
+                  <div className=\\"card__body\\">
+                    Hello moon!
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        Byyye!
+        "
+      `);
+  });
 });

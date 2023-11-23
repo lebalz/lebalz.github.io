@@ -12,12 +12,12 @@ const darkCodeTheme = themes.dracula;
 const REMARK_PLUGINS = {
   beforeDefaultRemarkPlugins: [
     flexCardsPlugin,
-    // [
-    //   imagePlugin,
-    //   {tagNames: {sourceRef: 'SourceRef', figure: 'Figure'}}
-    // ],
-  ],
-  remarkPlugins: [
+    [
+        imagePlugin,
+        {tagNames: {sourceRef: 'SourceRef', figure: 'Figure'}}
+      ],
+    ],
+    remarkPlugins: [
     [
       mdiPlugin,
       {
