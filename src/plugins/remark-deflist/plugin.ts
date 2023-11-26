@@ -6,6 +6,7 @@ import { Content, Parent, Text } from 'mdast';
 // match to determine if the line is an opening tag
 const DD_REGEX = /(^|\r?\n):[ \t]+(.*?)/;
 const DD_CONSECUTIVE_REGEX = /^(\r?\n)?:[ \t]+(.*?)/;
+type ActionStates = 'SEEK_DD_START' | 'SEEK_CONSECUTIVE_DD_START' | 'COLLECT_DT_BODY' | 'COLLECT_DD_BODY' | 'ADD_TO_DL';
 
 const createMdxJsxFlowElementNode = (name: string, children: Content[] = [], className?: string) => {
     const attributes = className ? [{ type: 'mdxJsxAttribute', name: 'className', value: className }] : [];
@@ -53,7 +54,7 @@ const plugin: Plugin = function plugin(
     return async (ast, vfile) => {
         visit(ast, (node, idx, parent: Parent) => {
             if (node.type === 'paragraph') {
-                let action: 'SEEK_DD_START' | 'SEEK_CONSECUTIVE_DD_START' | 'COLLECT_DT_BODY' | 'COLLECT_DD_BODY' | 'ADD_TO_DL' = 'SEEK_DD_START';
+                let action: ActionStates = 'SEEK_DD_START';
                 visit(node, (cNode, cIdx, cParent: Parent) => {
                     /** this is the node itself... */
                     if (!cParent) {
@@ -84,7 +85,7 @@ const plugin: Plugin = function plugin(
                             }
                             return SKIP;
                         case 'COLLECT_DT_BODY':
-                            visit(node, (dtNode, dtIdx, dtParent: Parent) => {
+                            visit(cParent, (dtNode, dtIdx, dtParent: Parent) => {
                                 const correctNested = dtParent && dtParent === cParent;
                                 if (!correctNested || dtIdx >= cIdx) {
                                     if (correctNested) {
@@ -156,7 +157,7 @@ const plugin: Plugin = function plugin(
                             }
                             return [SKIP, cIdx];
                         case 'COLLECT_DD_BODY':
-                            visit(node, (ddNode, ddIdx, ddParent: Parent) => {
+                            visit(cParent, (ddNode, ddIdx, ddParent: Parent) => {
                                 const correctNested = ddParent && ddParent === cParent;
                                 if (!correctNested || ddIdx < cIdx) {
                                     if (correctNested) {
