@@ -165,7 +165,7 @@ div.flex {
       border-radius: var(--ifm-card-border-radius);
       box-shadow: var(--ifm-global-shadow-lw);
       padding: 0 var(--ifm-spacing-horizontal);
-      >.item {
+      .item {
         &:first-of-type {
           border-top-right-radius: var(--ifm-alert-border-radius);
           border-bottom-right-radius: var(--ifm-alert-border-radius);

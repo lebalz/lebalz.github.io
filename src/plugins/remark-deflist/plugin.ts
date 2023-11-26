@@ -1,68 +1,19 @@
 import { visit, CONTINUE, SKIP, EXIT } from 'unist-util-visit';
 import type { Plugin, Processor, Transformer } from 'unified';
-import type { MdxJsxFlowElement, MdxJsxTextElement } from 'mdast-util-mdx';
-import { BlockContent, Content, DefinitionContent, Parent, PhrasingContent, Text } from 'mdast';
-import { Node } from 'unist';
-import { c, s } from 'vitest/dist/reporters-5f784f42.js';
-
-/**
- * Idea:
- * - visit all Parent-Nodes and check there for text nodes containing
- *   the start of a deflist 
- */
-
+import type { MdxJsxFlowElement } from 'mdast-util-mdx';
+import { Content, Parent, Text } from 'mdast';
 
 // match to determine if the line is an opening tag
 const DD_REGEX = /(^|\r?\n):[ \t]+(.*?)/;
 const DD_CONSECUTIVE_REGEX = /^(\r?\n)?:[ \t]+(.*?)/;
-// const DL_ELEMENT_REGEX = /(?<dt>[^:\s].*\r?\n)?:[ \t]+(?<dd>.+?)\r?\n/;
 
-const LINE_BREAK = {
-    "type": "mdxJsxTextElement",
-    "name": "br",
-    "attributes": [],
-    "children": [],
-    "data": {
-        "_mdxExplicitJsx": true
-    }
-} as MdxJsxTextElement;
-
-const getDLNode = (children: Content[] = []) => {
+const createMdxJsxFlowElementNode = (name: string, children: Content[] = [], className?: string) => {
+    const attributes = className ? [{ type: 'mdxJsxAttribute', name: 'className', value: className }] : [];
     return {
         type: 'mdxJsxFlowElement',
-        name: 'dl',
-        attributes: [],
+        name: name,
+        attributes: attributes,
         children: children,
-        data: {
-            "_mdxExplicitJsx": true
-        }
-    } as MdxJsxFlowElement;
-}
-
-const getDTNode = (children: Content[]) => {
-    return {
-        type: 'mdxJsxFlowElement',
-        name: 'dt',
-        attributes: [],
-        children: [{
-            type: 'paragraph',
-            children: children
-        }],
-        data: {
-            "_mdxExplicitJsx": true
-        }
-    } as MdxJsxFlowElement;
-}
-
-const getDDNode = (children: Content[]) => {
-    return {
-        type: 'mdxJsxFlowElement',
-        name: 'dd',
-        attributes: [],
-        children: [{
-            type: 'paragraph',
-            children: children
-        }],
         data: {
             "_mdxExplicitJsx": true
         }
@@ -72,9 +23,33 @@ const getDDNode = (children: Content[]) => {
 const plugin: Plugin = function plugin(
     this: Processor,
     optionsInput?: {
-        className?: string;
+        classNames?: {
+            dl?: string;
+            dt?: string;
+            dd?: string;
+        },
+        tagNames?: {
+            dl?: string;
+            dt?: string;
+            dd?: string;
+        }
     }
 ): Transformer {
+    const { classNames, tagNames } = { tagNames: {}, classNames: {}, ...(optionsInput || {})};
+    const DL = tagNames.dl || 'dl';
+    const DT = tagNames.dt || 'dt';
+    const DD = tagNames.dd || 'dd';
+    const getDLNode = (children: Content[] = []) => {
+        return createMdxJsxFlowElementNode(DL, children, classNames.dl);
+    }
+
+    const getDTNode = (children: Content[]) => {
+        return createMdxJsxFlowElementNode(DT, [{ type: 'paragraph', children: children} as Content], classNames.dt);
+    }
+
+    const getDDNode = (children: Content[]) => {
+        return createMdxJsxFlowElementNode(DD, [{ type: 'paragraph', children: children} as Content], classNames.dd);
+    }
     return async (ast, vfile) => {
         visit(ast, (node, idx, parent: Parent) => {
             if (node.type === 'paragraph') {
@@ -153,16 +128,15 @@ const plugin: Plugin = function plugin(
                             }, true);
                             return [SKIP, cIdx];
                         case 'ADD_TO_DL':
-                            /** expect cIdx to be 0 */
+                            /** expect cIdx to be 0 - otherwise it's a bug */
                             if (cIdx !== 0) {
                                 throw new Error('cIdx should be 0');
                             }
                             const hasDL = idx > 0
-                                && cIdx === 0
                                 && parent.children[idx - 1].type === 'mdxJsxFlowElement'
-                                && (parent.children[idx - 1] as MdxJsxFlowElement).name === 'dl';
+                                && (parent.children[idx - 1] as MdxJsxFlowElement).name === DL;
                             const node2move = cParent.children.splice(cIdx, 1)[0] as MdxJsxFlowElement;
-                            if (node2move.name === 'dt') {
+                            if (node2move.name === DT) {
                                 action = 'COLLECT_DD_BODY';
                             } else {
                                 action = 'SEEK_CONSECUTIVE_DD_START';

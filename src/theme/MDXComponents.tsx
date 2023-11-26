@@ -8,7 +8,7 @@ import SourceRef from '../components/Figure/SourceRef';
 export default {
   // Re-use the default mapping
   ...MDXComponents,
-  dl: DefinitionList,
+  Dl: DefinitionList,
   Figure: Figure,
   SourceRef: SourceRef
 };

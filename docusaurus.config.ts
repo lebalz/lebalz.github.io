@@ -6,187 +6,196 @@ import mdiPlugin from './src/plugins/remark-mdi/plugin';
 import kbdPlugin from './src/plugins/remark-kbd/plugin';
 import flexCardsPlugin from './src/plugins/remark-flex-cards/plugin';
 import imagePlugin from './src/plugins/remark-images/plugin';
+import deflistPlugin from './src/plugins/remark-deflist/plugin';
 
 const lightCodeTheme = themes.github;
 const darkCodeTheme = themes.dracula;
 const REMARK_PLUGINS = {
-  beforeDefaultRemarkPlugins: [
-    flexCardsPlugin,
-    [
-        imagePlugin,
-        {tagNames: {sourceRef: 'SourceRef', figure: 'Figure'}}
-      ],
+    beforeDefaultRemarkPlugins: [
+        flexCardsPlugin,
+        [
+            imagePlugin,
+            { tagNames: { sourceRef: 'SourceRef', figure: 'Figure' } }
+        ],
     ],
     remarkPlugins: [
-    [
-      mdiPlugin,
-      {
-        colorMapping: {
-          green: 'var(--ifm-color-success)',
-          red: 'var(--ifm-color-danger)',
-          orange: 'var(--ifm-color-warning)',
-          yellow: '#edcb5a',
-          blue: '#3578e5',
-          cyan: '#01f0bc'
-        },
-        defaultSize: '1.25em'
-      }
-    ],
-    kbdPlugin,
-  ]
+        [
+            deflistPlugin,
+            {
+                tagNames: {
+                    dl: 'Dl',
+                },
+            }
+        ],
+        [
+            mdiPlugin,
+            {
+                colorMapping: {
+                    green: 'var(--ifm-color-success)',
+                    red: 'var(--ifm-color-danger)',
+                    orange: 'var(--ifm-color-warning)',
+                    yellow: '#edcb5a',
+                    blue: '#3578e5',
+                    cyan: '#01f0bc'
+                },
+                defaultSize: '1.25em'
+            }
+        ],
+        kbdPlugin,
+    ]
 
 }
 
 const config: Config = {
-  title: 'Blog',
-  tagline: 'Dev Blog by LeBalz',
-  url: 'https://lebalz.ch',
-  baseUrl: '/',
-  onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
-  favicon: 'img/favicon.ico',
-  organizationName: 'lebalz', // Usually your GitHub org/user name.
-  projectName: 'blog', // Usually your repo name.
-  trailingSlash: true,
-  markdown: {
-    mdx1Compat: {
-      admonitions: false,
-      comments: false,
-      headingIds: false
-    }
-  },
-  presets: [
-    [
-      'classic',
-      {
-        docs: {
-          beforeDefaultRemarkPlugins: REMARK_PLUGINS.beforeDefaultRemarkPlugins,
-          remarkPlugins: REMARK_PLUGINS.remarkPlugins,
-          sidebarPath: require.resolve('./sidebars.js'),
-          routeBasePath: 'synopsis',
-          // Please change this to your repo.
-          editUrl: 'https://github.com/lebalz/blog/edit/main/'
-        },
-        blog: {
-          beforeDefaultRemarkPlugins: REMARK_PLUGINS.beforeDefaultRemarkPlugins,
-          remarkPlugins: REMARK_PLUGINS.remarkPlugins,
-          blogTitle: 'Dev Blog',
-          routeBasePath: '/',
-          showReadingTime: true,
-          blogSidebarCount: 'ALL',
-          postsPerPage: 15,
-          blogSidebarTitle: 'Posts',
-          // Please change this to your repo.
-          editUrl:
-            'https://github.com/lebalz/blog/edit/main/'
-        },
-        pages: {
-          beforeDefaultRemarkPlugins: REMARK_PLUGINS.beforeDefaultRemarkPlugins,
-          remarkPlugins: REMARK_PLUGINS.remarkPlugins,
-        },
-        theme: {
-          customCss: [
-            require.resolve('./src/css/custom.scss'),
-            require.resolve('./node_modules/react-image-gallery/styles/css/image-gallery.css')
-          ]
-        },
-        sitemap: {
-          priority: 0.9
+    title: 'Blog',
+    tagline: 'Dev Blog by LeBalz',
+    url: 'https://lebalz.ch',
+    baseUrl: '/',
+    onBrokenLinks: 'throw',
+    onBrokenMarkdownLinks: 'warn',
+    favicon: 'img/favicon.ico',
+    organizationName: 'lebalz', // Usually your GitHub org/user name.
+    projectName: 'blog', // Usually your repo name.
+    trailingSlash: true,
+    markdown: {
+        mdx1Compat: {
+            admonitions: false,
+            comments: false,
+            headingIds: false
         }
-      } satisfies Preset.Options,
-    ],
-  ],
-  themeConfig:
-    {
-      navbar: {
-        title: 'Dev Blog',
-        logo: {
-          alt: 'Le Balz',
-          src: 'img/logo.png',
-        },
-        items: [
-          {
-            type: 'doc',
-            docId: 'index',
-            position: 'left',
-            label: 'Knowledgebase',
-          },
-          {
-            to: 'recipes/',
-            position: 'left',
-            label: 'Rezepte',
-          },
-          {
-            href: 'https://github.com/lebalz/blog',
-            position: 'right',
-            className: 'header-github-link',
-            'aria-label': 'GitHub repository',
-          },
-        ],
-      },
-      algolia: {
-        appId: process.env.ALGOLIA_APP_ID || "no-id",
-        apiKey: process.env.ALGOLIA_API_KEY || "no-key",
-        indexName: process.env.ALGOLIA_INDEX_NAME || "no-index",
-        contextualSearch: true,
-        searchPagePath: 'search',
-      },
-      footer: {
-        style: 'dark',
-        links: [
-          {
-            title: 'Knowledgebase',
-            items: [
-              {
-                label: 'Dokku',
-                to: '/synopsis/dokku',
-              },
-            ],
-          },
-          {
-            title: 'More',
-            items: [
-              {
-                label: 'GitHub',
-                href: 'https://github.com/lebalz',
-              },
-            ],
-          },
-        ],
-        copyright: `Copyright © ${new Date().getFullYear()} Le Balz`,
-      },
-      prism: {
-        theme: lightCodeTheme,
-        darkTheme: darkCodeTheme,
-        additionalLanguages: ['bash', 'powershell', 'ruby', 'arduino', 'docker'],
-      },
-    } satisfies Preset.ThemeConfig,
-  plugins: [
-    'docusaurus-plugin-sass',
-    '@saucelabs/theme-github-codeblock',
-    [
-      '@docusaurus/plugin-content-docs',
-      {
-        beforeDefaultRemarkPlugins: REMARK_PLUGINS.beforeDefaultRemarkPlugins,
-        remarkPlugins: REMARK_PLUGINS.remarkPlugins,
-        id: 'recipes',
-        path: 'recipes',
-        routeBasePath: 'recipes',
-        sidebarPath: require.resolve('./sidebarsRecipes.js'),
-        // ... other options
-      }
-    ],
-  ],
-  scripts: [
-    // Object format.
-    {
-      src: process.env.UMAMI_SRC || 'localhost:3000',
-      ['data-website-id']: process.env.UMAMI_ID || '',
-      ['data-domains']: 'lebalz.ch',
-      async: true,
-      defer: true
     },
-  ],
+    presets: [
+        [
+            'classic',
+            {
+                docs: {
+                    beforeDefaultRemarkPlugins: REMARK_PLUGINS.beforeDefaultRemarkPlugins,
+                    remarkPlugins: REMARK_PLUGINS.remarkPlugins,
+                    sidebarPath: require.resolve('./sidebars.js'),
+                    routeBasePath: 'synopsis',
+                    // Please change this to your repo.
+                    editUrl: 'https://github.com/lebalz/blog/edit/main/'
+                },
+                blog: {
+                    beforeDefaultRemarkPlugins: REMARK_PLUGINS.beforeDefaultRemarkPlugins,
+                    remarkPlugins: REMARK_PLUGINS.remarkPlugins,
+                    blogTitle: 'Dev Blog',
+                    routeBasePath: '/',
+                    showReadingTime: true,
+                    blogSidebarCount: 'ALL',
+                    postsPerPage: 15,
+                    blogSidebarTitle: 'Posts',
+                    // Please change this to your repo.
+                    editUrl:
+                        'https://github.com/lebalz/blog/edit/main/'
+                },
+                pages: {
+                    beforeDefaultRemarkPlugins: REMARK_PLUGINS.beforeDefaultRemarkPlugins,
+                    remarkPlugins: REMARK_PLUGINS.remarkPlugins,
+                },
+                theme: {
+                    customCss: [
+                        require.resolve('./src/css/custom.scss'),
+                        require.resolve('./node_modules/react-image-gallery/styles/css/image-gallery.css')
+                    ]
+                },
+                sitemap: {
+                    priority: 0.9
+                }
+            } satisfies Preset.Options,
+        ],
+    ],
+    themeConfig:
+        {
+            navbar: {
+                title: 'Dev Blog',
+                logo: {
+                    alt: 'Le Balz',
+                    src: 'img/logo.png',
+                },
+                items: [
+                    {
+                        type: 'doc',
+                        docId: 'index',
+                        position: 'left',
+                        label: 'Knowledgebase',
+                    },
+                    {
+                        to: 'recipes/',
+                        position: 'left',
+                        label: 'Rezepte',
+                    },
+                    {
+                        href: 'https://github.com/lebalz/blog',
+                        position: 'right',
+                        className: 'header-github-link',
+                        'aria-label': 'GitHub repository',
+                    },
+                ],
+            },
+            algolia: {
+                appId: process.env.ALGOLIA_APP_ID || "no-id",
+                apiKey: process.env.ALGOLIA_API_KEY || "no-key",
+                indexName: process.env.ALGOLIA_INDEX_NAME || "no-index",
+                contextualSearch: true,
+                searchPagePath: 'search',
+            },
+            footer: {
+                style: 'dark',
+                links: [
+                    {
+                        title: 'Knowledgebase',
+                        items: [
+                            {
+                                label: 'Dokku',
+                                to: '/synopsis/dokku',
+                            },
+                        ],
+                    },
+                    {
+                        title: 'More',
+                        items: [
+                            {
+                                label: 'GitHub',
+                                href: 'https://github.com/lebalz',
+                            },
+                        ],
+                    },
+                ],
+                copyright: `Copyright © ${new Date().getFullYear()} Le Balz`,
+            },
+            prism: {
+                theme: lightCodeTheme,
+                darkTheme: darkCodeTheme,
+                additionalLanguages: ['bash', 'powershell', 'ruby', 'arduino', 'docker'],
+            },
+        } satisfies Preset.ThemeConfig,
+    plugins: [
+        'docusaurus-plugin-sass',
+        '@saucelabs/theme-github-codeblock',
+        [
+            '@docusaurus/plugin-content-docs',
+            {
+                beforeDefaultRemarkPlugins: REMARK_PLUGINS.beforeDefaultRemarkPlugins,
+                remarkPlugins: REMARK_PLUGINS.remarkPlugins,
+                id: 'recipes',
+                path: 'recipes',
+                routeBasePath: 'recipes',
+                sidebarPath: require.resolve('./sidebarsRecipes.js'),
+                // ... other options
+            }
+        ],
+    ],
+    scripts: [
+        // Object format.
+        {
+            src: process.env.UMAMI_SRC || 'localhost:3000',
+            ['data-website-id']: process.env.UMAMI_ID || '',
+            ['data-domains']: 'lebalz.ch',
+            async: true,
+            defer: true
+        },
+    ],
 };
 
 export default config;
