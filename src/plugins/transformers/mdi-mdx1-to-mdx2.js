@@ -32,7 +32,7 @@ const files = fileDirectories.reduce((acc, dir) => {
  * 
  * @param {string} file 
  */
-async function ensurePageId(file) {
+async function transformMdiIcons(file) {
     if (!(file.endsWith('.md') || !file.endsWith('.mdx'))) {
         return;
     }
@@ -57,4 +57,4 @@ async function ensurePageId(file) {
     }
 }
 
-files.forEach(ensurePageId);
+files.forEach(transformMdiIcons);
