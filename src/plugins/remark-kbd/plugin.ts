@@ -1,28 +1,9 @@
-import { visit, CONTINUE } from 'unist-util-visit';
+import { visit, CONTINUE, SKIP } from 'unist-util-visit';
 import type { Plugin, Processor, Transformer } from 'unified';
 import type { MdxJsxTextElement } from 'mdast-util-mdx';
-import { Parent, PhrasingContent, Text } from 'mdast';
-import { Node } from 'unist';
+import { Parent, Text } from 'mdast';
 
-/**
- * negative lookbehind:
- * @example (?<!y)x   Matches "x" only if "x" is not preceded by "y".
- * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions/Cheatsheet
- * 
- * here: match opening brackets [[ that are not preceded by closing brackets ]]
- */
-const OPENING_REGEX = /(?<!(\]{2}?.*?))\[{2}?/;
-
-/**
- * negative lookbehind:
- * @example (?<!y)x   Matches "x" only if "x" is not preceded by "y".
- * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions/Cheatsheet
- * 
- * here: match closing brackets ]] that are not preceded by opening brackets [[
- */
-const CLOSING_REGEX = /(?<!(\[{2}?.*?))\]{2}?/;
-
-type ActionStates = 'SPLIT_BRACKETS' | 'SEEK_CLOSING_BRACKET' | 'CREATE_KBD';
+type ActionStates = 'SPLIT_BRACKETS' | 'CREATE_KBD';
 
 const plugin: Plugin = function plugin(
     this: Processor,
@@ -30,26 +11,12 @@ const plugin: Plugin = function plugin(
         className?: string;
     }
 ): Transformer {
-    const kbdClassName = optionsInput?.className;
+    const KBD_ATTRIBUTES = optionsInput?.className ? [{type: 'mdxJsxAttribute', name: 'className', value: optionsInput.className}] : [];
     let actionState: ActionStates = 'SPLIT_BRACKETS';
-    const nestingMap = new Map<Node, number>();
-
-    /** a bracket stack for each nesting level */
-    const bracketStack = new Map<number, number[]>();
 
 
     return async (ast, vfile) => {
-        const kbds: MdxJsxTextElement[] = [];
         visit(ast, (node, idx, parent: Parent) => {
-            if (!parent) {
-                nestingMap.set(node, 0);
-            }
-            if (!nestingMap.get(node)) {
-                nestingMap.set(node, nestingMap.get(parent) + 1);
-            }
-            if (!bracketStack.get(nestingMap.get(node))) {
-                bracketStack.set(nestingMap.get(node), []);
-            }
             /** 
              * visit text nodes and nest all nodes between a kbd sequence [[<content>]] in a kbd mdxJsxTextElement.
             */
@@ -59,10 +26,6 @@ const plugin: Plugin = function plugin(
                     case 'SPLIT_BRACKETS':
                         const bracketIdx = [textNode.value.indexOf('[['), textNode.value.indexOf(']]')].filter(idx => idx > -1);
                         if (bracketIdx.length === 0) {
-                            if (idx + 1 >= parent.children.length) {
-                                actionState = 'CREATE_KBD';
-                                return [CONTINUE, 0];
-                            }
                             return CONTINUE;
                         }
                         parent.data = {...parent.data, hasKBD: true};
@@ -70,27 +33,13 @@ const plugin: Plugin = function plugin(
                         const pre = textNode.value.slice(0, splitIdx);
                         const bracket = textNode.value.slice(splitIdx, splitIdx + 2);
                         const post = textNode.value.slice(splitIdx + 2);
-                        
-                        const stack = bracketStack.get(nestingMap.get(node))
-                        let bracketId = stack.length;
-                        if (bracket === '[[') {
-                            stack.push(splitIdx);
-                            bracketId++;
-                        } else if (stack.length === 0) {
-                            /** unmatched brackets - ignore */
-                            bracketId--;
-                        } else {
-                            stack.pop();
-                        }
+
                         const splitted = [{
                             type: 'text',
-                            value: bracket,
-                            data: bracketId > 0 ? {
-                                id: bracketId
-                            } : undefined
+                            value: bracket
                         }] as Text[];
                         let nextIdx = idx + 1;
-                        
+
                         if (pre) {
                             splitted.unshift({
                                 type: 'text',
@@ -105,36 +54,35 @@ const plugin: Plugin = function plugin(
                             });
                         }
                         parent.children.splice(idx, 1, ...splitted);
-                        if (nextIdx >= parent.children.length) {
+                        if (bracket === ']]' && parent.children.slice(0, idx).some(node => (node as Text).value === '[[')) {
                             actionState = 'CREATE_KBD';
-                            return [CONTINUE, 0];
+                            return [SKIP, pre ? idx + 1 : idx];
                         }
                         return [CONTINUE, nextIdx];
                     case 'CREATE_KBD':
-                        if (!parent.data?.hasKBD) {
-                            actionState = 'SPLIT_BRACKETS';
-                            return [CONTINUE, parent.children.length]
+                        if (textNode.value !== ']]') {
+                            throw new Error('Expected closing brackets');
                         }
-                        if (textNode.value === '[[') {
-                            const bracketId = (textNode.data as {id: number}).id;
-                            const closingIdx = parent.children.findIndex((node, ind) => ind > idx && (node as Text).value === ']]' && bracketId === (node.data as {id: number})?.id);
-                            if (closingIdx > -1) {
-                                parent.children.splice(idx, closingIdx - idx + 1,
-                                    {
-                                        type: 'mdxJsxTextElement',
-                                        name: 'kbd',
-                                        attributes: [],
-                                        children: parent.children.slice(idx + 1, closingIdx),
-                                        data: {
-                                            ['_mdxExplicitJsx']: true
-                                        }
-                                    } as MdxJsxTextElement
-                                );
-                            }
-                            return CONTINUE;
+                        /** TODO: TS5 introduced "findLastIndex", but it is currently only supported with target: ESNext */
+                        const reversedIdx = parent.children.length - idx;
+                        const openingIdxReversed = [...parent.children].reverse().findIndex((node, ind) => ind > reversedIdx && (node as Text).value === '[[');
+                        if (openingIdxReversed === -1) {
+                            throw new Error('Expected opening brackets');
                         }
-
-                        console.log('kbd', node);
+                        const openingIdx = parent.children.length - openingIdxReversed - 1;
+                        parent.children.splice(openingIdx, idx - openingIdx + 1,
+                            {
+                                type: 'mdxJsxTextElement',
+                                name: 'kbd',
+                                attributes: [...KBD_ATTRIBUTES],
+                                children: parent.children.slice(openingIdx + 1, idx),
+                                data: {
+                                    ['_mdxExplicitJsx']: true
+                                }
+                            } as MdxJsxTextElement
+                        );
+                        actionState = 'SPLIT_BRACKETS';
+                        return [CONTINUE, openingIdx];
                 }
             }
         });

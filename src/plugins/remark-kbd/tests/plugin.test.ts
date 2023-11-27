@@ -35,6 +35,42 @@ Some content
         "`);
     });
 
+    it("can convert multiple kbds", async () => {
+        const input = `# Details element example
+        Hello [[ctrl]] [[world]]!
+        `;
+        const result = await process(input);
+        expect(result).toMatchInlineSnapshot(`
+          "# Details element example
+
+          Hello <kbd>ctrl</kbd> <kbd>world</kbd>!
+          "
+        `);
+    });
+
+    
+
+    it("can convert kbds in lists", async () => {
+        const input = `# Details element example
+        - [[ctrl]]
+        - or [[cmd]]
+        
+        Hello [[F4]]!
+        `;
+        const result = await process(input);
+        expect(result).toMatchInlineSnapshot(`
+          "# Details element example
+
+          * <kbd>ctrl</kbd>
+          * or <kbd>cmd</kbd>
+
+          Hello <kbd>F4</kbd>!
+          "
+        `);
+    });
+
+    
+
     it("accepts closing ]] without converting to kbd", async () => {
         const input = `Hello ctrl]] world!`;
         const result = await process(input);
