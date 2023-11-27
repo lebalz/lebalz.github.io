@@ -8,6 +8,7 @@ import flexCardsPlugin from './src/plugins/remark-flex-cards/plugin';
 import imagePlugin from './src/plugins/remark-images/plugin';
 import deflistPlugin from './src/plugins/remark-deflist/plugin';
 import strongPlugin from './src/plugins/remark-strong/plugin';
+import detailsPlugin from './src/plugins/remark-details/plugin';
 
 const lightCodeTheme = themes.github;
 const darkCodeTheme = themes.dracula;
@@ -20,6 +21,7 @@ const REMARK_PLUGINS = {
         ],
     ],
     remarkPlugins: [
+        [detailsPlugin, { tagNames: { details: 'Details' } }],
         [strongPlugin, { className: 'boxed'}],
         [
             deflistPlugin,
