@@ -4,8 +4,7 @@ import type { MdxJsxFlowElement } from 'mdast-util-mdx';
 import { Content, Image, Paragraph, Parent } from 'mdast';
 import path from 'path';
 import fs from 'fs';
-import { cleanedText, parseOptions, toJsxAttribute, transformAttributes } from '../helpers';
-import { as } from 'vitest/dist/reporters-5f784f42.js';
+import { cleanedText, parseOptions, toJsxAttribute } from '../helpers';
 
 const DEFAULT_TAG_NAMES = {
     figure: 'figure',

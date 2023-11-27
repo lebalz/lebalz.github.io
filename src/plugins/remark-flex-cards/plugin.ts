@@ -5,7 +5,6 @@ import { BlockContent, Content, DefinitionContent, Image, Paragraph, Parent } fr
 import { ContainerDirective, LeafDirective } from 'mdast-util-directive';
 import { Options, toJsxAttribute, transformAttributes } from '../helpers';
 import { Node } from 'unist';
-import { c } from 'vitest/dist/reporters-5f784f42.js';
 
 /** for creating cards or flex: :::cards, :::flex */
 enum ContainerDirectiveName {

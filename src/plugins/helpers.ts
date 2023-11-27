@@ -1,7 +1,6 @@
 import { Expression } from '@mdx-js/mdx/lib/plugin/recma-document';
 import { all as KnownCssProperties } from 'known-css-properties';
-import { MdxJsxAttribute, MdxJsxAttributeValueExpression } from 'mdast-util-mdx';
-import { Parent } from 'unist';
+import { MdxJsxAttribute } from 'mdast-util-mdx';
 
 // matches options in strings: "--width=200px --height=20%" -> {width: '20px', height='20%'}
 const OPTION_REGEX = /(^|\s+)--(?<key>[a-zA-Z\-]+)\s*=\s*(?<value>[\d\S-]+)/
