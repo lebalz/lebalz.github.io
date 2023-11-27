@@ -4,7 +4,7 @@
 
 When `dokku letsencrypt:auto-renew app-name` fails
 
-:::danger ERROR
+:::danger[ERROR]
 ```sh
 2022-01-22 07:42:43,377:ERROR:__main__:1388: CA marked some of the authorizations as
     invalid, which likely means it could not access http://example.com/.well-known/acme-challenge/X.
@@ -37,7 +37,7 @@ Unhandled error has happened, traceback is above
 
 and even `dokku letsencrypt:revoke app-name` fails 
 
-:::danger ERROR
+:::danger[ERROR]
 ```sh
 -----> Revoking letsencrypt certificate for app-name...
         - Domain 'domain.com'
@@ -52,7 +52,7 @@ Debugging tips: -v improves output verbosity. Help is available under --help.
 
 (and `dokku letsencrypt:cleanup app-name` does not help), then an easy trick will do the job:
 
-:::success Readd the domain
+:::success[Readd the domain]
 Remove your current domain since this will cleanup and remove the broken certificates.
 Then add it again and run letsencrypt for the win:
 

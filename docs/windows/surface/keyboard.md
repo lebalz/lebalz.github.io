@@ -8,7 +8,7 @@ Surface Keyboard not working:
 - no LED when connecting
 - no device shown in device Manager
 
-:::success FIX
+:::success[FIX]
 1. Press `Volume Up` + `Power Button` for 15s - you will see the UEFI screen 
 2. Go to `Devices` and disable `Type Cover`
 3. Save and Exit UEFI (restart)

@@ -21,7 +21,7 @@ It states the following:
 
 ## Preparing dokku and the image
 
-:::warning Prerequirements
+:::warning[Prerequirements]
 The following Dokku plugins are required
 - Dokkus [Postgres](https://github.com/dokku/dokku-postgres)
 - Letsencrypt [Letsencrypt](https://github.com/dokku/dokku-letsencrypt)
@@ -67,7 +67,7 @@ dokku config:set --no-restart umami TRACKER_SCRIPT_NAME=myumami
 dokku config:set --no-restart umami COLLECT_API_ENDPOINT="/api/tellme"
 ```
 
-:::info Notes
+:::info[Notes]
 - The environment variable `DATABASE_URL` must not be set manually since it was automatically set when linking the database to the application.
 :::
 

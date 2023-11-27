@@ -8,7 +8,7 @@ image: ./images/search-and-replace.png
 
 Today i wanted to move all the `title: ` fields from the frontmatter to the markdown content (since docusaurus knows how to do this...). 
 
-<!--truncate-->
+{/* truncate */}
 
 **Old**:
 

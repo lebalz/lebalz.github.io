@@ -129,6 +129,7 @@ div.flex {
     }
 
     .card__image {
+      line-height: 0;
       :first-child {
         margin: 0;
         margin-left: auto;
@@ -164,7 +165,7 @@ div.flex {
       border-radius: var(--ifm-card-border-radius);
       box-shadow: var(--ifm-global-shadow-lw);
       padding: 0 var(--ifm-spacing-horizontal);
-      >.item {
+      .item {
         &:first-of-type {
           border-top-right-radius: var(--ifm-alert-border-radius);
           border-bottom-right-radius: var(--ifm-alert-border-radius);
@@ -177,4 +178,26 @@ div.flex {
       }
     }
   }
+}
+
+.mdi-icon {
+  transform: translateY(15%);
+}
+
+
+
+strong.boxed {
+  color: var(--ifm-color-primary);
+  font-weight: normal;
+  border: 1px solid var(--ifm-color-gray-600);
+  padding: 1px 0.4em 1px 0.3em;
+  -moz-border-radius: .2em;
+  -webkit-border-radius: .2em;
+  border-radius: 0.2em;
+  line-height: initial;
+}
+figcaption {
+    strong.boxed {
+        transform: none;
+    }
 }

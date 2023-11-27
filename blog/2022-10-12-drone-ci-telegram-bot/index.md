@@ -9,7 +9,7 @@ image: ./images/flow.png
 
 Quickly committing the last change, push and run out the door to the trainstation... Out in the real world, i'm not worried anymore about the build state - i know what i did and for sure i did not made any mistake... 🫣
 
-<!--truncate-->
+{/* truncate */}
 
 Yes, mistakes happen and i hate, when a missing comma breaks everything, but i see it not before the next day...
 
@@ -69,7 +69,10 @@ return {
 };
 ```
 
-<details><summary>Flow Source</summary>
+<details>
+    <summary>
+        Flow Source
+    </summary>
 
 Copy&Paste this and your ready to go (except the configuration of your bot...)
 
