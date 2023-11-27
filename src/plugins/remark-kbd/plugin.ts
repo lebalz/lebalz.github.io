@@ -2,6 +2,7 @@ import { visit, CONTINUE } from 'unist-util-visit';
 import type { Plugin, Processor, Transformer } from 'unified';
 import type { MdxJsxTextElement } from 'mdast-util-mdx';
 import { Parent, PhrasingContent, Text } from 'mdast';
+import { Node } from 'unist';
 
 /**
  * negative lookbehind:
@@ -21,6 +22,8 @@ const OPENING_REGEX = /(?<!(\]{2}?.*?))\[{2}?/;
  */
 const CLOSING_REGEX = /(?<!(\[{2}?.*?))\]{2}?/;
 
+type ActionStates = 'SPLIT_BRACKETS' | 'SEEK_CLOSING_BRACKET' | 'CREATE_KBD';
+
 const plugin: Plugin = function plugin(
     this: Processor,
     optionsInput?: {
@@ -28,164 +31,113 @@ const plugin: Plugin = function plugin(
     }
 ): Transformer {
     const kbdClassName = optionsInput?.className;
+    let actionState: ActionStates = 'SPLIT_BRACKETS';
+    const nestingMap = new Map<Node, number>();
+
+    /** a bracket stack for each nesting level */
+    const bracketStack = new Map<number, number[]>();
+
+
     return async (ast, vfile) => {
         const kbds: MdxJsxTextElement[] = [];
         visit(ast, (node, idx, parent: Parent) => {
+            if (!parent) {
+                nestingMap.set(node, 0);
+            }
+            if (!nestingMap.get(node)) {
+                nestingMap.set(node, nestingMap.get(parent) + 1);
+            }
+            if (!bracketStack.get(nestingMap.get(node))) {
+                bracketStack.set(nestingMap.get(node), []);
+            }
             /** 
              * visit text nodes and nest all nodes between a kbd sequence [[<content>]] in a kbd mdxJsxTextElement.
-             */
+            */
             if (node.type === 'text') {
                 const textNode = node as Text;
-                const openingMatch = textNode.value.match(OPENING_REGEX);
-                if (openingMatch) {
-                    const pre = textNode.value.slice(0, openingMatch.index);
-                    const post = textNode.value.slice(openingMatch.index + 2);
-                    // remove the current text node from the parent's children array
-                    parent.children.splice(idx, 1);
-                    let spliceAt = idx;
-                    /**
-                     * some text was befor the opening brackets [[, so we need to insert it as a 
-                     * text node before the kbd.
-                     */
-                    if (pre) {
-                        // nested kbd - add to last kbd
-                        if (kbds.length > 0) {
-                            kbds[kbds.length - 1].children.push({
-                                type: 'text',
-                                value: pre
-                            } as Text);
+                switch (actionState) {
+                    case 'SPLIT_BRACKETS':
+                        const bracketIdx = [textNode.value.indexOf('[['), textNode.value.indexOf(']]')].filter(idx => idx > -1);
+                        if (bracketIdx.length === 0) {
+                            if (idx + 1 >= parent.children.length) {
+                                actionState = 'CREATE_KBD';
+                                return [CONTINUE, 0];
+                            }
+                            return CONTINUE;
+                        }
+                        parent.data = {...parent.data, hasKBD: true};
+                        const splitIdx = Math.min(...bracketIdx);
+                        const pre = textNode.value.slice(0, splitIdx);
+                        const bracket = textNode.value.slice(splitIdx, splitIdx + 2);
+                        const post = textNode.value.slice(splitIdx + 2);
+                        
+                        const stack = bracketStack.get(nestingMap.get(node))
+                        let bracketId = stack.length;
+                        if (bracket === '[[') {
+                            stack.push(splitIdx);
+                            bracketId++;
+                        } else if (stack.length === 0) {
+                            /** unmatched brackets - ignore */
+                            bracketId--;
                         } else {
-                            // new kbd - add to parent
-                            parent.children.splice(spliceAt, 0, {
+                            stack.pop();
+                        }
+                        const splitted = [{
+                            type: 'text',
+                            value: bracket,
+                            data: bracketId > 0 ? {
+                                id: bracketId
+                            } : undefined
+                        }] as Text[];
+                        let nextIdx = idx + 1;
+                        
+                        if (pre) {
+                            splitted.unshift({
                                 type: 'text',
                                 value: pre
-                            } as Text);
-                            spliceAt++;
+                            });
+                            nextIdx++;
                         }
-                    }
-                    /**
-                     * create a new kbd node
-                     */
-                    const kbd = {
-                        type: 'mdxJsxTextElement',
-                        name: 'kbd',
-                        attributes: [],
-                        children: [],
-                        data: {
-                            ['_mdxExplicitJsx']: true
+                        if (post) {
+                            splitted.push({
+                                type: 'text',
+                                value: post
+                            });
                         }
-                    } as MdxJsxTextElement;
+                        parent.children.splice(idx, 1, ...splitted);
+                        if (nextIdx >= parent.children.length) {
+                            actionState = 'CREATE_KBD';
+                            return [CONTINUE, 0];
+                        }
+                        return [CONTINUE, nextIdx];
+                    case 'CREATE_KBD':
+                        if (!parent.data?.hasKBD) {
+                            actionState = 'SPLIT_BRACKETS';
+                            return [CONTINUE, parent.children.length]
+                        }
+                        if (textNode.value === '[[') {
+                            const bracketId = (textNode.data as {id: number}).id;
+                            const closingIdx = parent.children.findIndex((node, ind) => ind > idx && (node as Text).value === ']]' && bracketId === (node.data as {id: number})?.id);
+                            if (closingIdx > -1) {
+                                parent.children.splice(idx, closingIdx - idx + 1,
+                                    {
+                                        type: 'mdxJsxTextElement',
+                                        name: 'kbd',
+                                        attributes: [],
+                                        children: parent.children.slice(idx + 1, closingIdx),
+                                        data: {
+                                            ['_mdxExplicitJsx']: true
+                                        }
+                                    } as MdxJsxTextElement
+                                );
+                            }
+                            return CONTINUE;
+                        }
 
-                    /**
-                     * add className attribute if configured
-                     */
-                    if (kbdClassName) {
-                        kbd.attributes.push({
-                            type: "mdxJsxAttribute",
-                            name: "className",
-                            value: kbdClassName
-                        });
-                    }
-
-                    /**
-                     * add the kbd node to the parent - either the parent node or the last kbd node
-                     */
-                    if (kbds.length > 0) {
-                        kbds[kbds.length - 1].children.push(kbd);
-                        // remember some meta-data: the parent node and the index of the kbd node in the parent's children array
-                        kbd.data.parent = {
-                            node: kbds[kbds.length - 1],
-                            idx: kbds[kbds.length - 1].children.length - 1
-                        };
-                    } else {
-                        parent.children.splice(spliceAt, 0, kbd);
-                        // remember some meta-data: the parent node and the index of the kbd node in the parent's children array
-                        kbd.data.parent = {
-                            node: parent,
-                            idx: spliceAt
-                        };
-                        spliceAt++;
-                    }
-                    // remember the kbd node
-                    kbds.push(kbd);
-
-                    /**
-                     * some text was after the opening brackets [[, so we need to insert it as a
-                     * text node after the kbd.
-                     */
-                    if (post) {
-                        parent.children.splice(spliceAt, 0, {
-                            type: 'text',
-                            value: post
-                        } as Text);
-                        /** 
-                         * return the index of the newly inserted text node, 
-                         * so it will be visited next
-                         */
-                        return [CONTINUE, spliceAt];
-                    }
-                    // visit the next sibling
-                    return [CONTINUE, spliceAt + 1];
-                }
-                const closingMatch = textNode.value.match(CLOSING_REGEX);
-
-                // this only matters, when a kbd node is open
-                if (closingMatch && kbds.length > 0) {
-                    const pre = textNode.value.slice(0, closingMatch.index);
-                    const post = textNode.value.slice(closingMatch.index + 2);
-                    // remove the current text node from the parent's children array
-                    parent.children.splice(idx, 1);
-                    if (pre) {
-                        kbds[kbds.length - 1].children.push({
-                            type: 'text',
-                            value: pre
-                        } as Text);
-                    }
-                    // delete the meta-data from the kbd node
-                    delete kbds[kbds.length - 1].data.parent;
-
-                    // remove the kbd node from the kbds array
-                    kbds.splice(kbds.length - 1, 1);
-
-                    if (post) {
-                        parent.children.splice(idx, 0, {
-                            type: 'text',
-                            value: post
-                        } as Text);
-                    }
-                    /** 
-                     * visit the next sibling - since we removed the closing kbd node, 
-                     * we don't need to increment the index
-                     */
-                    return [CONTINUE, idx];
-                } else if (kbds.length > 0) {
-                    // remove the node and append it to the currently open kbd node
-                    parent.children.splice(idx, 1);
-                    kbds[kbds.length - 1].children.push({
-                        type: 'text',
-                        value: textNode.value
-                    } as Text)
-                    return [CONTINUE, idx];
-                }
-            } else {
-                // if in a kbd sequence, append the node to the currently open kbd node
-                if (kbds.length > 0) {
-                    kbds[kbds.length - 1].children.push(node as PhrasingContent);
-                    parent.children.splice(idx, 1);
-                    return [CONTINUE, idx];
+                        console.log('kbd', node);
                 }
             }
         });
-        /**
-         * cleanup: remove all unprocessed kbd nodes and replace them with their children
-         * --> "[[ctrl]] + [[x" will result in "<kbd>ctrl</kbd> + [[x"
-         */
-        while (kbds.length > 0) {
-            const kbd = kbds.pop();
-            const parent = kbd?.data.parent as {node: Parent, idx: number};
-            parent.node.children.splice(parent.idx, 1, {type: 'text', value: '[['}, ...kbd.children);
-            delete kbd.data.parent;
-        }
     }
 }
 

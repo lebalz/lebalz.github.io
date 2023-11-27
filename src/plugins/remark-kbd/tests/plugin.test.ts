@@ -84,5 +84,13 @@ Some content
         "[<kbd>ctrl</kbd> + <kbd>x</kbd>](https://foobar.ch) world!
         "`);
     });
+    it("handels links in kbds", async () => {
+        const input = `[[ctrl + [x](https://foobar.ch)]] world!
+        `;
+        const result = await process(input);
+        expect(result).toMatchInlineSnapshot(`
+        "<kbd>ctrl + [x](https://foobar.ch)</kbd> world!
+        "`);
+    });
 
 });
