@@ -183,3 +183,21 @@ div.flex {
 .mdi-icon {
   transform: translateY(15%);
 }
+
+
+
+strong.boxed {
+  color: var(--ifm-color-primary);
+  font-weight: normal;
+  border: 1px solid var(--ifm-color-gray-600);
+  padding: 1px 0.4em 1px 0.3em;
+  -moz-border-radius: .2em;
+  -webkit-border-radius: .2em;
+  border-radius: 0.2em;
+  line-height: initial;
+}
+figcaption {
+    strong.boxed {
+        transform: none;
+    }
+}
