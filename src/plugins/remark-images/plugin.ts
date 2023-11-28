@@ -84,7 +84,7 @@ const plugin: Plugin = function plugin(
         const bibPromises = [] as Promise<any>[];
         visit(ast, (node, idx, parent: Parent) => {
             if (node.type === 'paragraph') {
-                const paragraph = node as Paragraph;
+                const paragraph = node as unknown as Paragraph;
                 const imagesOnly = paragraph.children.every(n => {
                     return n.type === 'image' || (n.type === 'text' && n.value.trim() === '')
                 });
@@ -95,10 +95,10 @@ const plugin: Plugin = function plugin(
                 }
             }
             if (node.type === 'image') {
-                const image = node as Image;
+                const image = node as unknown as Image;
                 /** get image options and set cleaned alt text */
                 const cleanedAlt = cleanedText(image.alt || '');
-                const options = parseOptions(image.alt || '');
+                const options = parseOptions(image.alt || '', true);
                 image.alt = cleanedAlt;
                 const figure = {
                     type: 'mdxJsxFlowElement',
@@ -124,8 +124,8 @@ const plugin: Plugin = function plugin(
                 } as MdxJsxFlowElement
 
                 if (cleanedAlt) {
-                    const altAst = this.parse(cleanedAlt) as Parent;
-                    const isWrappedByParagraph = altAst.children.length === 1 && altAst.children[0].type === 'paragraph';
+                    const altAst = this.parse(cleanedAlt) as unknown as Parent;
+                    const isWrappedByParagraph = altAst.children?.length === 1 && altAst.children[0].type === 'paragraph';
                     const sanitized = isWrappedByParagraph ? (altAst.children[0] as Paragraph) : altAst;
                     (caption.children as Content[]).splice(0, 0, ...[SPACER_SPAN, ...sanitized.children, SPACER_SPAN])
                 }

@@ -1,6 +1,5 @@
-import { Expression } from '@mdx-js/mdx/lib/plugin/recma-document';
 import { all as KnownCssProperties } from 'known-css-properties';
-import { MdxJsxAttribute } from 'mdast-util-mdx';
+import { MdxJsxAttribute, MdxJsxExpressionAttribute } from 'mdast-util-mdx';
 
 // matches options in strings: "--width=200px --height=20%" -> {width: '20px', height='20%'}
 const OPTION_REGEX = /(^|\s+)--(?<key>[a-zA-Z\-]+)\s*=\s*(?<value>[\d\S-]+)/
@@ -29,7 +28,7 @@ export const captialize = (s: string) => {
 export const toMdxJsxExpressionAttribute = (
     key: string,
     value: number | boolean | string | Object,
-    expression: { type: string, value: any, raw: string } | { type: 'Identifier', name: string } | Expression
+    expression: { type: string, value: any, raw: string } | { type: 'Identifier', name: string } | MdxJsxExpressionAttribute['data']
 ): MdxJsxAttribute => {
     return {
         type: 'mdxJsxAttribute',
@@ -86,7 +85,7 @@ export const toJsxAttribute = (key: string, value: string | number | boolean | O
         );
     }
     if (typeof value === 'object') {
-        const expression: Expression = {
+        const expression: MdxJsxAttribute['data'] = {
             type: 'ObjectExpression',
             properties: Object.entries(value).map(([k, v]) => ({
                 type: 'Property',

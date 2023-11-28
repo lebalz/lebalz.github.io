@@ -1,7 +1,7 @@
 import { visit, CONTINUE, SKIP, EXIT } from 'unist-util-visit';
 import type { Plugin, Processor, Transformer } from 'unified';
 import type { MdxJsxFlowElement } from 'mdast-util-mdx';
-import { Content, Parent, Text } from 'mdast';
+import { Content, Parent, PhrasingContent, RootContent, Text } from 'mdast';
 
 // match to determine if the line is an opening tag
 const DD_REGEX = /(^|\r?\n):[ \t]+(.*?)/;
@@ -56,14 +56,18 @@ const plugin: Plugin = function plugin(
             if (node.type === 'paragraph') {
                 let action: ActionStates = 'SEEK_DD_START';
                 visit(node, (cNode, cIdx, cParent: Parent) => {
-                    /** this is the node itself... */
+                    /**
+                     * RULE: only visit the direct children of the paragraph
+                     *       --> only "SKIP" or "EXIT" are returned (except on the first visit)
+                     */
                     if (!cParent) {
+                        /** continue to it's children if cParent is not present */
                         return CONTINUE;
                     }
                     switch (action) {
                         case 'SEEK_DD_START':
                             if (cNode.type === 'text') {
-                                const text = cNode as Text;
+                                const text = cNode as unknown as Text;
                                 const ddMatch = text.value.match(DD_REGEX);
                                 if (ddMatch) {
                                     const pre = text.value.slice(0, ddMatch.index);
@@ -85,6 +89,11 @@ const plugin: Plugin = function plugin(
                             }
                             return SKIP;
                         case 'COLLECT_DT_BODY':
+                            if (cIdx === 0) {
+                                /** the dd has no dt */
+                                action = 'COLLECT_DD_BODY';
+                                return [SKIP, cIdx];
+                            }
                             visit(cParent, (dtNode, dtIdx, dtParent: Parent) => {
                                 const correctNested = dtParent && dtParent === cParent;
                                 if (!correctNested || dtIdx >= cIdx) {
@@ -99,13 +108,13 @@ const plugin: Plugin = function plugin(
                                     if (newLineMatch) {
                                         const pre = text.value.slice(0, newLineMatch.index);
                                         const post = text.value.slice(newLineMatch.index + newLineMatch[0].length);
+                                        const newChildren: RootContent[] = [];
                                         const dtNodes = dtParent.children.splice(dtIdx + 1, cIdx - (dtIdx + 1));
                                         if (pre.trim()) {
-                                            dtParent.children.splice(dtIdx, 0, {
+                                            newChildren.push({
                                                 type: 'text',
                                                 value: pre
                                             });
-                                            dtIdx++;
                                         }
                                         if (post.trim()) {
                                             dtNodes.splice(0, 0, {
@@ -113,7 +122,8 @@ const plugin: Plugin = function plugin(
                                                 value: post
                                             });
                                         };
-                                        dtParent.children.splice(dtIdx, 0, getDTNode(dtNodes));
+                                        newChildren.push(getDTNode(dtNodes));
+                                        dtParent.children.splice(dtIdx, 1, ...newChildren);
                                         action = 'ADD_TO_DL';
                                         return EXIT;
                                     }
@@ -129,9 +139,16 @@ const plugin: Plugin = function plugin(
                             }, true);
                             return [SKIP, cIdx];
                         case 'ADD_TO_DL':
-                            /** expect cIdx to be 0 - otherwise it's a bug */
+                            /** if cIdx != 0, it means the paragraph did not start with 
+                             * the deflist. The current paragraph mus be splitted. */
                             if (cIdx !== 0) {
-                                throw new Error('cIdx should be 0');
+                                const pre = cParent.children.splice(0, cIdx) as PhrasingContent[];
+                                parent.children.splice(idx, 0, {
+                                    type: 'paragraph',
+                                    children: pre
+                                });
+                                idx++;
+                                cIdx = 0;
                             }
                             const hasDL = idx > 0
                                 && parent.children[idx - 1].type === 'mdxJsxFlowElement'
@@ -194,7 +211,7 @@ const plugin: Plugin = function plugin(
                             return [SKIP, cIdx];
                         case 'SEEK_CONSECUTIVE_DD_START':
                             if (cNode.type === 'text') {
-                                const text = cNode as Text;
+                                const text = cNode as unknown as Text;
                                 const ddMatch = text.value.match(DD_CONSECUTIVE_REGEX);
                                 if (ddMatch) {
                                     const dd = text.value.slice(ddMatch.index);

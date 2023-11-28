@@ -20,7 +20,7 @@ const process = async (content: string) => {
 }
 
 describe('#deflist', () => {
-    it("does nothing if there's no mdi", async () => {
+    it("does nothing if there's no deflist", async () => {
         const input = `# Heading
 
 Some content
@@ -211,6 +211,144 @@ Some content
         </dl>
 
         :directive[Foo] Bar
+        "
+      `);
+    });
+
+    it("can have html elements within dd", async () => {
+      const input = `# Details element example
+      [Hello](https://example.com) my [World](https://example.com)
+      : <span>hello
+            bla
+      </span> world`;
+      const result = await process(input);
+      expect(result).toMatchInlineSnapshot(`
+        "# Details element example
+
+        <dl>
+          <dt>
+            [Hello](https://example.com) my [World](https://example.com)
+          </dt>
+
+          <dd>
+            <span>hello
+            bla
+            </span> world
+          </dd>
+        </dl>
+        "
+      `);
+    });
+
+    it("can split inlined deflists", async () => {
+      const input = `# Details element example
+      Einige Vorteile:
+      Definition Eins
+      : Bli Bla Blu
+      : und so weiter
+
+`;
+      const result = await process(input);
+      expect(result).toMatchInlineSnapshot(`
+        "# Details element example
+
+        Einige Vorteile:
+
+        <dl>
+          <dt>
+            Definition Eins
+          </dt>
+
+          <dd>
+            Bli Bla Blu
+          </dd>
+
+          <dd>
+            und so weiter
+          </dd>
+        </dl>
+        "
+      `);
+    });
+
+    it("can handle false-positives", async () => {
+      const input = `# Details element example
+      : Bli Bla Blu
+      : und so weiter
+      `;
+      
+      const result = await process(input);
+      expect(result).toMatchInlineSnapshot(`
+        "# Details element example
+
+        <dl>
+          <dd>
+            Bli Bla Blu
+          </dd>
+
+          <dd>
+            und so weiter
+          </dd>
+        </dl>
+        "
+      `);
+    });
+
+    it("can handle false-positives", async () => {
+      const input = `# Details element example
+      Lirum Larum
+
+      And so on
+
+
+      : Bli Bla Blu
+      : und so weiter
+
+      whatever between
+
+      Lorem Ipsum
+      : And a correct def
+      Dolor Sit
+      : And another correct def
+      `;
+      
+      const result = await process(input);
+      expect(result).toMatchInlineSnapshot(`
+        "# Details element example
+
+        Lirum Larum
+
+        And so on
+
+        <dl>
+          <dd>
+            Bli Bla Blu
+          </dd>
+
+          <dd>
+            und so weiter
+          </dd>
+        </dl>
+
+        whatever between
+
+        <dl>
+          <dt>
+            Lorem Ipsum
+          </dt>
+
+          <dd>
+            And a correct def
+          </dd>
+
+          <dt>
+            Dolor Sit
+          </dt>
+
+          <dd>
+            And another correct def
+          </dd>
+        </dl>
         "
       `);
     });
