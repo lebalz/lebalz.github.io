@@ -55,7 +55,7 @@ The following step **has to be done after each deployment**, since there is no p
 ```bash title=/home/dokku/$APP/nginx.conf
 location / {
     ...
-    X-Real-IP to $remote_addr;
+    proxy_set_header X-Real-IP $remote_addr;
 }
 ```
 and then do a `service nginx reload`.
