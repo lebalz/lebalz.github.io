@@ -23,6 +23,8 @@ dokku storage:mount $APP /var/lib/dokku/data/storage/$APP/data:/data/
 dokku proxy:ports-add $APP "http:80:80"
 # set domain
 dokku domains:add $APP $DOMAIN
+# use X-Forwarded-For header to resolve users IP
+dokku config:set $APP IP_HEADER="X-Forwarded-For"
 
 # SMTP configuration
 dokku config:set $APP DOMAIN=https://$DOMAIN
@@ -49,14 +51,3 @@ dokku git:from-image $APP vaultwarden/server:latest
 #letsencrypt
 dokku letsencrypt $APP
 ```
-
-:::danger
-The following step **has to be done after each deployment**, since there is no possibility to set X-Real-IP to `$remote_addr` without a custom template, so edit the nginx template under `/home/dokku/$APP/nginx.conf` and add
-```bash title=/home/dokku/$APP/nginx.conf
-location / {
-    ...
-    proxy_set_header X-Real-IP $remote_addr;
-}
-```
-and then do a `service nginx reload`.
-:::
