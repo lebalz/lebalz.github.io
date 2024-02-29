@@ -61,7 +61,7 @@ dokku git:from-image gitlab gitlab/gitlab-ee:15.11.13-ee.0
 dokku letsencrypt gitlab
 ```
 
-:::important On Ubuntu >=22.04
+:::warning[On Ubuntu >=22.04]
 In Ubuntu 22.04+ cgrub v2 is used, what is not compatible with the current dockerized gitlab setup. To use cgrub v1, add the following command to `CGRUB_CMDLINE_LINUX`:
 
 Check if you have cgrub v2: `grep cgroup /proc/filesystems`.
