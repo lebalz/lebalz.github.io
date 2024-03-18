@@ -47,12 +47,18 @@ dokku config:set outline --no-restart AZURE_RESOURCE_APP_ID=""
 dokku config:set outline --no-restart SMTP_SECURE=false
 dokku config:set outline --no-restart SMTP_USERNAME =""
 dokku config:set outline --no-restart SMTP_PASSWORD=""
-dokku ports:add outline --no-restart http:80:3000
 dokku config:set --no-restart outline DOKKU_LETSENCRYPT_EMAIL=""
+
+dokku ports:add outline --no-restart http:80:3000
+
+# set the max upload size of attachements
+dokku nginx:set outline client-max-body-size 20m
+# and reconfigure the nginx-config
+dokku proxy:build-config inf-hfr-outline
 
 mkdir -p /var/lib/dokku/data/storage/outline/data
 chown -R 1001 /var/lib/dokku/data/storage/outline/data
-dokku storage:mount outline data:/var/lib/outline/data
+dokku storage:mount outline /var/lib/dokku/data/storage/outline/data:/var/lib/outline/data
 
 
 
