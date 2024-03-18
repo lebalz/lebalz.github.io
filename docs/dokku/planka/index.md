@@ -37,7 +37,7 @@ dokku git:from-image planka ghcr.io/plankanban/planka:latest
 - [👉 OIDC Configuration](https://docs.planka.cloud/docs/Configuration/OIDC)
 
 ```bash
-dokku config:set planka OIDC_ISSUER="https://login.microsoftonline.com/TENANT_ID/v2.0/.well-known/openid-configuration"
+dokku config:set planka OIDC_ISSUER="https://login.microsoftonline.com/TENANT_ID/v2.0"
 dokku config:set planka OIDC_CLIENT_ID="..."
 dokku config:set planka OIDC_CLIENT_SECRET="..."
 dokku config:set planka OIDC_SCOPES="openid profile email"
