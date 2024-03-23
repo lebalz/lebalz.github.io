@@ -33,6 +33,17 @@ dokku config:set --no-restart planka  DOKKU_LETSENCRYPT_EMAIL=foo@bar.ch
 dokku git:from-image planka ghcr.io/plankanban/planka:latest
 ```
 
+## SMTP Setup for Mail Notification
+
+```bash
+dokku config:set planka SMTP_HOST=""
+dokku config:set planka SMTP_USER=""
+dokku config:set planka SMTP_PASSWORD=""
+dokku config:set planka SMTP_PORT=587
+dokku config:set planka SMTP_SECURE=""
+dokku config:set planka SMTP_FROM="Demo Demo" <demo@demo.demo>
+```
+
 ## OICD with Azure AD
 - [👉 OIDC Configuration](https://docs.planka.cloud/docs/Configuration/OIDC)
 
