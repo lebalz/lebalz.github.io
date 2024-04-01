@@ -16,8 +16,8 @@
     "test": "vitest --coverage"
   },
   "dependencies": {
-    "@docusaurus/core": "^3.0.0",
-    "@docusaurus/preset-classic": "^3.0.0",
+    "@docusaurus/core": "^3.2.0",
+    "@docusaurus/preset-classic": "^3.2.0",
     "@mdi/js": "^7.2.96",
     "@mdi/react": "^1.6.1",
     "@mdx-js/mdx": "^3.0.0",
@@ -38,9 +38,9 @@
     "url": "^0.11.0"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "^3.0.0",
-    "@docusaurus/tsconfig": "^3.0.0",
-    "@docusaurus/types": "^3.0.0",
+    "@docusaurus/module-type-aliases": "^3.2.0",
+    "@docusaurus/tsconfig": "^3.2.0",
+    "@docusaurus/types": "^3.2.0",
     "@types/mdast": "^3.0.12",
     "@types/unist": "^3.0.2",
     "@vitest/coverage-v8": "^0.34.6",
