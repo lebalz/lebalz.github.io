@@ -49,7 +49,7 @@ const DEFAULT_CLASSES: {[key in ContainerDirectiveName]: {container: string, ite
     }
 }
 
-const generateContent = (type: ContainerDirectiveName): MdxJsxFlowElement & {data: {type: 'content'}} => {
+const generateContent = (type: ContainerDirectiveName): MdxJsxFlowElement & {data: {type: 'content', "_mdxExplicitJsx": boolean}} => {
     return {
         type: 'mdxJsxFlowElement',
         name: 'div',
@@ -68,7 +68,7 @@ const generateContent = (type: ContainerDirectiveName): MdxJsxFlowElement & {dat
     }
 }
 
-const generateImage = (image: Paragraph): MdxJsxFlowElement & {data: {type: 'image'}} => {
+const generateImage = (image: Paragraph): MdxJsxFlowElement & {data: {type: 'image', "_mdxExplicitJsx": boolean}} => {
     return {
         type: 'mdxJsxFlowElement',
         name: 'div',

@@ -9,7 +9,7 @@ const alignLeft = (content: string) => {
 }
 
 const process = async (content: string) => {
-    const {default: plugin} = await import('../plugin');
+    const {default: plugin} = await import('../plugin') as any;
     const result = await remark()
         .use(remarkMdx)
         .use(remarkDirective)
@@ -282,9 +282,9 @@ Some content
         "# Details element example
 
         <dl>
-          <dd>
-            Bli Bla Blu
-          </dd>
+          <dt>
+            : Bli Bla Blu
+          </dt>
 
           <dd>
             und so weiter
@@ -321,9 +321,9 @@ Some content
         And so on
 
         <dl>
-          <dd>
-            Bli Bla Blu
-          </dd>
+          <dt>
+            : Bli Bla Blu
+          </dt>
 
           <dd>
             und so weiter
@@ -420,4 +420,38 @@ Some content
         "
       `);
     });    
+
+    it("does not transform inline :", async () => {
+      const input = `# Details element example
+      - a: simple
+      - b: list
+      - c: with
+      - d: colons
+      `;
+      const result = await process(input);
+      expect(result).toMatchInlineSnapshot(`
+        "# Details element example
+
+        * a: simple
+        * b: list
+        * c: with
+        * d: colons
+        "
+      `);
+    });
+
+    it("does not : after an inline element", async () => {
+      const input = `# Details element example
+      - \`a\`: bla
+      - \`b\`: list
+      `;
+      const result = await process(input);
+      expect(result).toMatchInlineSnapshot(`
+        "# Details element example
+
+        * \`a\`: bla
+        * \`b\`: list
+        "
+      `);
+    });
 });

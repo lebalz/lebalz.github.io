@@ -1,6 +1,6 @@
 import { visit, SKIP } from 'unist-util-visit';
 import type { Plugin, Processor, Transformer } from 'unified';
-import type { MdxJsxFlowElement } from 'mdast-util-mdx';
+import type { MdxJsxFlowElement, MdxJsxTextElement } from 'mdast-util-mdx';
 import { Content, Image, Paragraph, Parent } from 'mdast';
 import path from 'path';
 import fs from 'fs';
@@ -100,28 +100,29 @@ const plugin: Plugin = function plugin(
                 const cleanedAlt = cleanedText(image.alt || '');
                 const options = parseOptions(image.alt || '', true);
                 image.alt = cleanedAlt;
+                const jsxType = parent.type === 'paragraph' ? 'mdxJsxTextElement' : 'mdxJsxFlowElement';
                 const figure = {
-                    type: 'mdxJsxFlowElement',
+                    type: jsxType,
                     name: optionsInput?.tagNames?.figure || DEFAULT_TAG_NAMES.figure,
                     attributes: Object.keys(options).length > 0 ? [toJsxAttribute('options', options)] : [],
                     children: [node as Content],
                     data: {
                         _mdxExplicitJsx: true
                     }
-                } as MdxJsxFlowElement;
+                } as MdxJsxFlowElement | MdxJsxTextElement;
 
                 /**
                  * Add alt as caption
                  */
                 const caption = {
-                    type: 'mdxJsxFlowElement',
+                    type: jsxType,
                     name: optionsInput?.tagNames?.figcaption || DEFAULT_TAG_NAMES.figcaption,
                     attributes: [],
                     children: [],
                     data: {
                         _mdxExplicitJsx: true
                     }
-                } as MdxJsxFlowElement
+                } as MdxJsxFlowElement | MdxJsxTextElement;
 
                 if (cleanedAlt) {
                     const altAst = this.parse(cleanedAlt) as unknown as Parent;
@@ -139,7 +140,7 @@ const plugin: Plugin = function plugin(
                 if (hasBibFile) {
                     const bibPromise = import(bibFile).then(({ default: bib }) => {
                         const bibNode = {
-                            type: 'mdxJsxFlowElement',
+                            type: jsxType,
                             name: optionsInput?.tagNames?.sourceRef || DEFAULT_TAG_NAMES.sourceRef,
                             attributes: [toJsxAttribute('bib', bib)],
                             children: [],

@@ -70,7 +70,7 @@ describe('#iamge', () => {
         "
       `);
   });
-  it("sets width with --width=", async () => {
+  it("sets width with --max-width=", async () => {
     const input = `# Heading
 
         ![Caption --max-width=200px](https://example.com/image.png)
@@ -165,5 +165,19 @@ describe('#iamge', () => {
           </figure>
           "
         `);
+  });
+
+  
+  it("wraps inline image to inlined figure", async () => {
+    const input = `# Heading
+            Hello ![](assets/placeholder.svg) my friend.
+        `;
+    const result = await process(input);
+    expect(result).toMatchInlineSnapshot(`
+      "# Heading
+
+      Hello <figure>![](assets/placeholder.svg)<figcaption><span style={{flexGrow: 1}} /><SourceRef bib={{\\"author\\":\\"Flanoz\\",\\"source\\":\\"https://commons.wikimedia.org/wiki/File:Placeholder_view_vector.svg\\",\\"licence\\":\\"CC 0\\",\\"licence_url\\":\\"https://creativecommons.org/publicdomain/zero/1.0/deed.en\\",\\"edited\\":false}} /></figcaption></figure> my friend.
+      "
+    `);
   });
 });
