@@ -13,8 +13,9 @@ custom gcode placeholders
 
 ```gcode
 {if layer_num >= 0}
-G1 X0 Y0 Z{toolchange_z+10}; Update this, tell the nozzle to go to 0 0 tool height
+G1 X0 Y0 Z{toolchange_z+10} E-0.6 F700; Update this, tell the nozzle to go to 0 0 tool height
 M600 ; change to filament for extruder
+G1 Z0.2 ; go to bed level
 G1 E0.3 F1500 ; prime after color change
 G1 X0 Y0 Z{toolchange_z+10}; ensure to not crash any printed objects after priming
 {endif}
