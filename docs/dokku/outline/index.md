@@ -82,6 +82,14 @@ docker pull docker.getoutline.com/outlinewiki/outline:latest
 dokku ps:rebuild outline
 ```
 
+:::warning[Error: `git repository not initialized`]
+When the docker image was not configured correctly, an error will indicate something is wrong with the git repo. Then stop the app and update with
+
+```bash
+dokku git:from-image outline docker.getoutline.com/outlinewiki/outline:latest
+```
+:::
+
 
 ## Backup Config
 When backing up with [👉 dokku-keeper](https://github.com/lebalz/dokku-keeper)
