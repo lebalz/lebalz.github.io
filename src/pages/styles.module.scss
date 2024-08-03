@@ -1,0 +1,80 @@
+/**
+ * CSS files with the .module.css suffix will be treated as CSS modules
+ * and scoped locally.
+ */
+
+.heroBanner {
+    padding: 4rem 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+@media screen and (max-width: 996px) {
+    .heroBanner {
+        padding: 2rem;
+    }
+}
+
+.technologies {
+    display: flex;
+    gap: 1em;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    --tech-icon-wrapper-size: 48px;
+    --tech-icon-size: 40px;
+    .techIcon {
+        box-shadow: var(--ifm-global-shadow-tl);
+        background: var(--ifm-color-secondary);
+        width: var(--tech-icon-wrapper-size);
+        height: var(--tech-icon-wrapper-size);
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        >.icon {
+            clip-path: circle(calc(var(--tech-icon-wrapper-size)/2) at center);
+            width: var(--tech-icon-size);
+            height: var(--tech-icon-size);
+        }
+    }
+}
+.section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.projects {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: stretch;
+    gap: 1em;
+    flex-direction: row;
+    .project {
+        max-width: 550px;
+        flex-basis: 300px;
+        flex-grow: 1;
+        flex-shrink: 1;
+        box-shadow: var(--ifm-global-shadow-tl);
+        margin: 2em;
+    }
+}
+.description {
+    margin-top: 1em;
+}
+.badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3em;
+}
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    > h3 {
+        margin-bottom: 0.4em;
+    }
+}

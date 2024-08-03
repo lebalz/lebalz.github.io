@@ -50,16 +50,51 @@ const REMARK_PLUGINS = {
 
 }
 
+export interface Project {
+    title: string;
+    description: string;
+    tags: string[];
+    image: string;
+    url?: string;
+    repository: string;
+}
+
+const PROJECTS: Project[] = [
+    {
+        title: 'DB-SQL',
+        description: 'Online DBMS to query any hosted DB. No need to install anything or to worry about closed ports (e.g. in schools or companies).',
+        tags: ['SQL', 'query', 'Database', 'Online', 'PSQL', 'MySQL'],
+        image: 'https://raw.githubusercontent.com/lebalz/db-sql/master/docs/db-sql.gif',
+        url: 'https://db-sql.ch',
+        repository: 'https://github.com/lebalz/db-sql'
+    },
+    {
+        title: 'Live-Brython',
+        description: 'Live coding with Python in the browser. Write Python code and see the results immediately.',
+        tags: ['Python', 'Brython', 'Live', 'Docusaurus', 'Web', 'IDE'],
+        image: 'https://raw.githubusercontent.com/lebalz/docusaurus-live-brython/main/brython-demo.gif',
+        url: 'https://lebalz.github.io/docusaurus-live-brython/',
+        repository: 'https://github.com/lebalz/docusaurus-live-brython'
+    },
+    {
+        title: 'SQL-Injection Demo',
+        description: 'Demonstration of SQL-Injection attacks in a simple web application. In this webshop, all database queries used are intentionally vulnerable to sql injection.',
+        tags: ['SQL', 'Injection', 'Security', 'Demo', 'Web'],
+        image: 'https://github.com/lebalz/sql-injection-demo/raw/master/docs/images/shop_screenshot.jpg',
+        repository: 'https://github.com/lebalz/sql-injection-demo'
+    }
+];
+
 const config: Config = {
-    title: 'Blog',
-    tagline: 'Dev Blog by LeBalz',
+    title: 'Hello .',
+    tagline: 'I\'m Balthasar Hofer, Teacher and Developer',
     url: 'https://lebalz.ch',
     baseUrl: '/',
     onBrokenLinks: 'throw',
     onBrokenMarkdownLinks: 'warn',
     favicon: 'img/favicon.ico',
     organizationName: 'lebalz', // Usually your GitHub org/user name.
-    projectName: 'blog', // Usually your repo name.
+    projectName: 'lebalz.github.io', // Usually your repo name.
     trailingSlash: true,
     markdown: {
         mdx1Compat: {
@@ -67,6 +102,9 @@ const config: Config = {
             comments: false,
             headingIds: false
         }
+    },
+    customFields: {
+        projects: PROJECTS
     },
     presets: [
         [
@@ -78,20 +116,18 @@ const config: Config = {
                     sidebarPath: require.resolve('./sidebars.js'),
                     routeBasePath: 'synopsis',
                     // Please change this to your repo.
-                    editUrl: 'https://github.com/lebalz/blog/edit/main/'
+                    editUrl: 'https://github.com/lebalz/lebalz.github.io/edit/main/'
                 },
                 blog: {
                     beforeDefaultRemarkPlugins: REMARK_PLUGINS.beforeDefaultRemarkPlugins,
                     remarkPlugins: REMARK_PLUGINS.remarkPlugins,
                     blogTitle: 'Dev Blog',
-                    routeBasePath: '/',
                     showReadingTime: true,
                     blogSidebarCount: 'ALL',
                     postsPerPage: 15,
                     blogSidebarTitle: 'Posts',
-                    // Please change this to your repo.
                     editUrl:
-                        'https://github.com/lebalz/blog/edit/main/'
+                        'https://github.com/lebalz/lebalz.github.io/edit/main/'
                 },
                 pages: {
                     beforeDefaultRemarkPlugins: REMARK_PLUGINS.beforeDefaultRemarkPlugins,
@@ -125,12 +161,17 @@ const config: Config = {
                         label: 'Knowledgebase',
                     },
                     {
+                        to: 'blog',
+                        position: 'left',
+                        label: 'Blog',
+                    },
+                    {
                         to: 'recipes/',
                         position: 'left',
                         label: 'Rezepte',
                     },
                     {
-                        href: 'https://github.com/lebalz/blog',
+                        href: 'https://github.com/lebalz',
                         position: 'right',
                         className: 'header-github-link',
                         'aria-label': 'GitHub repository',
@@ -155,6 +196,13 @@ const config: Config = {
                                 to: '/synopsis/dokku',
                             },
                         ],
+                    },
+                    {
+                        title: 'Projects',
+                        items: PROJECTS.map((project) => ({
+                            label: project.title,
+                            to: project.url || project.repository,
+                        })),
                     },
                     {
                         title: 'More',
