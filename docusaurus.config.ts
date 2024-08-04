@@ -77,12 +77,20 @@ const PROJECTS: Project[] = [
         repository: 'https://github.com/lebalz/docusaurus-live-brython'
     },
     {
+        title: 'Maqueen Plus V2',
+        description: "Library to program the Micro:bit with Python to control the Maqueen Plus V2 robot (by EV3 dfrobot). I'm the author and maintainer of the library.",
+        tags: ['Python', 'Library', 'Micropython', 'Micro:bit', 'Robot', 'Maqueen'],
+        image: 'https://gbsl-informatik.github.io/maqueen-plus-v2-mpy/img/maqueen-plus-v2.jpg',
+        url: 'https://gbsl-informatik.github.io/maqueen-plus-v2-mpy/',
+        repository: 'https://github.com/GBSL-Informatik/maqueen-plus-v2-mpy'
+    },
+    {
         title: 'SQL-Injection Demo',
         description: 'Demonstration of SQL-Injection attacks in a simple web application. In this webshop, all database queries used are intentionally vulnerable to sql injection.',
         tags: ['SQL', 'Injection', 'Security', 'Demo', 'Web'],
         image: 'https://github.com/lebalz/sql-injection-demo/raw/master/docs/images/shop_screenshot.jpg',
         repository: 'https://github.com/lebalz/sql-injection-demo'
-    }
+    },
 ];
 
 const config: Config = {
