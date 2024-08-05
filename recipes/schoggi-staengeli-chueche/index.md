@@ -1,3 +1,7 @@
+---
+image: ./images/schoggi-staengeli-cake.jpg
+---
+
 # Schoggistängeli-Chueche
 
 ::::cards{.recipe}

@@ -1,3 +1,6 @@
+---
+image: ./images/muffins.jpg
+---
 # Schoggi Muffins
 
 ::::cards{.recipe}
