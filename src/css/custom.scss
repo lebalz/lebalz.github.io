@@ -157,6 +157,20 @@ div.flex {
   }
 
   &.recipe {
+    .task {
+      border-color: red;
+      border-width: 1px;
+      background-color: var(--ifm-card-background-color);
+      border-radius: var(--ifm-card-border-radius);
+      box-shadow: var(--ifm-global-shadow-lw);
+      padding: 0 var(--ifm-spacing-horizontal);
+      .item {
+        dl.dl {
+          margin-block-start: 0.1em;
+          margin-block-end: 0.1em;
+        }
+      }
+    }
     .step {
       /* card props*/
       border-color: red;
