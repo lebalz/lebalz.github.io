@@ -1,9 +1,9 @@
 # Prusa Slicer
 
 prusa specific gcodes
-: [👉 help.prusa3d.com](https://help.prusa3d.com/article/prusa-firmware-specific-g-code-commands_112173)
+: [help.prusa3d.com](https://help.prusa3d.com/article/prusa-firmware-specific-g-code-commands_112173)
 custom gcode placeholders
-: [👉 help.prusa3d.com](https://help.prusa3d.com/article/list-of-placeholders_205643)
+: [help.prusa3d.com](https://help.prusa3d.com/article/list-of-placeholders_205643)
 
 ## Manual Multi Material
 

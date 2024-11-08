@@ -1,11 +1,11 @@
 # Planka Board
 
-[👉 Planka](https://planka.app/)
+[Planka](https://planka.app/)
 
 ## Dokku installation
 
-- [👉 docker-compose.yml](https://github.com/plankanban/planka/blob/master/docker-compose.yml)
-- [👉 Docker Installation](https://docs.planka.cloud/docs/installation/docker/production_version)
+- [docker-compose.yml](https://github.com/plankanban/planka/blob/master/docker-compose.yml)
+- [Docker Installation](https://docs.planka.cloud/docs/installation/docker/production_version)
 
 ```bash
 dokku apps:create planka
@@ -45,7 +45,7 @@ dokku config:set planka SMTP_FROM="Demo Demo" <demo@demo.demo>
 ```
 
 ## OICD with Azure AD
-- [👉 OIDC Configuration](https://docs.planka.cloud/docs/Configuration/OIDC)
+- [OIDC Configuration](https://docs.planka.cloud/docs/Configuration/OIDC)
 
 ```bash
 dokku config:set planka OIDC_ISSUER="https://login.microsoftonline.com/TENANT_ID/v2.0"
@@ -63,7 +63,7 @@ dokku ps:rebuild planka
 ```
 
 ## Backup Config
-When backing up with [👉 dokku-keeper](https://github.com/lebalz/dokku-keeper)
+When backing up with [dokku-keeper](https://github.com/lebalz/dokku-keeper)
 
 ```yml title="backup_config.yml"
 planka:

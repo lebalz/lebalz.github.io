@@ -1,6 +1,6 @@
 # Flights DB
 
-[👉 Demo Flights DB](https://postgrespro.com/community/demodb)
+[Demo Flights DB](https://postgrespro.com/community/demodb)
 
 Unpack the zip file and copy the files to the server.
 

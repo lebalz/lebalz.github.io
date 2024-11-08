@@ -1,7 +1,8 @@
 import type { Config } from '@docusaurus/types';
-import * as Preset from '@docusaurus/preset-classic';
+import type * as Preset from '@docusaurus/preset-classic';
+import { themes as prismThemes } from 'prism-react-renderer';
+import path from 'path';
 
-const { themes } = require('prism-react-renderer');
 import mdiPlugin from './src/plugins/remark-mdi/plugin';
 import kbdPlugin from './src/plugins/remark-kbd/plugin';
 import flexCardsPlugin from './src/plugins/remark-flex-cards/plugin';
@@ -9,9 +10,8 @@ import imagePlugin from './src/plugins/remark-images/plugin';
 import deflistPlugin from './src/plugins/remark-deflist/plugin';
 import strongPlugin from './src/plugins/remark-strong/plugin';
 import detailsPlugin from './src/plugins/remark-details/plugin';
+import linkAnnotationPlugin from './src/plugins/remark-link-annotation/plugin';
 
-const lightCodeTheme = themes.github;
-const darkCodeTheme = themes.dracula;
 const REMARK_PLUGINS = {
     beforeDefaultRemarkPlugins: [
         flexCardsPlugin,
@@ -19,9 +19,9 @@ const REMARK_PLUGINS = {
             imagePlugin,
             { tagNames: { sourceRef: 'SourceRef', figure: 'Figure' } }
         ],
+        detailsPlugin,
     ],
     remarkPlugins: [
-        [detailsPlugin, { tagNames: { details: 'Details' } }],
         [strongPlugin, { className: 'boxed'}],
         [
             deflistPlugin,
@@ -46,6 +46,13 @@ const REMARK_PLUGINS = {
             }
         ],
         kbdPlugin,
+        [
+            linkAnnotationPlugin,
+            {
+                prefix: '👉',
+                postfix: null
+            }
+        ]
     ]
 
 }
@@ -113,6 +120,9 @@ const config: Config = {
     },
     customFields: {
         projects: PROJECTS
+    },
+    future: {
+        experimental_faster: true,
     },
     presets: [
         [
@@ -225,8 +235,8 @@ const config: Config = {
                 copyright: `Copyright © ${new Date().getFullYear()} Le Balz`,
             },
             prism: {
-                theme: lightCodeTheme,
-                darkTheme: darkCodeTheme,
+                theme: prismThemes.github,
+                darkTheme: prismThemes.dracula,
                 additionalLanguages: ['bash', 'powershell', 'ruby', 'arduino', 'docker'],
             },
         } satisfies Preset.ThemeConfig,
@@ -245,6 +255,21 @@ const config: Config = {
                 // ... other options
             }
         ],
+        () => {
+          return {
+            name: 'alias-configuration',
+            configureWebpack(config, isServer, utils, content) {
+              return {
+                resolve: {
+                  alias: {
+                    '@tdev-components': path.resolve(__dirname, './src/components'),
+                    '@tdev': path.resolve(__dirname, './src'),
+                  }
+                }
+              }
+            }
+          }
+        },
     ],
     scripts: [
         // Object format.

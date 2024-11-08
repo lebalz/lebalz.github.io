@@ -3,8 +3,8 @@
 > Astuto is an open source customer feedback tool. It helps you collect, manage and prioritize feedback from your customers, so you can build a better product.
 
 Astuto
-: [👉 github.com/astuto/astuto](https://github.com/astuto/astuto)
-: [👉 docs.astuto.io](https://docs.astuto.io/)
+: [github.com/astuto/astuto](https://github.com/astuto/astuto)
+: [docs.astuto.io](https://docs.astuto.io/)
 
 
 To get started with [Astutot](https://github.com/astuto/astuto), read the

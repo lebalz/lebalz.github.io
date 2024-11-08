@@ -3,12 +3,8 @@ import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import Heading from '@theme/Heading';
-import useBaseUrl from '@docusaurus/useBaseUrl';
 import styles from './styles.module.scss';
-import { P } from 'vitest/dist/reporters-5f784f42.js';
 import { Project } from '@site/docusaurus.config';
-import Icon from '@mdi/react';
-import { mdiGithub, mdiStar } from '@mdi/js';
 import GitHubButton from 'react-github-btn'
 
 /**
@@ -134,14 +130,14 @@ function Projects() {
                                         <Link 
                                             className="button button--primary button--block"
                                             to={project.url}
-                                            >
+                                        >
                                             👉 Visit
                                         </Link>
                                     ) : (
                                         <Link 
                                             className="button button--primary button--block"
                                             to={project.repository}
-                                            >
+                                        >
                                             👉 Repository
                                         </Link>        
                                     )

@@ -1,16 +1,29 @@
-import React from 'react';
+import React, { type ReactNode } from 'react';
 import clsx from 'clsx';
+
 import styles from './styles.module.scss';
 
-
 interface Props {
-  children?: React.ReactNode;
+    children: ReactNode;
+    className?: string;
+    gridTemplateColumns?: string;
+    small?: boolean;
 }
 
-export default function DefinitionList(props: Props): JSX.Element {
-  return (
-    <dl className={clsx(styles.dl, 'dl')}>
-      {props.children}
-    </dl>
-  );
-}
+const DefinitionList = (props: Props) => {
+    return (
+        <dl
+            className={clsx(
+                styles.definitionList,
+                props.className,
+                props.gridTemplateColumns && styles.ignoreMediaQueries,
+                props.small && styles.small
+            )}
+            style={{ gridTemplateColumns: props.gridTemplateColumns }}
+        >
+            {props.children}
+        </dl>
+    );
+};
+
+export default DefinitionList;

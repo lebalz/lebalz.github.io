@@ -4,7 +4,6 @@ import styles from './styles.module.scss';
 import Icon from '@mdi/react';
 import { mdiOpenInNew } from '@mdi/js';
 
-
 interface Bib {
     author?: string;
     source?: string;
@@ -30,7 +29,7 @@ const SourceRef = (props: Props) => {
                 @
             </span>
             {visible && (
-                <>
+                <div className={clsx(styles.meta)}>
                     <span className={clsx('badge badge--secondary', styles.refItem)}>
                         Autor: {bib.author}
                     </span>
@@ -41,11 +40,11 @@ const SourceRef = (props: Props) => {
                         <span className={clsx('badge badge--secondary', styles.refItem)}>Bearbeitet</span>
                     )}
                     <a href={bib.source} target="_blank" className={styles.refItem}>
-                        <span className={clsx('badge badge--secondary')}>
-                            <Icon path={mdiOpenInNew} size={'1em'} />
+                        <span className={clsx('badge badge--secondary', styles.iconBadge)}>
+                            <Icon path={mdiOpenInNew} size={0.7} />
                         </span>
                     </a>
-                </>
+                </div>
             )}
         </>
     );

@@ -1,7 +1,7 @@
 # XKCD
 
 
-[👉 xkcd.com](https://xkcd.com/)
+[xkcd.com](https://xkcd.com/)
 
 ## Setup XKCD Database
 

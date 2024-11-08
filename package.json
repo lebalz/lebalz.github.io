@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@docusaurus/core": "^3.6.1",
+    "@docusaurus/faster": "^3.6.1",
     "@docusaurus/preset-classic": "^3.6.1",
     "@mdi/js": "^7.4.47",
     "@mdi/react": "^1.6.1",

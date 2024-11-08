@@ -1,15 +1,15 @@
 # Outline Wiki
 
 Website
-: 👉 [getoutline.com](https://www.getoutline.com/)
+: [getoutline.com](https://www.getoutline.com/)
 Dockerhub
-: 👉 [hub.docker.com/r/outlinewiki/outline](https://hub.docker.com/r/outlinewiki/outline)
+: [hub.docker.com/r/outlinewiki/outline](https://hub.docker.com/r/outlinewiki/outline)
 Guide
-: 👉 [official docs](https://docs.getoutline.com/s/hosting/doc/file-storage-N4M0T6Ypu7)
+: [official docs](https://docs.getoutline.com/s/hosting/doc/file-storage-N4M0T6Ypu7)
 Envs
-: 👉 [.env.sample](https://github.com/outline/outline/blob/main/.env.sample)
+: [.env.sample](https://github.com/outline/outline/blob/main/.env.sample)
 Azure Config
-: 👉[docs.getoutline.com](https://docs.getoutline.com/s/hosting/doc/microsoft-azure-UVz6jsIOcv)
+: [docs.getoutline.com](https://docs.getoutline.com/s/hosting/doc/microsoft-azure-UVz6jsIOcv)
 
 ```bash
 
@@ -92,7 +92,7 @@ dokku git:from-image outline docker.getoutline.com/outlinewiki/outline:latest
 
 
 ## Backup Config
-When backing up with [👉 dokku-keeper](https://github.com/lebalz/dokku-keeper)
+When backing up with [dokku-keeper](https://github.com/lebalz/dokku-keeper)
 
 ```yml title="backup_config.yml"
 outline:
