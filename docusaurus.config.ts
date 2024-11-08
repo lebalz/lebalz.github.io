@@ -213,6 +213,18 @@ const config: Config = {
                                 label: 'Dokku',
                                 to: '/synopsis/dokku',
                             },
+                            {
+                                label: 'Blog Archive',
+                                to: '/blog/archive',
+                            },
+                            {
+                                label: 'Search',
+                                to: '/search',
+                            },
+                            {
+                                label: 'Authors',
+                                to: '/authors',
+                            },
                         ],
                     },
                     {
