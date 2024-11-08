@@ -101,7 +101,7 @@ const PROJECTS: Project[] = [
 ];
 
 const config: Config = {
-    title: 'Hello .',
+    title: 'bBlog',
     tagline: 'I\'m Balthasar Hofer, Teacher and Developer',
     url: 'https://lebalz.ch',
     baseUrl: '/',

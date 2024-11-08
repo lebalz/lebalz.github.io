@@ -1,7 +1,14 @@
 ---
 image: ./images/muffins.jpg
+tags: [dessert, muffins]
 ---
+<head>
+    <meta property="og:locale" content="de_DE" />
+</head>
+
 # Schoggi Muffins
+
+Besonders fluffige Schoggi-Muffins die schnell und einfach in 30 Minuten zubereitet sind.
 
 ::::cards{.recipe}
 ![](images/muffins.jpg)

@@ -1,8 +1,14 @@
 ---
 image: ./images/schoggi-staengeli-cake.jpg
+tags: [dessert, cake]
 ---
 
 # Schoggistängeli-Chueche
+<head>
+    <meta property="og:locale" content="de_DE" />
+</head>
+
+Schoggistängeli-Chueche ist ein einfaches Schokoladen-Cake. Die Branchlis geben dem Kuchen einen besonders genüsslichen Kern.
 
 ::::cards{.recipe}
 ![](images/schoggi-staengeli-cake.jpg)
