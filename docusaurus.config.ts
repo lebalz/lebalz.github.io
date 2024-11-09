@@ -223,7 +223,7 @@ const config: Config = {
                             },
                             {
                                 label: 'Authors',
-                                to: '/authors',
+                                to: '/blog/authors',
                             },
                         ],
                     },
