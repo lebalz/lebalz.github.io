@@ -14,7 +14,7 @@ Schoggistängeli-Chueche ist ein einfaches Schokoladen-Cake. Die Branchlis geben
 ![](images/schoggi-staengeli-cake.jpg)
 
 :::tip[Vorbereitung]
-wär möchte kann die Schoggistängelis vorgängig für >40 Minuten in den Kühlschrank legen.
+Wer möchte, kann die Schoggistängelis vorgängig für >40 Minuten in den Kühlschrank legen.
 :::
 
 :::flex{.step alignItems=center}
