@@ -2,9 +2,6 @@
 image: ./images/muffins.jpg
 tags: [dessert, muffins]
 ---
-<head>
-    <meta property="og:locale" content="de_DE" />
-</head>
 
 # Schoggi Muffins
 
@@ -52,3 +49,7 @@ Besonders fluffige Schoggi-Muffins die schnell und einfach in 30 Minuten zuberei
 
 Papierförmli bis zur Hälfte füllen (ca. 24 Stück) im vorgeheizten Ofen bei 220°C **8-9 min.** backen.
 ::::
+
+<head>
+    <meta property="og:locale" content="de_DE" />
+</head>

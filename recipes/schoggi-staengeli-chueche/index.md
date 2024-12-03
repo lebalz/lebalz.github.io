@@ -13,6 +13,10 @@ Schoggistängeli-Chueche ist ein einfaches Schokoladen-Cake. Die Branchlis geben
 ::::cards{.recipe}
 ![](images/schoggi-staengeli-cake.jpg)
 
+:::tip[Vorbereitung]
+Wer möchte, kann die Schoggistängelis vorgängig für >40 Minuten in die Kühltruhe legen.
+:::
+
 :::flex{.step alignItems=center}
     40 g
     : Caotina\*
