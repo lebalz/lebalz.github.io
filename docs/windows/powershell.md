@@ -32,3 +32,13 @@ set-executionpolicy remotesigned -scope CurrentUser
 
 dir | lolcat
 ```
+
+## Git / SSH-Agent
+Ensure the ssh agent is running on startup:
+
+```powershell
+# Make sure you're running as an Administrator
+Set-Service ssh-agent -StartupType Automatic
+Start-Service ssh-agent
+Get-Service ssh-agent
+```
