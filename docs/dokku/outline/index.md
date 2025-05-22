@@ -49,7 +49,7 @@ dokku config:set outline --no-restart SMTP_USERNAME =""
 dokku config:set outline --no-restart SMTP_PASSWORD=""
 dokku config:set --no-restart outline DOKKU_LETSENCRYPT_EMAIL=""
 
-dokku ports:add outline --no-restart http:80:3000
+dokku ports:add outline http:80:3000
 
 # set the max upload size of attachements
 dokku nginx:set outline client-max-body-size 20m
