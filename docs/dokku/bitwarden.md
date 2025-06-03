@@ -51,3 +51,10 @@ dokku git:from-image $APP vaultwarden/server:latest
 #letsencrypt
 dokku letsencrypt $APP
 ```
+
+## Update
+
+```bash
+docker pull vaultwarden/server:latest
+dokku ps:rebuild bitwarden
+```
