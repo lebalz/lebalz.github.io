@@ -103,4 +103,12 @@ In order to update an existing Git submodule, you need to execute the `git submo
 git submodule update --remote --merge
 ```
 
+### Remove merged branches
+
+```bash
+git config --global alias.sync '!git switch main && git pull --prune && git branch --format '\''%(refname:short) %(upstream:track)'\'' | awk '\''$2 == "[gone]" { print $1 }'\'' | xargs -r git branch -D'
+```
+
+by [mathspp.com](https://mathspp.com/blog/til/delete-merged-git-branches)
+
 [^1]: Source: [Snippet by Colematt](https://gist.github.com/colematt/3645b50b20254a7c1a5a8608757626b2)
