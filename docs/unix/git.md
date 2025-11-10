@@ -13,7 +13,8 @@ git config --global user.email foo@bar.ch
 
 # create new ssh key pair
 
-ssh-keygen
+# ssh-keygen
+ssh-keygen -t ed25519 -C "foo@bar.ch"
 
 cat ~/.ssh/id_rsa.pub
 ```
