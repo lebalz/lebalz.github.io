@@ -1,0 +1,212 @@
+{
+    "[python]": {
+        "editor.formatOnType": true
+    },
+    "workbench.colorTheme": "One Dark Pro Darker",
+    "workbench.settings.useSplitJSON": true,
+    "terminal.integrated.profiles.linux": {
+        "bash": {
+            "path": "bash",
+            "icon": "terminal-bash",
+            "args": ["--login"]
+        },
+        "zsh": {
+            "path": "zsh"
+        },
+        "fish": {
+            "path": "fish"
+        },
+        "tmux": {
+            "path": "tmux",
+            "icon": "terminal-tmux"
+        },
+        "pwsh": {
+            "path": "pwsh",
+            "icon": "terminal-powershell"
+        }
+    },
+    "terminal.integrated.defaultProfile.linux": "bash",
+    "git.autofetch": true,
+    "editor.inlineSuggest.enabled": true,
+    "git.confirmSync": false,
+    "local-history.path": "/home/bh0fer/.local-history/",
+    "eslint.validate": [
+        "markdwon",
+        "mdx",
+        "javascript",
+        "javascriptreact",
+        "typescript",
+        "typescriptreact"
+    ],
+    "eslint.packageManager": "yarn",
+    "eslint.alwaysShowStatus": true,
+    "eslint.format.enable": true,
+    "terminal.integrated.scrollback": 10000,
+    "editor.accessibilitySupport": "off",
+    "auto-close-tag.activationOnLanguage": [
+        "xml",
+        "php",
+        "blade",
+        "ejs",
+        "jinja",
+        "javascript",
+        "javascriptreact",
+        "typescript",
+        "typescriptreact",
+        "plaintext",
+        "markdown",
+        "vue",
+        "liquid",
+        "erb",
+        "lang-cfml",
+        "cfml",
+        "HTML (EEx)",
+        "HTML (Eex)",
+        "plist",
+        "mdx"
+    ],
+    "editor.tabSize": 4,
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/.DS_Store": true,
+        "**/.git": true,
+        "**/.hg": true,
+        "**/.pytest_cache": true,
+        "**/.svn": true,
+        "**/*:Zone.Identifier": true,
+        "**/CVS": true
+    },
+    "[scss]": {
+        "editor.defaultFormatter": "vscode.css-language-features"
+    },
+    "[css]": {
+        "editor.defaultFormatter": "vscode.css-language-features"
+    },
+    "typescript.preferences.quoteStyle": "single",
+    "editor.suggest.matchOnWordStartOnly": false,
+    "materialdesigniconsIntellisense.matchers": [
+        {
+            "match": ":?\\bmdi-{param}\\b",
+            "insert": "mdi-{param}",
+            "displayName": "kebab-case (web font)",
+            "name": "kebabCase",
+            "insertSuffix": ":"
+        },
+        {
+            "match": "\\bmdi{pascal}\\b",
+            "insert": "mdi{pascal}",
+            "displayName": "camelCase (js)",
+            "name": "camelCase"
+        },
+        {
+            "match": ":mdi\\[{param}\\]",
+            "insert": "mdi\\[{param}\\]",
+            "displayName": "md directive (web font)",
+            "name": "mdDirective"
+        }
+    ],
+    "materialdesigniconsIntellisense.selector": [
+        "dart",
+        "html",
+        "javascriptreact",
+        "javascript",
+        "markdown",
+        "typescript",
+        "typescriptreact",
+        "yaml",
+        "vue-pug",
+        "vue-html",
+        "vue",
+        "ng-template",
+        "home-assistant",
+        "mdx"
+    ],
+    "materialdesigniconsIntellisense.insertStyle": "mdDirective",
+    "telemetry.telemetryLevel": "off",
+    "[markdown]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "github.copilot.enable": {
+        "*": true,
+        "plaintext": false,
+        "markdown": true,
+        "scminput": false
+    },
+    "python.analysis.typeCheckingMode": "basic",
+    "python.analysis.diagnosticSeverityOverrides": {
+        "reportUnknownMemberType": "none",
+        "reportUnknownVariableType": "none",
+        "reportUnknownParameterType": "none",
+        "reportUnknownArgumentType": "none"
+    },
+    "codesnap.shutterAction": "copy",
+    "[json]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "jestrunner.jestCommand": "TZ=UTC NODE_ENV=test yarn jest",
+    "jestrunner.configPath": "jest.config.js",
+    "window.density.editorTabHeight": "compact",
+    "git.suggestSmartCommit": false,
+    "remote.autoForwardPortsSource": "hybrid",
+    "cmake.showOptionsMovedNotification": false,
+    "[typescriptreact]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features"
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features"
+    },
+    "terminal.integrated.mouseWheelZoom": true,
+    "editor.mouseWheelZoom": true,
+    "codesnap.transparentBackground": true,
+    "prisma.showPrismaDataPlatformNotification": false,
+    "github.copilot.editor.enableAutoCompletions": true,
+    "github.copilot.preferredAccount": "bh0fer",
+    "mdx.validate.validateUnusedLinkDefinitions": "hint",
+    "mdx.validate.validateReferences": "hint",
+    "mdx.validate.validateFragmentLinks": "hint",
+    "mdx.validate.validateFileLinks": "hint",
+    "window.newWindowProfile": "Default",
+    "python.languageServer": "Pylance",
+    "python.analysis.typeEvaluation.strictSetInference": true,
+    "python.analysis.typeEvaluation.strictListInference": true,
+    "python.analysis.typeEvaluation.strictDictionaryInference": true,
+    "python.analysis.typeEvaluation.enableReachabilityAnalysis": true,
+    "python.analysis.typeEvaluation.enableExperimentalFeatures": true,
+    "python.analysis.typeEvaluation.disableBytesTypePromotions": true,
+    "python.analysis.typeEvaluation.deprecateTypingAliases": true,
+    "markdown-pdf.displayHeaderFooter": false,
+    "python.createEnvironment.trigger": "off",
+    "prettier.prettierPath": "./node_modules/prettier",
+    "git.blame.editorDecoration.enabled": false,
+    "[mdx]": {
+        "editor.defaultFormatter": "remcohaszing.vscode-mdxlint"
+    },
+    "githubPullRequests.pullBranch": "never",
+    "security.allowedUNCHosts": ["wsl.localhost"],
+    "VitestRunner.executionArg": "yarn",
+    "[jsonc]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "github.copilot.nextEditSuggestions.enabled": true,
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "markdownTablePrettify.extendedLanguages": ["mdx"],
+    "terminal.integrated.fontSize": 10,
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "prettier.tabWidth": 4,
+    "prettier.configPath": ".prettierrc",
+    "prettier.requireConfig": true,
+    "prettier.singleQuote": true,
+    "[prisma]": {
+        "editor.defaultFormatter": "Prisma.prisma"
+    },
+    "pgsql.enableQueryHistoryCapture": false,
+    "codesnap.containerPadding": "1em",
+    "[xml]": {
+        "editor.defaultFormatter": "redhat.vscode-xml"
+    },
+    "javascript.updateImportsOnFileMove.enabled": "always",
+    "search.followSymlinks": false
+}
