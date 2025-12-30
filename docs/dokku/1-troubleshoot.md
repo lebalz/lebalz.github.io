@@ -20,6 +20,7 @@ e.g. when you want to build for a newly released node lts version, but heroku ca
 
 ```bash
 docker pull gliderlabs/herokuish:latest
+# when this does not help, try additionally:
 dokku buildpacks:set-property APP stack gliderlabs/herokuish:latest
 dokku repo:purge-cache APP
 ```
