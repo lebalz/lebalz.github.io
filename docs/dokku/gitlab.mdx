@@ -1,0 +1,202 @@
+# sdg-gitlab
+
+sdg-gitlab provides a [docker-compose.yml](https://docs.sdg-gitlab.com/ee/install/docker.html#install-sdg-gitlab-using-docker-compose) file, which can be easily converted to a dokku config with [dokkupose.netlify.app](https://dokkupose.netlify.app/).
+
+This results in the following bash script:
+
+```bash
+# sdg-gitlab
+dokku apps:create sdg-gitlab
+
+dokku domains:add sdg-gitlab gitlab.domain.ch
+
+dokku ports:add sdg-gitlab http:80:80
+# eventually open ssh port aswell. docker options must be used here.
+# See https://github.com/dokku/dokku/issues/2383#issuecomment-242591167 for more details how to do this.
+# dokku docker-options:add sdg-gitlab deploy -p 2222:22
+
+# create the storage directory with permissions for root 0:0
+dokku storage:ensure-directory --chown root sdg-gitlab
+
+mkdir -p /var/lib/dokku/data/storage/sdg-gitlab/config
+chown -R 0:0 /var/lib/dokku/data/storage/sdg-gitlab/config
+dokku storage:mount sdg-gitlab /var/lib/dokku/data/storage/sdg-gitlab/config:/etc/gitlab
+
+mkdir -p /var/lib/dokku/data/storage/sdg-gitlab/logs
+chown -R 0:0 /var/lib/dokku/data/storage/sdg-gitlab/logs
+dokku storage:mount sdg-gitlab /var/lib/dokku/data/storage/sdg-gitlab/logs:/var/log/gitlab
+
+mkdir -p /var/lib/dokku/data/storage/sdg-gitlab/data
+chown -R 0:0 /var/lib/dokku/data/storage/sdg-gitlab/data
+dokku storage:mount sdg-gitlab /var/lib/dokku/data/storage/sdg-gitlab/data:/var/opt/gitlab
+
+# configure environment of sdg-gitlab - important to use http:// and not https protocol, since sdg-gitlab runs behind
+# the nginx reverse proxy!
+dokku config:set sdg-gitlab GITLAB_OMNIBUS_CONFIG="external_url 'https://gitlab.domain.ch'; nginx['listen_port'] = 80; nginx['listen_https'] = false;"
+
+
+# assign image to sdg-gitlab
+dokku git:from-image sdg-gitlab gitlab/gitlab-ee:18.10.0-ee.0
+
+
+# optional: letsencrypt
+dokku domains:remove sdg-gitlab sdg-gitlab.fs-inf-26
+dokku letsencrypt:enable sdg-gitlab
+```
+## Admin login
+
+To get the initial admin password, the password must be reset:
+
+```bash
+dokku enter sdg-gitlab
+
+gitlab-rake "gitlab:password:reset"
+```
+
+
+## Configuring Mail
+
+You can modify the `gitlab.rb` file directly on your host system:
+
+```bash
+nano /var/lib/dokku/data/storage/sdg-gitlab/config/gitlab.rb
+```
+
+... and set the following config options:
+
+```rb
+gitlab_rails['smtp_enable'] = true
+gitlab_rails['smtp_address'] = "authsmtp.securemail.pro"
+gitlab_rails['smtp_port'] = 587
+gitlab_rails['smtp_user_name'] = "foo@bar.ch"
+gitlab_rails['smtp_password'] = "PW"
+gitlab_rails['smtp_domain'] = "bar.ch"
+gitlab_rails['smtp_authentication'] = "plain"
+gitlab_rails['smtp_enable_starttls_auto'] = true
+gitlab_rails['smtp_tls'] = false
+gitlab_rails['smtp_openssl_verify_mode'] = 'peer'
+gitlab_rails['gitlab_email_enabled'] = true
+
+gitlab_rails['gitlab_email_from'] = 'foo@bar.ch'
+gitlab_rails['gitlab_email_display_name'] = 'GitLab GBSL'
+gitlab_rails['gitlab_email_reply_to'] = 'foo@bar.ch'
+```
+
+After this, you need to reconfigure gitlab, by entering the running container and run `reconfigure`
+
+```bash
+# enter the docker container spawned by dokku
+dokku enter sdg-gitlab
+
+# and the reconfigure inside the container
+gitlab-ctl reconfigure
+
+# check if you can send an email:
+gitlab-rails console
+```
+
+and run
+
+```irb
+Notify.test_email('USERNAME@gmail.com', 'Message Subject', 'Message Body').deliver_now
+```
+
+### Reconfigure
+```bash
+dokku run sdg-gitlab gitlab-ctl reconfigure
+```
+
+## Reduce Memory usage
+https://docs.gitlab.com/omnibus/settings/memory_constrained_envs/
+
+To work, the following service must be added to allow gitlab to eccess the cgroup memory limits:
+
+```service title="/usr/lib/systemd/system/gitlab-cgroup-permission.service"
+# /usr/lib/systemd/system/gitlab-cgroup-permission.service
+[Unit]
+Description=Set cgroup permissions for GitLab Gitaly
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+Slice=gitlab-gitaly.slice
+
+ExecStartPre=/bin/sh -c 'echo "+cpu +memory" > /sys/fs/cgroup/gitlab.slice/cgroup.subtree_control'
+ExecStartPre=chown 0:0 /sys/fs/cgroup/gitlab.slice/cgroup.procs
+ExecStartPre=mkdir -m 0700 -p /sys/fs/cgroup/gitlab.slice/gitaly.slice
+ExecStartPre=chown -R 0:0 /sys/fs/cgroup/gitlab.slice/gitaly.slice
+
+ExecStart=/bin/true
+
+[Install]
+WantedBy=multi-user.target
+```
+
+and enabled with
+
+```bash
+sudo systemctl start gitlab-cgroup-permission.service
+sudo systemctl enable gitlab-cgroup-permission.service
+```
+
+and mount the cgroup options to the container:
+
+```bash
+dokku storage:mount sdg-gitlab /sys/fs/cgroup/gitlab.slice:/cgroup-gitlab.slice
+# dokku docker-options:add sdg-gitlab run "-v /sys/fs/cgroup/gitlab.slice:/sys/fs/cgroup/gitlab.slice"
+```
+
+```rb title="/var/lib/dokku/data/storage/sdg-gitlab/config/gitlab.rb"
+# Performance optimizations
+# @see https://docs.gitlab.com/omnibus/settings/memory_constrained_envs/
+
+# Reduce sidekiq concurrency
+sidekiq['concurrency'] = 5
+
+postgresql['shared_buffers'] = "256MB"
+
+# use only a single puma server and no worker
+puma['worker_processes'] = 0
+
+# release memory back to os all 2s
+gitlab_rails['env'] = {
+  'MALLOC_CONF' => 'dirty_decay_ms:1000,muzzy_decay_ms:1000'
+}
+
+gitaly['configuration'] = {
+  concurrency: [
+    {
+        'rpc' => "/gitaly.SmartHTTPService/PostReceivePack",
+        'max_per_repo' => 3,
+    }, {
+        'rpc' => "/gitaly.SSHService/SSHUploadPack",
+        'max_per_repo' => 3,
+    },
+  ],
+  cgroups: {
+    mountpoint: '/cgroup-gitlab.slice',
+    hierarchy_root: 'gitaly.slice',
+    memory_bytes: 250000,
+    cpu_shares: 512,
+    repositories: {
+      count: 2,
+    },
+  },
+}
+
+gitaly['env'] = {
+  'GITALY_COMMAND_SPAWN_MAX_PARALLEL' => '2',
+  'MALLOC_CONF' => 'dirty_decay_ms:1000,muzzy_decay_ms:1000'
+}
+
+alertmanager['enable'] = false
+gitlab_exporter['enable'] = false
+gitlab_kas['enable'] = false
+node_exporter['enable'] = false
+postgres_exporter['enable'] = false
+prometheus_monitoring['enable'] = false
+prometheus['enable'] = false
+puma['exporter_enabled'] = false
+redis_exporter['enable'] = false
+sidekiq['metrics_enabled'] = false
+```

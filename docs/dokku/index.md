@@ -53,8 +53,7 @@ sudo nano /etc/fstab
 
 and paste the following line:
 
-```sh
-/etc/fstab
+```sh title="/etc/fstab"
 /swapfile swap swap defaults 0 0
 ```
 
